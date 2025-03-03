@@ -15,6 +15,5 @@
         "--group-directories-first"
         "--header"
       ];
-      enableZshIntegration = true;
     };
 }
