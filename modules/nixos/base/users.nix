@@ -17,7 +17,9 @@
       "networkmanager"
       "lp"
       "input"
-      "scanner" ];
+      "scanner"
+      "libvirtd" # Virtualization
+    ];
     initialPassword = "password";
   };
 
