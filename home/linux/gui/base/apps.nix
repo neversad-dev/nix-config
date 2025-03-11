@@ -15,12 +15,12 @@
     localsend
     bitwarden-desktop
 
-    obs-studio
     onlyoffice-desktopeditors
     obsidian
 
     android-studio
     orca-slicer
+    localsend
 
   ];
 
