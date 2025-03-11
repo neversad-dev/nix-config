@@ -16,6 +16,12 @@
     git # used by nix flakes
     just # a command runner like make, but simpler
 
+    # archives
+    zip
+    xz
+    zstd
+    unzipNLS
+    p7zip
   ];
 
   users.users.${myvars.username} = {
