@@ -16,7 +16,7 @@
    with nix installed:
 
   ```
-  nix-shell -p git --run "git clone https://github.com/GiveNoCode/nix-setup.git"
+  nix-shell -p git --run "git clone https://github.com/GiveNoCode/nix-config.git"
   ```
 
 4. Change hostname if required:
@@ -37,7 +37,7 @@
 ## Install
 
   ```
-  cd nix-setup
+  cd nix-config
   nix  --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake .
   ```
 
@@ -68,7 +68,7 @@
 #### Stats
 
 - start at login
-- import settings from /nix-setup-home-dotfiles/stats
+- import settings from /nix-config/home/dotfiles/stats
 
 #### MonitorControl
 
