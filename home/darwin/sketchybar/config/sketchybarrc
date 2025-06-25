@@ -1,0 +1,78 @@
+#!/bin/bash
+
+DIR="$HOME/.config/sketchybar/"
+ITEM_DIR="$DIR/items"
+# shellcheck disable=SC2034
+PLUGIN_DIR="$DIR/plugins"
+
+FONT="SF Pro"
+ICON_FONT="SF Pro"
+
+PADDING=6
+
+source "$DIR/colors.sh"
+source "$DIR/icons.sh"
+
+BAR_PROPS=(
+  color="$BG_PRI_COLR"
+  position=top
+  height=32
+  margin=6
+  y_offset=6
+  blur_radius=10
+  corner_radius=10
+  padding_left=10
+  padding_right=10
+  notch_width=160
+  topmost=off
+  sticky=on
+  shadow=on
+)
+
+DEF_PROPS=(
+  icon.font="$ICON_FONT:Semibold:15.0"
+  icon.color="$WHITE"
+  icon.padding_left=10
+  icon.padding_right=2
+  label.font="$FONT:Semibold:15.0"
+  label.color="$WHITE"
+  label.padding_left="$PADDING"
+  label.padding_right=10
+  background.color="$BG_PRI_COLOR"
+  background.padding_right="$PADDING"
+  background.padding_left="$PADDING"
+  background.height=22
+  background.corner_radius=8
+  popup.blur_radius=20
+  popup.y_offset=2
+  popup.background.corner_radius=9
+  popup.background.color="$BG_SEC_COLR"
+  popup.background.shadow.drawing=on
+)
+
+sketchybar --bar "${BAR_PROPS[@]}"
+sketchybar --default "${DEF_PROPS[@]}"
+
+# -- LEFT Side Items --
+source "$ITEM_DIR/apple.sh" 1
+source "$ITEM_DIR/apple.sh" 2
+source "$ITEM_DIR/spaces.sh"
+source "$ITEM_DIR/front_app.sh"
+
+# -- Right Side Of Notch Items --
+source $ITEM_DIR/media.sh
+
+# -- RIGHT Side Items --
+source "$ITEM_DIR/input_source.sh"
+source "$ITEM_DIR/time.sh"
+source "$ITEM_DIR/calendar.sh"
+source "$ITEM_DIR/network.sh"
+source "$ITEM_DIR/battery.sh"
+source "$ITEM_DIR/cpu.sh"
+source "$ITEM_DIR/volume.sh"
+
+sketchybar --hotload on
+
+sketchybar --update
+
+echo "sketchybar configuation loaded.."
