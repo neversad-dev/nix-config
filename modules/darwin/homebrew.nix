@@ -39,6 +39,7 @@
         "ghostty"
         "firefox"
         "google-chrome"
+        "zen"
         "the-unarchiver"
         "alt-tab"
         "aerospace"
