@@ -47,8 +47,6 @@
 
         # messengers
         "signal"
-        "zoom"
-        "slack"
 
         "itsycal"
         "iina"
@@ -73,6 +71,8 @@
       ++ lib.optionals config.personal.enable [
         "cursor"
         "steam"
+        "slack"
+        "zoom"
       ];
 
     # Applications to install from Mac App Store using mas.
@@ -80,7 +80,7 @@
     # otherwise Apple Store will refuse to install them.
     # For details, see https://github.com/mas-cli/mas
     masApps = {
-      Xcode = 497799835;
+      # Xcode = 497799835;
       #   wireguard = 1451685025;
       Bitwarden = 1352778147;
       PDFgear = 6469021132;
