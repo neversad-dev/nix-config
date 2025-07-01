@@ -4,5 +4,6 @@
     git
     just
     jq
+    home-manager
   ];
 }
