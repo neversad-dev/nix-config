@@ -100,7 +100,8 @@
     };
 
     homeModules = {
-      default = ./home;
+      darwin = ./home/darwin;
+      linux = ./home/linux;
     };
 
     # Export lib and vars for reuse
