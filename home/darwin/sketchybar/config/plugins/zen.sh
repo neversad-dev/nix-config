@@ -11,7 +11,8 @@ zen_on() {
     --set volume drawing=off \
     --set volume_icon drawing=off \
     --set volume_slider drawing=off \
-    --set media drawing=off
+    --set media drawing=off \
+    --set Stats drawing=off
 }
 
 zen_off() {
@@ -25,7 +26,8 @@ zen_off() {
     --set volume drawing=on \
     --set volume_icon drawing=on \
     --set volume_slider drawing=on \
-    --set media drawing=on
+    --set media drawing=on \
+    --set Stats drawing=on
 }
 
 if [ "$1" = "on" ]; then

@@ -20,6 +20,8 @@
 
     # `brew install`
     brews = [
+      "git"
+      "git-lfs" # git large file storage
       "wget" # download tool
       "curl" # no not install curl via nixpkgs, it's not working well on macOS!
 
@@ -36,37 +38,48 @@
     # `brew install --cask`
     casks =
       [
+        # terminal
+        "kitty"
         "ghostty"
+
+        # browsers
         "firefox"
         "google-chrome"
         "zen"
-        "the-unarchiver"
-        "alt-tab"
-        "aerospace"
-        "bettertouchtool"
 
         # messengers
         "signal"
 
-        "itsycal"
+        # media & files
         "iina"
-        "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
-        "stats" # beautiful system status monitor in menu bar
-        "monitorcontrol"
-
-        "font-sf-pro"
-        "sf-symbols"
-        "balenaetcher"
-
-        "android-platform-tools"
-        "android-file-transfer"
-        "android-studio"
         "localsend"
+        "the-unarchiver"
         "transnomino" # A batch rename utility for the Mac
         "handbrake" # Open-source video transcoder available for Linux, Mac, and Windows
         "imageoptim" # Tool to optimise images to a smaller size
         "onlyoffice" # Document editor
+
+        # productivity
+        "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
+        "aerospace"
+        "alt-tab"
+        "bettertouchtool"
+        "itsycal"
         "obsidian" # Knowledge base that works on top of a local folder of plain text Markdown files
+
+        # tools
+        "stats" # beautiful system status monitor in menu bar
+        "monitorcontrol"
+        "balenaetcher"
+
+        # fonts
+        "font-sf-pro"
+        "sf-symbols"
+
+        # development
+        "android-platform-tools"
+        "android-file-transfer"
+        "android-studio"
       ]
       ++ lib.optionals config.personal.enable [
         "cursor"

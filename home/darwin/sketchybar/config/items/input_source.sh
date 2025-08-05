@@ -2,8 +2,8 @@
 
 INPUT_SOURCE=(
     update_freq=1
-    width=16
-    icon.font="$FONT:Regular:20.0"
+    width=12
+    icon.font="$FONT:Regular:16.0"
     icon.padding_left=0
     icon.padding_right=2
     label.drawing=off

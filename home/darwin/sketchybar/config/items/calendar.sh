@@ -1,11 +1,12 @@
 #!/bin/bash
 
 CALENDAR=(
+  width=94
   update_freq=60
   icon=􀧞
-  icon.drawing=on
+  icon.drawing=off
   icon.color="$SKY"
-  background.color="$BG_SEC_COLR"
+  label.font="$FONT:Semibold:13.0"
   script="$PLUGIN_DIR/calendar.sh"
   click_script="open \"itsycal://date/now\""
 )
