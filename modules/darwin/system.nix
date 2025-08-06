@@ -154,6 +154,7 @@
       };
 
       # universalaccess.reduceMotion = true;  # TODO causes error
+      universalaccess.reduceTransparency = true;
 
       # Customize settings that not supported by nix-darwin directly
       # see the source code of this project to get more undocumented options:
