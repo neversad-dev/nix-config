@@ -10,10 +10,9 @@
     pkgs.runCommand "formatted-settings.json" {} ''
       echo '${builtins.toJSON settings}' | ${pkgs.jq}/bin/jq '.' > $out
     '';
-in
-  lib.mkIf config.personal.enable {
-    # Create the Cursor settings directory and configuration
-    home.file."Library/Application Support/Cursor/User/settings.json" = {
-      text = builtins.readFile (formatJSON commonSettings);
-    };
-  }
+in {
+  # Create the Cursor settings directory and configuration
+  home.file."Library/Application Support/Cursor/User/settings.json" = {
+    text = builtins.readFile (formatJSON commonSettings);
+  };
+}
