@@ -23,7 +23,7 @@
     # Workbench settings
     "workbench.colorTheme" = "Catppuccin Mocha";
     "workbench.editor.labelFormat" = "medium";
-    "workbench.editor.showTabs" = "none";
+    "workbench.editor.showTabs" = "multiple";
     "workbench.iconTheme" = "catppuccin-mocha";
     "workbench.startupEditor" = "newUntitledFile";
 
