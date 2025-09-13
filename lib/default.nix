@@ -38,59 +38,61 @@
     configFile = builtins.baseNameOf configPath;
     backupFile = "${configDir}/${configFile}.home-manager.backup";
 
+    shouldFormatJson = isJson && pkgs != null;
+
     # Use delta if available, fallback to diff
     diffCommand =
       if pkgs != null
       then "${pkgs.delta}/bin/delta --file-style=omit --hunk-header-style=omit"
       else "diff -u";
   in ''
-        CONFIG_DIR="${configDir}"
-        CONFIG_FILE="${configPath}"
-        BACKUP_FILE="${backupFile}"
+            CONFIG_DIR="${configDir}"
+            CONFIG_FILE="${configPath}"
+            BACKUP_FILE="${backupFile}"
 
-        # Create directory if it doesn't exist
-        mkdir -p "$CONFIG_DIR"
+            # Create directory if it doesn't exist
+            mkdir -p "$CONFIG_DIR"
 
-        # Create new config content in a temp file (safely, without shell interpretation)
-        TEMP_FILE=$(mktemp)
-        if ${
-      if isJson && pkgs != null
+            # Create new config content in a temp file (safely, without shell interpretation)
+            TEMP_FILE=$(mktemp)
+            if ${
+      if shouldFormatJson
       then "true"
       else "false"
     }; then
-          # For JSON: use jq to format
-          cat <<'NIXEOF' | ${
+              # For JSON: use jq to format
+              cat <<'NIXEOF' | ${
       if pkgs != null
       then "${pkgs.jq}/bin/jq '.'"
       else "cat"
     } > "$TEMP_FILE"
-${content}
-NIXEOF
-        else
-          # For plain text: write content directly to avoid shell interpretation
-          cat > "$TEMP_FILE" << 'NIXEOF'
     ${content}
-NIXEOF
-        fi
+    NIXEOF
+            else
+              # For plain text: write content directly to avoid shell interpretation
+              cat > "$TEMP_FILE" << 'NIXEOF'
+        ${content}
+    NIXEOF
+            fi
 
-        # If config exists and is different from new content, create backup and show diff
-        if [ -f "$CONFIG_FILE" ]; then
-          if ! cmp -s "$CONFIG_FILE" "$TEMP_FILE"; then
-            cp "$CONFIG_FILE" "$BACKUP_FILE"
-            echo "" >&2
-            printf "📁 \033[1;36m%s\033[0m config backed up to %s\n" "${name}" "$BACKUP_FILE" >&2
-            printf "🔄 Overwriting manual changes in \033[1;33m%s\033[0m config (%s):\n" "${name}" "$CONFIG_FILE" >&2
-            ${diffCommand} "$CONFIG_FILE" "$TEMP_FILE" >&2 || true
-            echo "" >&2
-          fi
-        fi
+            # If config exists and is different from new content, create backup and show diff
+            if [ -f "$CONFIG_FILE" ]; then
+              if ! cmp -s "$CONFIG_FILE" "$TEMP_FILE"; then
+                cp "$CONFIG_FILE" "$BACKUP_FILE"
+                echo "" >&2
+                printf "📁 \033[1;36m%s\033[0m config backed up to %s\n" "${name}" "$BACKUP_FILE" >&2
+                printf "🔄 Overwriting manual changes in \033[1;33m%s\033[0m config (%s):\n" "${name}" "$CONFIG_FILE" >&2
+                ${diffCommand} "$CONFIG_FILE" "$TEMP_FILE" >&2 || true
+                echo "" >&2
+              fi
+            fi
 
-        # Always overwrite with new config
-        cp "$TEMP_FILE" "$CONFIG_FILE"
-        rm "$TEMP_FILE"
+            # Always overwrite with new config
+            cp "$TEMP_FILE" "$CONFIG_FILE"
+            rm "$TEMP_FILE"
 
-        # Make sure it's writable
-        chmod 644 "$CONFIG_FILE"
+            # Make sure it's writable
+            chmod 644 "$CONFIG_FILE"
 
   '';
 }
