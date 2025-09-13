@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      darwin-hosts:
+        description: "Comma-separated list of Darwin hosts (optional, auto-detected if empty)"
+        required: false
+        type: string
+      linux-hosts:
+        description: "Comma-separated list of Linux hosts (optional, auto-detected if empty)"
+        required: false
+        type: string
 
 jobs:
   check:
@@ -58,22 +67,61 @@ jobs:
           darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
           echo "Darwin system configs: $darwin_configs"
 
+          # Get Darwin host list from flake or workflow input
+          if [[ -n "${{ github.event.inputs.darwin-hosts }}" ]]; then
+            echo "Using Darwin hosts from workflow input: ${{ github.event.inputs.darwin-hosts }}"
+            darwin_hosts=$(echo "${{ github.event.inputs.darwin-hosts }}" | tr ',' '\n' | jq -R . | jq -s .)
+          else
+            echo "Auto-detecting Darwin hosts from darwinConfigurations..."
+            darwin_hosts=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames')
+          fi
+          echo "Darwin hosts: $darwin_hosts"
+
+          # Get Linux host list from workflow input or auto-detect
+          if [[ -n "${{ github.event.inputs.linux-hosts }}" ]]; then
+            echo "Using Linux hosts from workflow input: ${{ github.event.inputs.linux-hosts }}"
+            linux_hosts=$(echo "${{ github.event.inputs.linux-hosts }}" | tr ',' '\n' | jq -R . | jq -s .)
+          else
+            echo "Auto-detecting Linux hosts from homeConfigurations..."
+            # Get all home configurations and extract hosts, then filter out Darwin hosts
+            all_home_hosts=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' | jq -r '.[]' | cut -d'@' -f2 | sort -u)
+            linux_hosts='[]'
+            for host in $all_home_hosts; do
+              # Check if this host is NOT in the Darwin hosts list
+              is_darwin=$(echo "$darwin_hosts" | jq --arg host "$host" 'any(. == $host)')
+              if [[ "$is_darwin" == "false" ]]; then
+                linux_hosts=$(echo "$linux_hosts" | jq --arg host "$host" '. + [$host]')
+              fi
+            done
+          fi
+          echo "Linux hosts: $linux_hosts"
+
           # Get all homeConfigurations
           echo "Discovering homeConfigurations..."
           USERNAME=$(nix eval --raw .#vars.username)
           home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames')
           echo "Home config names: $home_configs_names"
 
-          # Process home configurations
+          # Process home configurations with auto-detected system types
           darwin_home_configs='[]'
           linux_home_configs='[]'
 
           for config in $(echo "$home_configs_names" | jq -r '.[]'); do
             host=$(echo "$config" | cut -d'@' -f2)
-            if [[ "$host" == "mbair" ]]; then
-              darwin_home_configs=$(echo "$darwin_home_configs" | jq -c '. + [{name: "homeConfigurations '"$host"'", target: "homeConfigurations.\"'"$config"'\".activationPackage", type: "home-manager", system: "aarch64-darwin"}]')
+            
+            # Check if host is in Darwin hosts list
+            is_darwin_host=$(echo "$darwin_hosts" | jq --arg host "$host" 'any(. == $host)')
+            
+            if [[ "$is_darwin_host" == "true" ]]; then
+              # Detect actual Darwin system architecture from the configuration
+              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" 2>/dev/null || echo '"aarch64-darwin"')
+              system_arch=$(echo "$system_arch" | jq -r '.')
+              darwin_home_configs=$(echo "$darwin_home_configs" | jq -c --arg host "$host" --arg config "$config" --arg system "$system_arch" '. + [{name: ("homeConfigurations " + $host), target: ("homeConfigurations.\"" + $config + "\".activationPackage"), type: "home-manager", system: $system}]')
             else
-              linux_home_configs=$(echo "$linux_home_configs" | jq -c '. + [{name: "homeConfigurations '"$host"'", target: "homeConfigurations.\"'"$config"'\".activationPackage", type: "home-manager", system: "x86_64-linux"}]')
+              # Detect actual Linux system architecture from the configuration
+              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" 2>/dev/null || echo '"x86_64-linux"')
+              system_arch=$(echo "$system_arch" | jq -r '.')
+              linux_home_configs=$(echo "$linux_home_configs" | jq -c --arg host "$host" --arg config "$config" --arg system "$system_arch" '. + [{name: ("homeConfigurations " + $host), target: ("homeConfigurations.\"" + $config + "\".activationPackage"), type: "home-manager", system: $system}]')
             fi
           done
 
