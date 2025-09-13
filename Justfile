@@ -30,7 +30,8 @@ darwin-debug:
 [group('desktop')]
 darwin-legacy: 
   nix build .#darwinConfigurations.{{hostname}}.system \
-    --extra-experimental-features 'nix-command flakes'
+    --extra-experimental-features 'nix-command flakes' \
+    --accept-flake-config
 
   ./result/sw/bin/darwin-rebuild switch --flake .#{{hostname}}
 
@@ -55,7 +56,8 @@ home-build:
 home-legacy:
   home-manager switch --flake . \
     -b home-manager.backup \
-    --extra-experimental-features 'nix-command flakes'
+    --extra-experimental-features 'nix-command flakes' \
+    --accept-flake-config
 
 
 
@@ -69,13 +71,13 @@ home-legacy:
 # Update all the flake inputs
 [group('nix')]
 up:
-  nix flake update --commit-lock-file
+  nix flake update --commit-lock-file --accept-flake-config
 
 # Update specific input
 # Usage: just upp nixpkgs
 [group('nix')]
 upp input:
-  nix flake update {{input}} --commit-lock-file
+  nix flake update {{input}} --commit-lock-file --accept-flake-config
 
 # List all generations of the system profile
 [group('nix')]
@@ -85,7 +87,7 @@ history:
 # Open a nix shell with the flake
 [group('nix')]
 repl:
-  nix repl -f flake:nixpkgs
+  nix repl -f flake:nixpkgs --accept-flake-config
 
 # Clean old generations and garbage collect with nh
 [group('nix')]
@@ -112,10 +114,11 @@ gcroot:
 [group('tools')]
 fmt:
   # format the nix files in this repo
-  nix fmt .
+  nix fmt . --accept-flake-config
 
 [group('tools')]
 nvim:
   # run neovim
   nix run .#nvim \
-    --extra-experimental-features 'nix-command flakes'
+    --extra-experimental-features 'nix-command flakes' \
+    --accept-flake-config
