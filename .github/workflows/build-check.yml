@@ -36,10 +36,10 @@ jobs:
           skipPush: true
 
       - name: Check flake
-        run: nix flake check --all-systems
+        run: nix flake check --all-systems --accept-flake-config
 
       - name: Check formatting
-        run: nix fmt . -- --check
+        run: nix fmt . -- --check --accept-flake-config
 
   discover-configurations:
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
 
           # Get all darwinConfigurations
           echo "Discovering darwinConfigurations..."
-          darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
+          darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' --accept-flake-config | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
           echo "Darwin system configs: $darwin_configs"
 
           # Get Darwin host list from flake or workflow input
@@ -73,7 +73,7 @@ jobs:
             darwin_hosts=$(echo "${{ github.event.inputs.darwin-hosts }}" | tr ',' '\n' | jq -R . | jq -s .)
           else
             echo "Auto-detecting Darwin hosts from darwinConfigurations..."
-            darwin_hosts=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames')
+            darwin_hosts=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' --accept-flake-config)
           fi
           echo "Darwin hosts: $darwin_hosts"
 
@@ -84,7 +84,7 @@ jobs:
           else
             echo "Auto-detecting Linux hosts from homeConfigurations..."
             # Get all home configurations and extract hosts, then filter out Darwin hosts
-            all_home_hosts=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' | jq -r '.[]' | cut -d'@' -f2 | sort -u)
+            all_home_hosts=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config | jq -r '.[]' | cut -d'@' -f2 | sort -u)
             linux_hosts='[]'
             for host in $all_home_hosts; do
               # Check if this host is NOT in the Darwin hosts list
@@ -98,8 +98,8 @@ jobs:
 
           # Get all homeConfigurations
           echo "Discovering homeConfigurations..."
-          USERNAME=$(nix eval --raw .#vars.username)
-          home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames')
+          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
+          home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config)
           echo "Home config names: $home_configs_names"
 
           # Process home configurations with auto-detected system types
@@ -114,12 +114,12 @@ jobs:
             
             if [[ "$is_darwin_host" == "true" ]]; then
               # Detect actual Darwin system architecture from the configuration
-              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" 2>/dev/null || echo '"aarch64-darwin"')
+              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" --accept-flake-config 2>/dev/null || echo '"aarch64-darwin"')
               system_arch=$(echo "$system_arch" | jq -r '.')
               darwin_home_configs=$(echo "$darwin_home_configs" | jq -c --arg host "$host" --arg config "$config" --arg system "$system_arch" '. + [{name: ("homeConfigurations " + $host), target: ("homeConfigurations.\"" + $config + "\".activationPackage"), type: "home-manager", system: $system}]')
             else
               # Detect actual Linux system architecture from the configuration
-              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" 2>/dev/null || echo '"x86_64-linux"')
+              system_arch=$(nix eval --json ".#homeConfigurations.\"$config\".pkgs.system" --accept-flake-config 2>/dev/null || echo '"x86_64-linux"')
               system_arch=$(echo "$system_arch" | jq -r '.')
               linux_home_configs=$(echo "$linux_home_configs" | jq -c --arg host "$host" --arg config "$config" --arg system "$system_arch" '. + [{name: ("homeConfigurations " + $host), target: ("homeConfigurations.\"" + $config + "\".activationPackage"), type: "home-manager", system: $system}]')
             fi
@@ -129,7 +129,7 @@ jobs:
           echo "Discovering packages..."
           all_packages='[]'
           for system in "x86_64-linux" "aarch64-linux" "aarch64-darwin"; do
-            packages=$(nix eval --json ".#packages.$system" --apply 'builtins.attrNames' 2>/dev/null || echo '[]')
+            packages=$(nix eval --json ".#packages.$system" --apply 'builtins.attrNames' --accept-flake-config 2>/dev/null || echo '[]')
             for pkg in $(echo "$packages" | jq -r '.[]' 2>/dev/null); do
               all_packages=$(echo "$all_packages" | jq -c '. + [{name: "'"$pkg"' ('"$system"')", target: "packages.'"$system"'.'"$pkg"'", system: "'"$system"'"}]')
             done
@@ -172,7 +172,7 @@ jobs:
           configs='${{ needs.discover-configurations.outputs.darwin-configs }}'
           echo "Configurations to build: $configs"
 
-          USERNAME=$(nix eval --raw .#vars.username)
+          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one
@@ -189,7 +189,7 @@ jobs:
             fi
             
             echo "Running: nix build \".#$target\" --dry-run"
-            if ! nix build ".#$target" --dry-run; then
+            if ! nix build ".#$target" --dry-run --accept-flake-config; then
               echo "Failed to build $name"
               exit 1
             fi
@@ -224,7 +224,7 @@ jobs:
           configs='${{ needs.discover-configurations.outputs.linux-configs }}'
           echo "Configurations to build: $configs"
 
-          USERNAME=$(nix eval --raw .#vars.username)
+          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one
@@ -240,7 +240,7 @@ jobs:
             fi
             
             echo "Running: nix build \".#$target\" --dry-run"
-            if ! nix build ".#$target" --dry-run; then
+            if ! nix build ".#$target" --dry-run --accept-flake-config; then
               echo "Failed to build $name"
               exit 1
             fi
@@ -284,7 +284,7 @@ jobs:
             echo "Testing $name on $system..."
             echo "Running: nix build \".#$target\" --dry-run"
             
-            if ! nix build ".#$target" --dry-run; then
+            if ! nix build ".#$target" --dry-run --accept-flake-config; then
               echo "Failed to build package $name"
               exit 1
             fi
