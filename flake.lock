@@ -302,7 +302,8 @@
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2",
-        "nvf-config": "nvf-config"
+        "nvf-config": "nvf-config",
+        "wallpapers": "wallpapers"
       }
     },
     "systems": {
@@ -332,6 +333,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "wallpapers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747176584,
+        "narHash": "sha256-7S84eTltD9dk8mUje+P5G/cwTlQ5ArVq7FJW/yPY+ro=",
+        "owner": "neversad-dev",
+        "repo": "wallpapers",
+        "rev": "597bd667b03b59c621041bb78bb11d67e1bedc65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "neversad-dev",
+        "repo": "wallpapers",
         "type": "github"
       }
     },

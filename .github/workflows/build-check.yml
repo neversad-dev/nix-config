@@ -46,7 +46,7 @@ jobs:
     outputs:
       darwin-configs: ${{ steps.discover.outputs.darwin-configs }}
       linux-configs: ${{ steps.discover.outputs.linux-configs }}
-      all-packages: ${{ steps.discover.outputs.all-packages }}
+      packages: ${{ steps.discover.outputs.packages }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -127,31 +127,30 @@ jobs:
 
           # Get all packages
           echo "Discovering packages..."
-          linux_packages='[]'
-          for system in "x86_64-linux" "aarch64-linux"; do
+          all_packages='[]'
+          for system in "x86_64-linux" "aarch64-linux" "aarch64-darwin"; do
             packages=$(nix eval --json ".#packages.$system" --apply 'builtins.attrNames' 2>/dev/null || echo '[]')
             for pkg in $(echo "$packages" | jq -r '.[]' 2>/dev/null); do
-              linux_packages=$(echo "$linux_packages" | jq -c '. + [{name: "packages '"$pkg"' ('"$system"')", target: "packages.'"$system"'.'"$pkg"'", system: "'"$system"'"}]')
+              all_packages=$(echo "$all_packages" | jq -c '. + [{name: "'"$pkg"' ('"$system"')", target: "packages.'"$system"'.'"$pkg"'", system: "'"$system"'"}]')
             done
           done
 
-          # Combine configurations
+          # Combine configurations (without packages in linux configs now)
           combined_darwin=$(echo "$darwin_configs $darwin_home_configs" | jq -c -s 'add')
-          combined_linux=$(echo "$linux_home_configs $linux_packages" | jq -c -s 'add')
+          combined_linux=$(echo "$linux_home_configs" | jq -c)
 
           echo "darwin-configs=$combined_darwin" >> $GITHUB_OUTPUT
           echo "linux-configs=$combined_linux" >> $GITHUB_OUTPUT
+          echo "packages=$all_packages" >> $GITHUB_OUTPUT
 
           echo "Found Darwin configs: $combined_darwin"
           echo "Found Linux configs: $combined_linux"
+          echo "Found packages: $all_packages"
 
   build-darwin:
     needs: discover-configurations
     if: ${{ fromJson(needs.discover-configurations.outputs.darwin-configs) != '[]' }}
     runs-on: macos-latest
-    strategy:
-      matrix:
-        config: ${{ fromJson(needs.discover-configurations.outputs.darwin-configs) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -167,25 +166,42 @@ jobs:
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Build ${{ matrix.config.name }} (dry-run)
+      - name: Build all Darwin configurations
         run: |
-          if [[ "${{ matrix.config.type }}" == "home-manager" ]]; then
-            USERNAME=$(nix eval --raw .#vars.username)
-            target="${{ matrix.config.target }}"
-            # Replace $USERNAME in target
-            target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run
-          else
-            nix build ".#${{ matrix.config.target }}" --dry-run
-          fi
+          echo "Building Darwin configurations..."
+          configs='${{ needs.discover-configurations.outputs.darwin-configs }}'
+          echo "Configurations to build: $configs"
+
+          USERNAME=$(nix eval --raw .#vars.username)
+          echo "Username: $USERNAME"
+
+          # Parse configurations and build each one
+          echo "$configs" | jq -c '.[]' | while read -r config; do
+            name=$(echo "$config" | jq -r '.name')
+            target=$(echo "$config" | jq -r '.target')
+            type=$(echo "$config" | jq -r '.type')
+            
+            echo "Building $name..."
+            
+            if [[ "$type" == "home-manager" ]]; then
+              # Replace $USERNAME in target
+              target="${target//\$USERNAME/$USERNAME}"
+            fi
+            
+            echo "Running: nix build \".#$target\" --dry-run"
+            if ! nix build ".#$target" --dry-run; then
+              echo "Failed to build $name"
+              exit 1
+            fi
+            echo "Successfully built $name"
+          done
+
+          echo "All Darwin configurations built successfully!"
 
   build-linux:
     needs: discover-configurations
     if: ${{ fromJson(needs.discover-configurations.outputs.linux-configs) != '[]' }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        config: ${{ fromJson(needs.discover-configurations.outputs.linux-configs) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -202,14 +218,77 @@ jobs:
           name: nix-community
           skipPush: true
 
-      - name: Build ${{ matrix.config.name }} (dry-run)
+      - name: Build all Linux configurations
         run: |
-          if [[ "${{ matrix.config.target }}" == *"homeConfigurations"* ]]; then
-            USERNAME=$(nix eval --raw .#vars.username)
-            target="${{ matrix.config.target }}"
-            # Replace $USERNAME in target
-            target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run
-          else
-            nix build ".#${{ matrix.config.target }}" --dry-run
-          fi
+          echo "Building Linux configurations..."
+          configs='${{ needs.discover-configurations.outputs.linux-configs }}'
+          echo "Configurations to build: $configs"
+
+          USERNAME=$(nix eval --raw .#vars.username)
+          echo "Username: $USERNAME"
+
+          # Parse configurations and build each one
+          echo "$configs" | jq -c '.[]' | while read -r config; do
+            name=$(echo "$config" | jq -r '.name')
+            target=$(echo "$config" | jq -r '.target')
+            
+            echo "Building $name..."
+            
+            if [[ "$target" == *"homeConfigurations"* ]]; then
+              # Replace $USERNAME in target
+              target="${target//\$USERNAME/$USERNAME}"
+            fi
+            
+            echo "Running: nix build \".#$target\" --dry-run"
+            if ! nix build ".#$target" --dry-run; then
+              echo "Failed to build $name"
+              exit 1
+            fi
+            echo "Successfully built $name"
+          done
+
+          echo "All Linux configurations built successfully!"
+
+  test-packages:
+    needs: discover-configurations
+    if: ${{ fromJson(needs.discover-configurations.outputs.packages) != '[]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: nix-community
+          skipPush: true
+
+      - name: Test all packages
+        run: |
+          echo "Testing standalone packages..."
+          packages='${{ needs.discover-configurations.outputs.packages }}'
+          echo "Packages to test: $packages"
+
+          # Parse packages and test each one
+          echo "$packages" | jq -c '.[]' | while read -r package; do
+            name=$(echo "$package" | jq -r '.name')
+            target=$(echo "$package" | jq -r '.target')
+            system=$(echo "$package" | jq -r '.system')
+            
+            echo "Testing $name on $system..."
+            echo "Running: nix build \".#$target\" --dry-run"
+            
+            if ! nix build ".#$target" --dry-run; then
+              echo "Failed to build package $name"
+              exit 1
+            fi
+            echo "Successfully tested $name"
+          done
+
+          echo "All packages tested successfully!"
