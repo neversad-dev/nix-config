@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-This directory contains 3 GitHub Actions workflows for the nix-config repository. These workflows provide comprehensive testing, validation, and automated dependency management.
+This directory contains 2 GitHub Actions workflows for the nix-config repository. These workflows provide comprehensive testing and automated dependency management.
 
 ## Workflows
 
@@ -19,23 +19,7 @@ This directory contains 3 GitHub Actions workflows for the nix-config repository
 - Builds all configurations with dry-run validation
 - Tests standalone packages
 
-### 2. Security Scan (`security-scan.yml`)
-
-**Purpose**: Security validation and vulnerability scanning.
-
-**Triggers**:
-- Push to main branches
-- Pull requests to main branches
-- Daily schedule
-- Manual dispatch
-
-**Features**:
-- Nix security audit
-- Dependency outdatedness check
-- Secret scanning
-- Configuration validation
-
-### 3. Update Dependencies (`update-dependencies.yml`)
+### 2. Update Dependencies (`update-dependencies.yml`)
 
 **Purpose**: Automatically updates flake dependencies.
 

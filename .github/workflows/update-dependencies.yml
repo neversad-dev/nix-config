@@ -137,6 +137,5 @@ jobs:
             **Testing:**
             - [x] Dependency validation passed
             - [ ] Build check workflow passes
-            - [ ] Security scan workflow passes
           branch: ${{ steps.update.outputs.branch-name }}
           delete-branch: true
