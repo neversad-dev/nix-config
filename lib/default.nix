@@ -59,11 +59,13 @@
       else "false"
     }; then
           # For JSON: use jq to format
-          echo '${content}' | ${
+          cat <<'NIXEOF' | ${
       if pkgs != null
       then "${pkgs.jq}/bin/jq '.'"
       else "cat"
     } > "$TEMP_FILE"
+${content}
+NIXEOF
         else
           # For plain text: write content directly to avoid shell interpretation
           cat > "$TEMP_FILE" << 'NIXEOF'
