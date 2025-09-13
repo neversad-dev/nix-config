@@ -38,11 +38,6 @@
     configFile = builtins.baseNameOf configPath;
     backupFile = "${configDir}/${configFile}.home-manager.backup";
 
-    formatCommand =
-      if isJson && pkgs != null
-      then "echo '${content}' | ${pkgs.jq}/bin/jq '.'"
-      else "cat";
-
     # Use delta if available, fallback to diff
     diffCommand =
       if pkgs != null
