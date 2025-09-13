@@ -49,7 +49,6 @@
 
     # Custom nvf configuration
     nvf-config.url = "github:neversad-dev/nvf-config";
-
   };
 
   outputs = inputs @ {
