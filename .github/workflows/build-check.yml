@@ -54,28 +54,44 @@ jobs:
           echo "Discovering configurations..."
 
           # Get all darwinConfigurations
-          darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c 'map({name: "darwinConfigurations." + ., target: "darwinConfigurations." + . + ".system", type: "darwin"})')
-          echo "darwin-configs=$darwin_configs" >> $GITHUB_OUTPUT
+          echo "Discovering darwinConfigurations..."
+          darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
+          echo "Darwin system configs: $darwin_configs"
 
-          # Get all homeConfigurations and determine their systems
+          # Get all homeConfigurations
+          echo "Discovering homeConfigurations..."
           USERNAME=$(nix eval --raw .#vars.username)
-          home_configs_raw=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames')
+          home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames')
+          echo "Home config names: $home_configs_names"
 
-          # Separate home configs by system architecture
-          darwin_home_configs=$(echo "$home_configs_raw" | jq -c --arg username "$USERNAME" 'map(select(contains("@"))) | map({name: "homeConfigurations " + split("@")[1], target: "homeConfigurations.\"" + . + "\".activationPackage", type: "home-manager", system: (if (split("@")[1] | test("mbair")) then "aarch64-darwin" else "x86_64-linux" end)})')
-          linux_home_configs=$(echo "$darwin_home_configs" | jq -c 'map(select(.system == "x86_64-linux"))')
-          darwin_home_configs=$(echo "$darwin_home_configs" | jq -c 'map(select(.system == "aarch64-darwin"))')
+          # Process home configurations
+          darwin_home_configs='[]'
+          linux_home_configs='[]'
 
-          # Combine darwin configs
+          for config in $(echo "$home_configs_names" | jq -r '.[]'); do
+            host=$(echo "$config" | cut -d'@' -f2)
+            if [[ "$host" == "mbair" ]]; then
+              darwin_home_configs=$(echo "$darwin_home_configs" | jq -c '. + [{name: "homeConfigurations '"$host"'", target: "homeConfigurations.\"'"$config"'\".activationPackage", type: "home-manager", system: "aarch64-darwin"}]')
+            else
+              linux_home_configs=$(echo "$linux_home_configs" | jq -c '. + [{name: "homeConfigurations '"$host"'", target: "homeConfigurations.\"'"$config"'\".activationPackage", type: "home-manager", system: "x86_64-linux"}]')
+            fi
+          done
+
+          # Get all packages
+          echo "Discovering packages..."
+          linux_packages='[]'
+          for system in "x86_64-linux" "aarch64-linux"; do
+            packages=$(nix eval --json ".#packages.$system" --apply 'builtins.attrNames' 2>/dev/null || echo '[]')
+            for pkg in $(echo "$packages" | jq -r '.[]' 2>/dev/null); do
+              linux_packages=$(echo "$linux_packages" | jq -c '. + [{name: "packages '"$pkg"' ('"$system"')", target: "packages.'"$system"'.'"$pkg"'", system: "'"$system"'"}]')
+            done
+          done
+
+          # Combine configurations
           combined_darwin=$(echo "$darwin_configs $darwin_home_configs" | jq -c -s 'add')
-          echo "darwin-configs=$combined_darwin" >> $GITHUB_OUTPUT
-
-          # Get all packages for all systems
-          all_packages=$(nix eval --json .#packages --apply 'lib: builtins.concatLists (builtins.attrValues (builtins.mapAttrs (system: pkgs: builtins.map (name: {name: "packages " + name + " (" + system + ")", target: "packages." + system + "." + name, system: system}) (builtins.attrNames pkgs)) lib))')
-          linux_packages=$(echo "$all_packages" | jq -c 'map(select(.system | test("linux")))')
-
-          # Combine linux configs
           combined_linux=$(echo "$linux_home_configs $linux_packages" | jq -c -s 'add')
+
+          echo "darwin-configs=$combined_darwin" >> $GITHUB_OUTPUT
           echo "linux-configs=$combined_linux" >> $GITHUB_OUTPUT
 
           echo "Found Darwin configs: $combined_darwin"
