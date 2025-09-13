@@ -55,13 +55,13 @@ jobs:
 
           # Get all darwinConfigurations
           echo "Discovering darwinConfigurations..."
-          darwin_configs=$(nix eval --offline --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
+          darwin_configs=$(nix eval --json .#darwinConfigurations --apply 'builtins.attrNames' | jq -c '[.[] | {name: ("darwinConfigurations." + .), target: ("darwinConfigurations." + . + ".system"), type: "darwin"}]')
           echo "Darwin system configs: $darwin_configs"
 
           # Get all homeConfigurations
           echo "Discovering homeConfigurations..."
-          USERNAME=$(nix eval --offline --raw .#vars.username)
-          home_configs_names=$(nix eval --offline --json .#homeConfigurations --apply 'builtins.attrNames')
+          USERNAME=$(nix eval --raw .#vars.username)
+          home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames')
           echo "Home config names: $home_configs_names"
 
           # Process home configurations
@@ -81,7 +81,7 @@ jobs:
           echo "Discovering packages..."
           linux_packages='[]'
           for system in "x86_64-linux" "aarch64-linux"; do
-            packages=$(nix eval --offline --json ".#packages.$system" --apply 'builtins.attrNames' 2>/dev/null || echo '[]')
+            packages=$(nix eval --json ".#packages.$system" --apply 'builtins.attrNames' 2>/dev/null || echo '[]')
             for pkg in $(echo "$packages" | jq -r '.[]' 2>/dev/null); do
               linux_packages=$(echo "$linux_packages" | jq -c '. + [{name: "packages '"$pkg"' ('"$system"')", target: "packages.'"$system"'.'"$pkg"'", system: "'"$system"'"}]')
             done
@@ -122,13 +122,13 @@ jobs:
       - name: Build ${{ matrix.config.name }} (dry-run)
         run: |
           if [[ "${{ matrix.config.type }}" == "home-manager" ]]; then
-            USERNAME=$(nix eval --offline --raw .#vars.username)
+            USERNAME=$(nix eval --raw .#vars.username)
             target="${{ matrix.config.target }}"
             # Replace $USERNAME in target
             target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run --offline
+            nix build ".#$target" --dry-run
           else
-            nix build ".#${{ matrix.config.target }}" --dry-run --offline
+            nix build ".#${{ matrix.config.target }}" --dry-run
           fi
 
   build-linux:
@@ -157,11 +157,11 @@ jobs:
       - name: Build ${{ matrix.config.name }} (dry-run)
         run: |
           if [[ "${{ matrix.config.target }}" == *"homeConfigurations"* ]]; then
-            USERNAME=$(nix eval --offline --raw .#vars.username)
+            USERNAME=$(nix eval --raw .#vars.username)
             target="${{ matrix.config.target }}"
             # Replace $USERNAME in target
             target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run --offline
+            nix build ".#$target" --dry-run
           else
-            nix build ".#${{ matrix.config.target }}" --dry-run --offline
+            nix build ".#${{ matrix.config.target }}" --dry-run
           fi
