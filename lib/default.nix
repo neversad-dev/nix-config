@@ -67,7 +67,8 @@
         else
           # For plain text: write content directly to avoid shell interpretation
           cat > "$TEMP_FILE" << 'NIXEOF'
-    ${content}NIXEOF
+    ${content}
+NIXEOF
         fi
 
         # If config exists and is different from new content, create backup and show diff
