@@ -1,0 +1,142 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC (1 hour before main repo)
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+    inputs:
+      update-type:
+        description: "Type of update to perform"
+        required: true
+        type: choice
+        options:
+          - "all"
+          - "nixpkgs"
+          - "nix-darwin"
+          - "home-manager"
+          - "catppuccin"
+          - "ghostty"
+          - "nvf-config"
+          - "other"
+        default: "all"
+      create-pr:
+        description: "Create a pull request with the updates"
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: nix-community
+          skipPush: true
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update dependencies
+        id: update
+        run: |
+          echo "Updating dependencies..."
+
+          case "${{ github.event.inputs.update-type || 'all' }}" in
+            "all")
+              echo "Updating all dependencies..."
+              nix flake update --accept-flake-config
+              ;;
+            "nixpkgs")
+              echo "Updating nixpkgs..."
+              nix flake update --update-input nixpkgs --accept-flake-config
+              ;;
+            "nix-darwin")
+              echo "Updating nix-darwin..."
+              nix flake update --update-input nix-darwin --accept-flake-config
+              ;;
+            "home-manager")
+              echo "Updating home-manager..."
+              nix flake update --update-input home-manager --accept-flake-config
+              ;;
+            "catppuccin")
+              echo "Updating catppuccin themes..."
+              nix flake update --update-input catppuccin --update-input catppuccin-vsc --accept-flake-config
+              ;;
+            "ghostty")
+              echo "Updating ghostty..."
+              nix flake update --update-input ghostty --accept-flake-config
+              ;;
+            "nvf-config")
+              echo "Updating nvf-config..."
+              nix flake update --update-input nvf-config --accept-flake-config
+              ;;
+            "other")
+              echo "Updating other dependencies..."
+              nix flake update --accept-flake-config
+              ;;
+          esac
+
+          # Check if there are any changes
+          if git diff --quiet; then
+            echo "No changes to dependencies"
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Changes detected, committing update..."
+          # Add the flake.lock changes
+          git add flake.lock
+          git commit -m "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
+
+          # Push the changes
+          BRANCH_NAME="update-deps-$(date +%Y%m%d-%H%M%S)"
+          git push origin HEAD:$BRANCH_NAME
+          echo "has-changes=true" >> $GITHUB_OUTPUT
+          echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: No changes detected
+        if: steps.update.outputs.has-changes == 'false'
+        run: |
+          echo "✅ Dependencies are already up to date - no changes needed"
+
+      - name: Test updated dependencies
+        if: steps.update.outputs.has-changes == 'true'
+        run: |
+          echo "Testing updated dependencies..."
+          nix flake check --accept-flake-config
+          echo "✅ Dependency update validation passed"
+
+      - name: Create Pull Request
+        if: ${{ github.event.inputs.create-pr == 'true' && steps.update.outputs.has-changes == 'true' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
+          body: |
+            This PR updates the flake dependencies.
+
+            **Changes:**
+            - Updated dependencies (${{ github.event.inputs.update-type || 'all' }})
+
+            **Testing:**
+            - [x] Dependency validation passed
+            - [ ] Build check workflow passes
+            - [ ] Security scan workflow passes
+          branch: ${{ steps.update.outputs.branch-name }}
+          delete-branch: true
