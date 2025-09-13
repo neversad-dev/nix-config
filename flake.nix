@@ -49,12 +49,19 @@
 
     # Custom nvf configuration
     nvf-config.url = "github:neversad-dev/nvf-config";
+
+    # my wallpapers
+    wallpapers = {
+      url = "github:neversad-dev/wallpapers";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
     nix-darwin,
     nixpkgs,
     home-manager,
+    wallpapers,
     ghostty,
     nvf-config,
     ...
@@ -112,43 +119,31 @@
     homeConfigurations = {
       "${myvars.username}@mbair" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${darwinSystems.aarch64};
-        extraSpecialArgs = specialArgs // {inherit inputs;};
+        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
         modules = [
           ./home/darwin
           ./hosts/mbair/home.nix
           {home.packages = [(mkNeovim darwinSystems.aarch64 {inherit mylib;})];}
-          # Enable wallpapers for this host
-          {
-            wallpapers.enable = true;
-            wallpapers.autoDownload = true;
-          }
         ];
       };
 
       "${myvars.username}@tinkerdell" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${linuxSystems.x86_64};
-        extraSpecialArgs = specialArgs // {inherit inputs;};
+        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
         modules = [
           ./home/linux
           ./hosts/tinkerdell/home.nix
           {home.packages = [(mkNeovim linuxSystems.x86_64 {inherit mylib;})];}
-          # Enable wallpapers for this host
-          {
-            wallpapers.enable = true;
-            wallpapers.autoDownload = false; # Manual download
-          }
         ];
       };
 
       "${myvars.username}@enduro" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${linuxSystems.x86_64};
-        extraSpecialArgs = specialArgs // {inherit inputs;};
+        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
         modules = [
           ./home/linux
           ./hosts/enduro/home.nix
           {home.packages = [(mkNeovim linuxSystems.x86_64 {inherit mylib;})];}
-          # Disable wallpapers for this minimal host
-          {wallpapers.enable = false;}
         ];
       };
     };
