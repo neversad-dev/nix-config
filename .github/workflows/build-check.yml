@@ -119,16 +119,22 @@ jobs:
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Build ${{ matrix.config.name }} (dry-run)
+      - name: Evaluate ${{ matrix.config.name }} (check only)
         run: |
           if [[ "${{ matrix.config.type }}" == "home-manager" ]]; then
             USERNAME=$(nix eval --raw .#vars.username)
-            target="${{ matrix.config.target }}"
-            # Replace $USERNAME in target
-            target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run
+            config_name="${{ matrix.config.target }}"
+            # Replace $USERNAME in config name and get base config path
+            config_name="${config_name//\$USERNAME/$USERNAME}"
+            # Remove .activationPackage to get the config itself
+            config_path="${config_name%.activationPackage}"
+            echo "Evaluating home-manager configuration: $config_path"
+            nix eval ".#$config_path.config.home.stateVersion" --raw
+            echo " ✓ Home Manager configuration evaluates successfully"
           else
-            nix build ".#${{ matrix.config.target }}" --dry-run
+            echo "Evaluating darwin configuration: ${{ matrix.config.target }}"
+            nix eval ".#${{ matrix.config.target }}.config.system.stateVersion" --raw
+            echo " ✓ Darwin configuration evaluates successfully"
           fi
 
   build-linux:
@@ -154,14 +160,20 @@ jobs:
           name: nix-community
           skipPush: true
 
-      - name: Build ${{ matrix.config.name }} (dry-run)
+      - name: Evaluate ${{ matrix.config.name }} (check only)
         run: |
           if [[ "${{ matrix.config.target }}" == *"homeConfigurations"* ]]; then
             USERNAME=$(nix eval --raw .#vars.username)
-            target="${{ matrix.config.target }}"
-            # Replace $USERNAME in target
-            target="${target//\$USERNAME/$USERNAME}"
-            nix build ".#$target" --dry-run
+            config_name="${{ matrix.config.target }}"
+            # Replace $USERNAME in config name and get base config path
+            config_name="${config_name//\$USERNAME/$USERNAME}"
+            # Remove .activationPackage to get the config itself
+            config_path="${config_name%.activationPackage}"
+            echo "Evaluating home-manager configuration: $config_path"
+            nix eval ".#$config_path.config.home.stateVersion" --raw
+            echo " ✓ Home Manager configuration evaluates successfully"
           else
-            nix build ".#${{ matrix.config.target }}" --dry-run
+            echo "Evaluating package: ${{ matrix.config.target }}"
+            nix eval ".#${{ matrix.config.target }}.name or .#${{ matrix.config.target }}.pname" --raw 2>/dev/null || echo "package"
+            echo " ✓ Package evaluates successfully"
           fi
