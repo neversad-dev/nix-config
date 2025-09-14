@@ -71,6 +71,7 @@
         "stats" # beautiful system status monitor in menu bar
         "monitorcontrol"
         "balenaetcher"
+        "rustdesk"
 
         # fonts
         "font-sf-pro"
