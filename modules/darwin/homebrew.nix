@@ -98,6 +98,7 @@
       #   wireguard = 1451685025;
       Bitwarden = 1352778147;
       PDFgear = 6469021132;
+      Amphetamine = 937984704;
     };
   };
 
