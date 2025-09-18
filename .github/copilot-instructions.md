@@ -89,28 +89,6 @@ The configuration is designed for reuse:
 - **Export utilities**: `lib` and `vars` for other flakes
 - **Example configs**: Ready-to-use host configurations
 
-## Continuous Integration
-
-### GitHub Actions Workflows
-
-1. **Build Check** (`.github/workflows/build-check.yml`)
-   - Triggers on push/PR to main branch
-   - Auto-discovers all configurations from flake
-   - Tests on both macOS (macos-latest) and Linux (ubuntu-latest)
-   - Validates formatting with `nix fmt . --check`
-   - Performs dry-run builds of all configurations
-
-2. **Update Dependencies** (`.github/workflows/update-dependencies.yml`)
-   - Scheduled weekly (Sundays 2 AM UTC)
-   - Updates flake inputs with `nix flake update`
-   - Creates PRs automatically
-   - Validates updates with `nix flake check`
-
-### CI Requirements
-- **No secrets needed** beyond default `GITHUB_TOKEN`
-- **Caching**: Uses Cachix (nix-community) and Magic Nix Cache
-- **Multi-arch**: Tests aarch64-darwin, x86_64-linux, aarch64-linux
-
 ## Common Issues & Workarounds
 
 ### Known Warnings (Safe to Ignore)
