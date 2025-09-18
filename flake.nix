@@ -87,8 +87,6 @@
     allSystems = builtins.attrValues darwinSystems ++ builtins.attrValues linuxSystems;
     forAllSystems = func: (nixpkgs.lib.genAttrs allSystems func);
 
-    # Helper function to create Neovim for any system (from nvf-config)
-    mkNeovim = nvf-config.lib.mkNeovim;
   in {
     # Export modules for use in other flakes
     darwinModules = {
@@ -123,7 +121,7 @@
         modules = [
           ./home/darwin
           ./hosts/mbair/home.nix
-          {home.packages = [(mkNeovim darwinSystems.aarch64 {inherit mylib;})];}
+          {home.packages = [nvf-config.packages.${darwinSystems.aarch64}.default];}
         ];
       };
 
@@ -133,7 +131,7 @@
         modules = [
           ./home/linux
           ./hosts/tinkerdell/home.nix
-          {home.packages = [(mkNeovim linuxSystems.x86_64 {inherit mylib;})];}
+          {home.packages = [nvf-config.packages.${linuxSystems.x86_64}.default];}
         ];
       };
 
@@ -143,14 +141,14 @@
         modules = [
           ./home/linux
           ./hosts/enduro/home.nix
-          {home.packages = [(mkNeovim linuxSystems.x86_64 {inherit mylib;})];}
+          {home.packages = [nvf-config.packages.${linuxSystems.x86_64}.default];}
         ];
       };
     };
 
     # standalone neovim package for each system
     packages = forAllSystems (system: {
-      nvim = mkNeovim system {inherit mylib;};
+      nvim = nvf-config.packages.${system}.default;
     });
 
     # Format the nix code in this flake
