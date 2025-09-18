@@ -86,7 +86,6 @@
 
     allSystems = builtins.attrValues darwinSystems ++ builtins.attrValues linuxSystems;
     forAllSystems = func: (nixpkgs.lib.genAttrs allSystems func);
-
   in {
     # Export modules for use in other flakes
     darwinModules = {
