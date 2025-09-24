@@ -4,7 +4,7 @@
   ...
 }: let
   defaultConfig = ''
-    theme = Catppuccin Mocha
+    theme = catppuccin-mocha
 
     window-inherit-working-directory = "true"
 
