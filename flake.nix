@@ -21,8 +21,6 @@
     max-substitution-jobs = 128;
     # Use shallow clones for large repositories
     fetch-git-shallow = true;
-    # Optimize for large binary files
-    auto-optimise-store = true;
   };
 
   inputs = {
@@ -58,9 +56,6 @@
     wallpapers = {
       url = "github:neversad-dev/wallpapers";
       flake = false;
-      # Use shallow clone to reduce download size
-      ref = "main";
-      type = "git";
     };
   };
 
