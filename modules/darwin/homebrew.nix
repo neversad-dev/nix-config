@@ -55,7 +55,7 @@
         "localsend"
         "the-unarchiver"
         "transnomino" # A batch rename utility for the Mac
-        "handbrake" # Open-source video transcoder available for Linux, Mac, and Windows
+        "handbrake-app" # Open-source video transcoder available for Linux, Mac, and Windows
         "imageoptim" # Tool to optimise images to a smaller size
         "onlyoffice" # Document editor
 
