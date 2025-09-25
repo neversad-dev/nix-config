@@ -49,6 +49,8 @@
 
         # messengers
         "signal"
+        "slack"
+        "zoom"
 
         # media & files
         "iina"
@@ -82,11 +84,11 @@
         "android-file-transfer"
         "android-studio"
       ]
-      ++ lib.optionals config.personal.enable [
+      ++ lib.optionals config.cursor.enable [
         "cursor"
+      ]
+      ++ lib.optionals config.gaming.enable [
         "steam"
-        "slack"
-        "zoom"
       ];
 
     # Applications to install from Mac App Store using mas.
