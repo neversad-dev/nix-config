@@ -69,6 +69,74 @@ just gc         # Garbage collect
 - `enduro` - Linux laptop
 - `tinkerdell` - Linux laptop
 
+## Configuration Options
+
+- `cursor.enable` - Enable Cursor editor configurations (default: true)
+- `gaming.enable` - Enable gaming-related packages (default: false)
+
+### Usage Examples
+
+**Recommended: Shared Configuration File**
+```nix
+# hosts/myhost/config.nix (shared configuration)
+{
+  cursor.enable = true;   # Enable Cursor editor
+  gaming.enable = false;  # Disable gaming packages
+}
+
+# hosts/myhost/home.nix (imports shared config)
+{
+  imports = [ ./config.nix ];
+}
+
+# hosts/myhost/default.nix (imports shared config)
+{
+  imports = [ ./config.nix ];
+}
+```
+
+**Important**: Use shared config files to avoid duplication and ensure consistency.
+
+### Adding New Options
+
+1. **Define the option** in `vars/config.nix`:
+```nix
+myFeature.enable = lib.mkOption {
+  type = lib.types.bool;
+  default = false;
+  description = "Enable My Feature";
+};
+```
+
+2. **Use the option** in modules:
+```nix
+config = lib.mkIf config.myFeature.enable {
+  # Your configuration here
+};
+```
+
+3. **Set the option** in shared host config:
+```nix
+# hosts/myhost/config.nix (shared configuration)
+myFeature.enable = true;
+
+# hosts/myhost/home.nix (imports shared config)
+{
+  imports = [ ./config.nix ];
+}
+
+# hosts/myhost/default.nix (imports shared config)
+{
+  imports = [ ./config.nix ];
+}
+```
+
+**Rules:**
+- Always use `lib.mkIf` for conditional configurations
+- Follow the `featureName.enable` naming convention
+- Document options with clear descriptions
+- Set sensible defaults (usually `false` for optional features)
+
 ## Structure
 
 - `modules/` - nix-darwin system modules
