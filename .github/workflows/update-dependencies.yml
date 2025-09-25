@@ -100,14 +100,16 @@ jobs:
           fi
 
           echo "Changes detected, committing update..."
+          # Create branch first, before committing
+          BRANCH_NAME="update-deps-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $BRANCH_NAME
+
           # Add the flake.lock changes
           git add flake.lock
           git commit -m "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
 
           # Push the changes
-          BRANCH_NAME="update-deps-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b $BRANCH_NAME
-          git push origin HEAD:$BRANCH_NAME
+          git push origin $BRANCH_NAME
           echo "has-changes=true" >> $GITHUB_OUTPUT
           echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
