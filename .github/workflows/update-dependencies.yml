@@ -127,18 +127,20 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' }}
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
-          body: |
-            This PR updates the flake dependencies.
+        run: |
+          # Switch back to main branch before creating PR
+          git checkout main
+          gh pr create \
+            --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }})" \
+            --body "This PR updates the flake dependencies.
 
-            **Changes:**
-            - Updated dependencies (${{ github.event.inputs.update-type || 'all' }})
+          **Changes:**
+          - Updated dependencies (${{ github.event.inputs.update-type || 'all' }})
 
-            **Testing:**
-            - [x] Dependency validation passed
-            - [ ] Build check workflow passes
-          branch: ${{ steps.update.outputs.branch-name }}
-          delete-branch: true
+          **Testing:**
+          - [x] Dependency validation passed
+          - [ ] Build check workflow passes" \
+            --head ${{ steps.update.outputs.branch-name }} \
+            --base main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
