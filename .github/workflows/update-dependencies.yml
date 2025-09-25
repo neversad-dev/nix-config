@@ -106,6 +106,7 @@ jobs:
 
           # Push the changes
           BRANCH_NAME="update-deps-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $BRANCH_NAME
           git push origin HEAD:$BRANCH_NAME
           echo "has-changes=true" >> $GITHUB_OUTPUT
           echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
