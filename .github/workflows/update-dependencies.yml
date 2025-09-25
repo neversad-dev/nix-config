@@ -126,7 +126,7 @@ jobs:
           echo "✅ Dependency update validation passed"
 
       - name: Create Pull Request
-        if: ${{ github.event.inputs.create-pr == 'true' && steps.update.outputs.has-changes == 'true' }}
+        if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' }}
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
