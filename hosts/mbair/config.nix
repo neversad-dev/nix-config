@@ -5,7 +5,7 @@
   development = {
     vscode.enable = true;
     cursor.enable = true;
-    android.enable = false;
+    android.enable = true;
     flutter.enable = false;
   };
   gaming.enable = false;
