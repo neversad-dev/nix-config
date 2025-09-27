@@ -94,13 +94,14 @@
     # You need to install all these Apps manually first so that your apple account have records for them.
     # otherwise Apple Store will refuse to install them.
     # For details, see https://github.com/mas-cli/mas
-    masApps = {
-      # Xcode = 497799835;
-      #   wireguard = 1451685025;
-      Bitwarden = 1352778147;
-      PDFgear = 6469021132;
-      Amphetamine = 937984704;
-    };
+    masApps =
+      {
+        Bitwarden = 1352778147;
+        PDFgear = 6469021132;
+      }
+      // lib.optionalAttrs config.stay-awake.enable {
+        Amphetamine = 937984704;
+      };
   };
 
   # Add Homebrew paths to the session path

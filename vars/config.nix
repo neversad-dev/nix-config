@@ -28,6 +28,11 @@
       default = {};
       description = "Development tool configurations";
     };
+    stay-awake.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable Stay Awake Configurations";
+    };
     gaming.enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
