@@ -71,7 +71,9 @@ just gc         # Garbage collect
 
 ## Configuration Options
 
-- `cursor.enable` - Enable Cursor editor configurations (default: true)
+- `development.cursor.enable` - Enable Cursor editor configurations (default: false)
+- `development.vscode.enable` - Enable VSCode editor configurations (default: false)
+- `development.android.enable` - Enable Android development configurations (default: false)
 - `gaming.enable` - Enable gaming-related packages (default: false)
 
 ### Usage Examples
@@ -80,7 +82,9 @@ just gc         # Garbage collect
 ```nix
 # hosts/myhost/config.nix (shared configuration)
 {
-  cursor.enable = true;   # Enable Cursor editor
+  development.cursor.enable = true;   # Enable Cursor editor
+  development.vscode.enable = false; # Disable VSCode editor
+  development.android.enable = false; # Disable Android development
   gaming.enable = false;  # Disable gaming packages
 }
 

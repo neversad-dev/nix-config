@@ -1,7 +1,12 @@
-{pkgs, ...}: let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   commonSettings = (import ./common.nix {inherit pkgs;}).commonSettings;
 in {
-  programs.vscode = {
+  programs.vscode = lib.mkIf config.development.vscode.enable {
     enable = true;
     package = pkgs.vscodium;
 
