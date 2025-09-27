@@ -20,13 +20,12 @@
 
     # `brew install`
     brews = [
-      "git"
-      "git-lfs" # git large file storage
       "wget" # download tool
       "curl" # no not install curl via nixpkgs, it's not working well on macOS!
 
       "borders"
       "imagemagick"
+      "ffmpeg"
 
       {
         name = "sketchybar";
@@ -78,14 +77,14 @@
         # fonts
         "font-sf-pro"
         "sf-symbols"
-
-        # development
+      ]
+      ++ lib.optionals config.development.cursor.enable [
+        "cursor"
+      ]
+      ++ lib.optionals config.development.android.enable [
         "android-platform-tools"
         "android-file-transfer"
         "android-studio"
-      ]
-      ++ lib.optionals config.cursor.enable [
-        "cursor"
       ]
       ++ lib.optionals config.gaming.enable [
         "steam"

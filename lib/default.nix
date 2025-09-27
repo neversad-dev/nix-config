@@ -1,4 +1,4 @@
-{lib, ...}: {
+{lib, ...}: rec {
   relativeToRoot = lib.path.append ../.;
 
   scanPaths = path:
@@ -33,6 +33,7 @@
     content,
     pkgs ? null,
     isJson ? false,
+    executable ? false,
   }: let
     configDir = builtins.dirOf configPath;
     configFile = builtins.baseNameOf configPath;
@@ -87,8 +88,88 @@
         cp "$TEMP_FILE" "$CONFIG_FILE"
         rm "$TEMP_FILE"
 
-        # Make sure it's writable
-        chmod 644 "$CONFIG_FILE"
+        # Make sure it's writable and set executable permission if needed
+        chmod ${
+      if executable
+      then "755"
+      else "644"
+    } "$CONFIG_FILE"
 
   '';
+
+  # Creates editable config files for all files in a directory recursively
+  # Usage: mkEditableConfigDir {
+  #   name = "myapp";
+  #   configDir = "$HOME/.config/myapp";
+  #   sourceDir = ./config;
+  #   pkgs = pkgs; # recommended for delta diffs and jq formatting
+  # }
+  mkEditableConfigDir = {
+    name,
+    configDir,
+    sourceDir,
+    pkgs ? null,
+  }: let
+    # Recursively read all files from source directory, preserving structure
+    readDirRecursive = dir: let
+      entries = builtins.readDir dir;
+      files = lib.filterAttrs (name: type: type == "regular") entries;
+      dirs = lib.filterAttrs (name: type: type == "directory") entries;
+
+      # Process files in current directory (relative to sourceDir)
+      currentFiles = builtins.listToAttrs (builtins.map (name: let
+        fullPath = dir + "/${name}";
+        sourceDirStr = toString sourceDir + "/";
+        fullPathStr = toString fullPath;
+        relativePath = lib.removePrefix sourceDirStr fullPathStr;
+      in {
+        name = relativePath; # Use relative path as key to avoid conflicts
+        value = {
+          sourcePath = fullPath;
+          relativePath = relativePath;
+        };
+      }) (builtins.attrNames files));
+
+      # Recursively process subdirectories
+      subdirFiles = builtins.foldl' (
+        acc: dirName:
+          acc
+          // (readDirRecursive (dir + "/${dirName}"))
+      ) {} (builtins.attrNames dirs);
+    in
+      currentFiles // subdirFiles;
+
+    allFiles = readDirRecursive sourceDir;
+
+    # Create activation scripts for each file
+    fileActivations =
+      builtins.mapAttrs (
+        relativePath: fileInfo: let
+          targetPath = "${configDir}/${fileInfo.relativePath}";
+          content = builtins.readFile fileInfo.sourcePath;
+          fileName = builtins.baseNameOf fileInfo.relativePath;
+          fileExtension = let
+            parts = lib.strings.splitString "." fileName;
+          in
+            if builtins.length parts > 1
+            then builtins.elemAt parts 1
+            else "";
+          isJson = fileExtension == "json";
+          isExecutable = fileExtension == "sh" || fileName == "sketchybarrc";
+        in
+          mkEditableConfig {
+            name = "${name} ${fileName}";
+            configPath = targetPath;
+            content = content;
+            pkgs = pkgs;
+            isJson = isJson;
+            executable = isExecutable;
+          }
+      )
+      allFiles;
+
+    # Combine all activation scripts
+    combinedScript = builtins.foldl' (acc: script: acc + "\n" + script) "" (builtins.attrValues fileActivations);
+  in
+    combinedScript;
 }

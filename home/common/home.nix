@@ -1,7 +1,6 @@
 {myvars, ...}: {
   imports = [
     ./lsp.nix
-    ./packages.nix
   ];
 
   # Home Manager needs a bit of information about you and the

@@ -1,9 +1,8 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    neovim
+    vim
     git
     just
     jq
-    home-manager
   ];
 }
