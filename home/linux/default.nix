@@ -11,6 +11,7 @@
       ../common/core
       ../common/tui
       ../common/gui
+      ../common/development
     ];
 
   # Home Manager needs a bit of information about you and the

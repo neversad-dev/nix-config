@@ -19,20 +19,24 @@
     };
 
     # `brew install`
-    brews = [
-      "wget" # download tool
-      "curl" # no not install curl via nixpkgs, it's not working well on macOS!
+    brews =
+      [
+        "wget" # download tool
+        "curl" # no not install curl via nixpkgs, it's not working well on macOS!
 
-      "borders"
-      "imagemagick"
-      "ffmpeg"
+        "borders"
+        "imagemagick"
+        "ffmpeg"
 
-      {
-        name = "sketchybar";
-        start_service = true;
-        restart_service = "changed";
-      }
-    ];
+        {
+          name = "sketchybar";
+          start_service = true;
+          restart_service = "changed";
+        }
+      ]
+      ++ lib.optionals config.development.flutter.enable [
+        "cocoapods" # needed for Flutter
+      ];
 
     # `brew install --cask`
     casks =
@@ -82,8 +86,6 @@
         "cursor"
       ]
       ++ lib.optionals config.development.android.enable [
-        "android-platform-tools"
-        "android-file-transfer"
         "android-studio"
       ]
       ++ lib.optionals config.gaming.enable [
@@ -101,6 +103,9 @@
       }
       // lib.optionalAttrs config.stay-awake.enable {
         Amphetamine = 937984704;
+      }
+      // lib.optionalAttrs config.development.flutter.enable {
+        Xcode = 497799835;
       };
   };
 
