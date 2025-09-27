@@ -141,6 +141,29 @@ myFeature.enable = true;
 - Document options with clear descriptions
 - Set sensible defaults (usually `false` for optional features)
 
+## Available Configuration Options
+
+The configuration provides several optional features that can be enabled:
+
+- `development.cursor.enable` - Enable Cursor editor configurations (default: false)
+- `development.vscode.enable` - Enable VSCode editor configurations (default: false)
+- `development.android.enable` - Enable Android development configurations (default: false)
+- `development.flutter.enable` - Enable Flutter development configurations (default: false)
+- `gaming.enable` - Enable gaming-related packages (default: false)
+- `stay-awake.enable` - Enable stay awake configurations (default: false)
+
+### Android Development Features
+
+When `development.android.enable = true`, the configuration provides:
+
+- **Complete Android SDK**: Build tools, platform tools, NDK, and emulator
+- **Pre-configured Emulators**: 
+  - `MyResizable` - Resizable emulator with multiple form factors
+  - `MyPixel9` - Pixel 9 device emulator with Google APIs
+- **Java Development**: Zulu OpenJDK 21 automatically configured
+- **Environment Variables**: `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `ANDROID_NDK_ROOT`
+- **SDK Synchronization**: Automatic sync with Android Studio location
+
 ## Structure
 
 - `modules/` - nix-darwin system modules
