@@ -1,4 +1,9 @@
-{pkgs, ...}:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 ###################################################################################
 #
 #  macOS's System configuration
@@ -246,4 +251,14 @@
     nerd-fonts.meslo-lg
     nerd-fonts.hack
   ];
+
+  # Stay awake configuration - keep Mac awake on AC power + enable WOL
+  system.activationScripts.stayAwake = lib.mkIf config.stay-awake.enable {
+    text = ''
+      pmset -c sleep 0
+      pmset -c displaysleep 15
+      pmset -c disksleep 0
+      pmset -c womp 1
+    '';
+  };
 }
