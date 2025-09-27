@@ -170,6 +170,34 @@ When adding any package/program, follow this configuration priority:
 - Only override settings that are truly useful, recommended, or specifically requested
 - Avoid over-configuring packages - maintain simplicity and maintainability
 
+### Android Development Configuration
+
+The Android development setup provides a complete development environment:
+
+- **Conditional Loading**: All Android configurations use `lib.mkIf config.development.android.enable`
+- **Complete SDK**: Android SDK with build tools, platform tools, NDK, and emulator
+- **Pre-configured Emulators**: 
+  - `MyResizable` - Resizable emulator with multiple form factors (phone, foldable, tablet, desktop)
+  - `MyPixel9` - Pixel 9 device emulator with Google APIs
+- **Java Development**: Zulu OpenJDK 21 automatically configured
+- **Environment Setup**: Automatic configuration of `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `ANDROID_NDK_ROOT`
+- **SDK Synchronization**: Automatic sync between Nix-managed SDK and Android Studio location
+
+**Android Configuration Files**:
+- `home/common/development/android/android.nix` - Main Android SDK configuration
+- `home/common/development/android/java.nix` - Java development environment
+- `home/common/development/android/emulators/my-resizable.nix` - Resizable emulator
+- `home/common/development/android/emulators/my-pixel-9.nix` - Pixel 9 emulator
+
+**Usage**: Enable Android development by setting `development.android.enable = true` in host configuration.
+
+### Recent Package Additions
+
+- **mitmproxy**: HTTP/HTTPS traffic inspection tool added to TUI packages
+  - Location: `home/common/tui/mitmproxy.nix`
+  - Provides: `mitmproxy`, `mitmdump`, `mitmweb` commands
+  - Usage: Traffic inspection, debugging, and testing
+
 ## Validation Pipeline
 
 The build check workflow validates:
