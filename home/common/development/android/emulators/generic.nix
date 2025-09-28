@@ -1,4 +1,4 @@
-# MyPixel9 Emulator Configuration
+# Generic Emulator Configuration
 # Optimized for performance with ARM system images and hardware acceleration
 {
   config,
@@ -7,21 +7,21 @@
 }: {
   config = lib.mkIf config.development.android.enable {
     home.file = {
-      ".android/avd/MyPixel9.ini" = {
+      ".android/avd/Generic.ini" = {
         text = ''
           avd.ini.encoding=UTF-8
-          path=${config.home.homeDirectory}/.android/avd/MyPixel9.avd
-          path.rel=avd/MyPixel9.avd
+          path=${config.home.homeDirectory}/.android/avd/Generic.avd
+          path.rel=avd/Generic.avd
           target=android-36
         '';
       };
 
-      ".android/avd/MyPixel9.avd/config.ini" = {
+      ".android/avd/Generic.avd/config.ini" = {
         text = ''
-          AvdId=MyPixel9
+          AvdId=Generic
           PlayStore.enabled=false
           abi.type=arm64-v8a
-          avd.ini.displayname=MyPixel9
+          avd.ini.displayname=Generic
           avd.ini.encoding=UTF-8
           disk.dataPartition.size=6G
           fastboot.chosenSnapshotFile=
@@ -39,7 +39,7 @@
           hw.dPad=no
           hw.device.hash2=MD5:5478e3411cc0e0441240e736eb14c07a
           hw.device.manufacturer=Google
-          hw.device.name=pixel_9
+          hw.device.name=generic_phone
           hw.gps=yes
           hw.gpu.enabled=yes
           hw.gpu.mode=host
@@ -62,9 +62,8 @@
           runtime.network.latency=none
           runtime.network.speed=full
           sdcard.size=512M
-          showDeviceFrame=yes
-          skin.dynamic=yes
-          skin.name=pixel_9
+          showDeviceFrame=no
+          skin.dynamic=no
           tag.display=Google APIs
           tag.displaynames=Google APIs
           tag.id=google_apis
@@ -75,16 +74,16 @@
       };
     };
 
-    # Create MyPixel9 AVD data directory
-    home.activation.setupMyPixel9Emulator = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      echo "Setting up MyPixel9 emulator..."
-      mkdir -p "${config.home.homeDirectory}/.android/avd/MyPixel9.avd"
+    # Create Generic AVD data directory
+    home.activation.setupGenericEmulator = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      echo "Setting up Generic emulator..."
+      mkdir -p "${config.home.homeDirectory}/.android/avd/Generic.avd"
 
       # Preserve existing userdata if it exists
-      if [ -f "${config.home.homeDirectory}/.android/avd/MyPixel9.avd/userdata-qemu.img" ]; then
-        echo "Preserving userdata for MyPixel9 emulator..."
+      if [ -f "${config.home.homeDirectory}/.android/avd/Generic.avd/userdata-qemu.img" ]; then
+        echo "Preserving userdata for Generic emulator..."
       else
-        echo "Fresh MyPixel9 emulator setup complete!"
+        echo "Fresh Generic emulator setup complete!"
       fi
     '';
   };

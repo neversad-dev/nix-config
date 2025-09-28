@@ -1,4 +1,4 @@
-# MyResizable Emulator Configuration
+# Resizable Emulator Configuration
 # Optimized for performance with ARM system images and hardware acceleration
 # Supports multiple form factors: phone, foldable, tablet, desktop
 {
@@ -8,21 +8,21 @@
 }: {
   config = lib.mkIf config.development.android.enable {
     home.file = {
-      ".android/avd/MyResizable.ini" = {
+      ".android/avd/Resizable.ini" = {
         text = ''
           avd.ini.encoding=UTF-8
-          path=${config.home.homeDirectory}/.android/avd/MyResizable.avd
-          path.rel=avd/MyResizable.avd
+          path=${config.home.homeDirectory}/.android/avd/Resizable.avd
+          path.rel=avd/Resizable.avd
           target=android-36
         '';
       };
 
-      ".android/avd/MyResizable.avd/config.ini" = {
+      ".android/avd/Resizable.avd/config.ini" = {
         text = ''
-          AvdId=MyResizable
+          AvdId=Resizable
           PlayStore.enabled=false
           abi.type=arm64-v8a
-          avd.ini.displayname=MyResizable
+          avd.ini.displayname=Resizable
           avd.ini.encoding=UTF-8
           disk.dataPartition.size=6G
           fastboot.chosenSnapshotFile=
@@ -90,16 +90,16 @@
       };
     };
 
-    # Create MyResizable AVD data directory
-    home.activation.setupMyResizableEmulator = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      echo "Setting up MyResizable emulator..."
-      mkdir -p "${config.home.homeDirectory}/.android/avd/MyResizable.avd"
+    # Create Resizable AVD data directory
+    home.activation.setupResizableEmulator = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      echo "Setting up Resizable emulator..."
+      mkdir -p "${config.home.homeDirectory}/.android/avd/Resizable.avd"
 
       # Preserve existing userdata if it exists
-      if [ -f "${config.home.homeDirectory}/.android/avd/MyResizable.avd/userdata-qemu.img" ]; then
-        echo "Preserving userdata for MyResizable emulator..."
+      if [ -f "${config.home.homeDirectory}/.android/avd/Resizable.avd/userdata-qemu.img" ]; then
+        echo "Preserving userdata for Resizable emulator..."
       else
-        echo "Fresh MyResizable emulator setup complete!"
+        echo "Fresh Resizable emulator setup complete!"
       fi
     '';
   };
