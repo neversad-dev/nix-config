@@ -18,6 +18,7 @@
         "org.gradle.daemon" = true;
         "org.gradle.configureondemand" = true;
         "org.gradle.caching" = true;
+        "org.gradle.caching.local.enabled" = true;
 
         # Kotlin-specific optimization
         "kotlin.incremental.useClasspathSnapshot" = true;
