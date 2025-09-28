@@ -24,7 +24,7 @@
         "kotlin.daemon.jvmargs" = "-Xmx4096m";
 
         # Ensure correct JDK (Zulu 17 is safest for Android/Gradle)
-        "org.gradle.java.home" = "${pkgs.zulu17}/lib/openjdk";
+        "org.gradle.java.home" = "${pkgs.zulu17}";
       };
     };
 
