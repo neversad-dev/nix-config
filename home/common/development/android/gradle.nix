@@ -7,7 +7,7 @@
   config = lib.mkIf config.development.android.enable {
     programs.gradle = {
       enable = true;
-      package = pkgs.gradle_8;
+      package = pkgs.gradle;
 
       settings = {
         # Memory & GC tuning
