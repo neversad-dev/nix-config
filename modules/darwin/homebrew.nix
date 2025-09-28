@@ -53,7 +53,7 @@
         # messengers
         "signal"
         "slack"
-        "zoom"
+        # "zoom"
 
         # media & files
         "iina"
