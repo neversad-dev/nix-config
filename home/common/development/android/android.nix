@@ -64,6 +64,7 @@ in {
       "${androidSdkPath}/platform-tools"
       "${androidSdkPath}/cmdline-tools/latest/bin"
       "${androidSdkPath}/emulator"
+      "${androidSdkPath}/ndk/${ndkVersion}"
     ];
 
     # Sync Nix Android SDK to Android Studio's expected location
