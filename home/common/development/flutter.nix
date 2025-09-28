@@ -42,7 +42,7 @@ in {
       FLUTTER_HOME = flutterDir;
 
       # Configure Flutter to use our Zulu JDK
-      JAVA_HOME_FLUTTER = "${pkgs.zulu17}";
+      JAVA_HOME_FLUTTER = "${pkgs.zulu21}";
 
       # Fix upstream repository warning
       FLUTTER_GIT_URL = "unknown source";
@@ -70,7 +70,7 @@ in {
       if [ -d "$FLUTTER_DIR" ]; then
         echo "Configuring Flutter to use Zulu JDK..."
         # Set the JDK path for Flutter
-        "$FLUTTER_DIR/bin/flutter" config --jdk-dir "${pkgs.zulu17}" || true
+        "$FLUTTER_DIR/bin/flutter" config --jdk-dir "${pkgs.zulu21}" || true
         echo "Flutter JDK configuration completed"
       fi
     '';
