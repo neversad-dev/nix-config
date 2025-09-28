@@ -5,21 +5,30 @@
   ...
 }: {
   config = lib.mkIf config.development.android.enable {
-    # Install Gradle via Home Manager
     programs.gradle = {
       enable = true;
       package = pkgs.gradle_8;
 
       settings = {
-        "org.gradle.caching" = true;
+        # Memory & GC tuning
+        "org.gradle.jvmargs" = "-Xmx12288m -XX:+UseG1GC -Dfile.encoding=UTF-8";
+
+        # Performance optimizations
         "org.gradle.parallel" = true;
-        "org.gradle.jvmargs" = "-XX:MaxMetaspaceSize=384m -Djava.library.path=${pkgs.git}/bin";
-        "org.gradle.java.home" = "${pkgs.zulu21}";
         "org.gradle.daemon" = true;
+        "org.gradle.configureondemand" = true;
+        "org.gradle.caching" = true;
+
+        # Kotlin-specific optimization
+        "kotlin.incremental.useClasspathSnapshot" = true;
+        "kotlin.daemon.jvmargs" = "-Xmx4096m";
+
+        # Ensure correct JDK (Zulu 17 is safest for Android/Gradle)
+        "org.gradle.java.home" = "${pkgs.zulu17}/lib/openjdk";
       };
     };
 
-    # Ensure git is available for Gradle
+    # Make sure git is in PATH for Gradle
     home.sessionPath = [
       "${pkgs.git}/bin"
     ];

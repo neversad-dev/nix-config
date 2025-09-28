@@ -1,10 +1,11 @@
+# MyPixel9 Emulator Configuration
+# Optimized for performance with ARM system images and hardware acceleration
 {
   config,
   lib,
   ...
 }: {
   config = lib.mkIf config.development.android.enable {
-    # MyPixel9 Emulator Configuration
     home.file = {
       ".android/avd/MyPixel9.ini" = {
         text = ''
@@ -34,14 +35,14 @@
           hw.camera.back=virtualscene
           hw.camera.front=emulated
           hw.cpu.arch=arm64
-          hw.cpu.ncore=4
+          hw.cpu.ncore=2
           hw.dPad=no
           hw.device.hash2=MD5:5478e3411cc0e0441240e736eb14c07a
           hw.device.manufacturer=Google
           hw.device.name=pixel_9
           hw.gps=yes
           hw.gpu.enabled=yes
-          hw.gpu.mode=auto
+          hw.gpu.mode=host
           hw.gyroscope=yes
           hw.initialOrientation=portrait
           hw.keyboard=yes
@@ -49,7 +50,7 @@
           hw.lcd.height=2424
           hw.lcd.width=1080
           hw.mainKeys=no
-          hw.ramSize=2048
+          hw.ramSize=3072
           hw.sdCard=yes
           hw.sensors.light=yes
           hw.sensors.magnetic_field=yes
@@ -63,6 +64,7 @@
           sdcard.size=512M
           showDeviceFrame=yes
           skin.dynamic=yes
+          skin.name=pixel_9
           tag.display=Google APIs
           tag.displaynames=Google APIs
           tag.id=google_apis

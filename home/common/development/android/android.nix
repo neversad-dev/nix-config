@@ -76,7 +76,7 @@ in {
       echo "Syncing Nix Android SDK to Android Studio location..."
 
       # Copy core components from Nix (resolving all symlinks)
-      for component in build-tools cmdline-tools emulator platform-tools platforms system-images sources; do
+      for component in build-tools cmdline-tools emulator platform-tools platforms system-images sources skins; do
         if [ -d "${androidComposition.androidsdk}/libexec/android-sdk/$component" ]; then
           echo "Syncing $component..."
           rm -rf "${androidSdkPath}/$component"
@@ -103,9 +103,18 @@ in {
         cp -rL "${androidComposition.androidsdk}/libexec/android-sdk/licenses/"* "${androidSdkPath}/licenses/" 2>/dev/null || true
       fi
 
+      # Ensure skins directory exists and is accessible
+      if [ -d "${androidSdkPath}/skins" ]; then
+        echo "✓ Emulator skins available at ${androidSdkPath}/skins"
+        ls -la "${androidSdkPath}/skins" | head -10
+      else
+        echo "⚠ Skins directory not found - emulators will use default skins"
+      fi
+
       echo "✓ Nix Android SDK synced to ${androidSdkPath}"
       echo "✓ Android Studio can now download additional components to the same location"
       echo "✓ Command-line tools (adb, etc.) work from both Nix and Android Studio SDK"
+      echo "✓ Emulator skins are available for device-specific configurations"
     '';
   };
 }

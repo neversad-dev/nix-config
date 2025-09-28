@@ -1,10 +1,12 @@
+# MyResizable Emulator Configuration
+# Optimized for performance with ARM system images and hardware acceleration
+# Supports multiple form factors: phone, foldable, tablet, desktop
 {
   config,
   lib,
   ...
 }: {
   config = lib.mkIf config.development.android.enable {
-    # MyResizable Emulator Configuration
     home.file = {
       ".android/avd/MyResizable.ini" = {
         text = ''
@@ -34,7 +36,7 @@
           hw.camera.back=virtualscene
           hw.camera.front=emulated
           hw.cpu.arch=arm64
-          hw.cpu.ncore=4
+          hw.cpu.ncore=2
           hw.dPad=no
           hw.device.hash2=MD5:6ea1f37386c6ff2bb09825b1a05114ee
           hw.device.manufacturer=Generic
@@ -45,7 +47,7 @@
           hw.displayRegion.0.1.yOffset=0
           hw.gps=yes
           hw.gpu.enabled=yes
-          hw.gpu.mode=auto
+          hw.gpu.mode=host
           hw.gyroscope=yes
           hw.initialOrientation=portrait
           hw.keyboard=yes
@@ -54,7 +56,7 @@
           hw.lcd.height=2400
           hw.lcd.width=1080
           hw.mainKeys=no
-          hw.ramSize=2048
+          hw.ramSize=3072
           hw.resizable.configs=phone-0-1080-2400-420, foldable-1-2208-1840-420, tablet-2-1920-1200-240, desktop-3-1920-1080-160
           hw.sdCard=yes
           hw.sensor.hinge=yes

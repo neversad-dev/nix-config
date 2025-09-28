@@ -7,13 +7,13 @@
   config = lib.mkIf config.development.android.enable {
     home = {
       packages = with pkgs; [
-        zulu21
+        zulu17
       ];
       sessionVariables = {
-        JAVA_HOME = "${pkgs.zulu21}";
+        JAVA_HOME = "${pkgs.zulu17}";
       };
       sessionPath = [
-        "${pkgs.zulu21}/bin"
+        "${pkgs.zulu17}/bin"
       ];
     };
   };
