@@ -36,6 +36,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Shared library functions
+    nix-lib = {
+      url = "github:neversad-dev/nix-lib";
+    };
+
     # theme
     catppuccin.url = "github:catppuccin/nix";
     catppuccin-vsc = {
@@ -66,10 +71,15 @@
     wallpapers,
     ghostty,
     nvf-config,
+    nix-lib,
     ...
   }: let
     inherit (inputs.nixpkgs) lib;
-    mylib = import ./lib {inherit lib;};
+    mylib =
+      nix-lib.lib
+      // {
+        relativeToRoot = lib.path.append ./.;
+      };
     myvars = import ./vars;
 
     specialArgs =
