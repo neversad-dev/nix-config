@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  mylib,
   ...
 }: let
   # Flutter version configuration - update this to change Flutter version
@@ -53,26 +54,17 @@ in {
       "${flutterDir}/bin"
     ];
 
-    # Create Flutter configuration
-    home.file.".flutter_settings" = {
-      text = ''
+    home.activation.copyFlutterSettings = mylib.mkEditableConfig {
+      name = "Flutter";
+      configPath = "$HOME/.config/flutter/settings";
+      content = ''
         {
           "enable-analytics": false,
-          "crash-reporting": false
+          "crash-reporting": false,
+          "jdk-dir": "${pkgs.zulu17}"
         }
       '';
+      pkgs = pkgs;
     };
-
-    # Configure Flutter JDK
-    home.activation.configureFlutterJdk = lib.hm.dag.entryAfter ["installFlutter"] ''
-      FLUTTER_DIR="${flutterDir}"
-
-      if [ -d "$FLUTTER_DIR" ]; then
-        echo "Configuring Flutter to use Zulu JDK..."
-        # Set the JDK path for Flutter
-        "$FLUTTER_DIR/bin/flutter" config --jdk-dir "${pkgs.zulu17}" || true
-        echo "Flutter JDK configuration completed"
-      fi
-    '';
   };
 }
