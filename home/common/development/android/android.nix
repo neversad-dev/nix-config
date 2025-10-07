@@ -6,7 +6,7 @@
   ...
 }: let
   # NDK version (easily configurable)
-  ndkVersion = "26.3.11579264";
+  ndkVersion = "27.0.12077973";
 
   # Android SDK installation path (platform-specific)
   androidSdkPath =
@@ -19,8 +19,8 @@
     # Core tools for command-line development
     cmdLineToolsVersion = "19.0";
     platformToolsVersion = "36.0.0"; # adb, fastboot
-    buildToolsVersions = ["36.0.0"]; # Latest build tools
-    platformVersions = ["36"]; # Latest platform
+    buildToolsVersions = ["34.0.0" "35.0.0" "36.0.0"]; 
+    platformVersions = ["34" "35" "36"];
 
     # NDK for native development
     includeNDK = true;
@@ -28,7 +28,7 @@
 
     # Include emulator and system images
     includeEmulator = true;
-    emulatorVersion = "36.1.2";
+    emulatorVersion = "36.1.9";
     includeSystemImages = true;
     systemImageTypes = ["google_apis"];
     # Only download system images for current architecture (saves disk space & build time)

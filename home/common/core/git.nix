@@ -14,6 +14,10 @@
     delta # Modern diff viewer for Git
   ];
 
+  home.sessionPath = [
+    "${pkgs.git}/bin"
+  ];
+
   programs.git = {
     enable = true;
     lfs.enable = true;
