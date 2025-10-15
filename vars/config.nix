@@ -23,6 +23,11 @@
             default = false;
             description = "Enable Flutter Configurations";
           };
+          ruby.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable Ruby Configurations";
+          };
         };
       };
       default = {};
