@@ -19,7 +19,7 @@
     # Core tools for command-line development
     cmdLineToolsVersion = "19.0";
     platformToolsVersion = "36.0.0"; # adb, fastboot
-    buildToolsVersions = ["34.0.0" "35.0.0" "36.0.0"]; 
+    buildToolsVersions = ["34.0.0" "35.0.0" "36.0.0"];
     platformVersions = ["34" "35" "36"];
 
     # NDK for native development
