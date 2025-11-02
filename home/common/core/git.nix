@@ -21,8 +21,6 @@
   programs.git = {
     enable = true;
     lfs.enable = true;
-    userName = "neversad-dev";
-    userEmail = "7419136+neversad-dev@users.noreply.github.com";
 
     ignores = [
       ".DS_Store"
@@ -45,7 +43,12 @@
       }
     ];
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = "neversad-dev";
+        email = "7419136+neversad-dev@users.noreply.github.com";
+      };
+
       core = {
         pager = "delta";
         whitespace = "trailing-space,space-before-tab";
