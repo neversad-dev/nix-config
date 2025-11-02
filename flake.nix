@@ -39,6 +39,7 @@
     # Shared library functions
     nix-lib = {
       url = "github:neversad-dev/nix-lib";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # theme
@@ -55,7 +56,10 @@
     };
 
     # Custom nvf configuration
-    nvf-config.url = "github:neversad-dev/nvf-config";
+    nvf-config = {
+      url = "github:neversad-dev/nvf-config";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # my wallpapers
     wallpapers = {
