@@ -29,12 +29,7 @@
         "borders"
         "imagemagick"
         "ffmpeg"
-
-        {
-          name = "sketchybar";
-          start_service = true;
-          restart_service = "changed";
-        }
+        "sketchybar"
       ]
       ++ lib.optionals config.development.flutter.enable [
         "cocoapods" # needed for Flutter
