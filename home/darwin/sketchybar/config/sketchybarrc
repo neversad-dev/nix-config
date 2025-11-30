@@ -66,11 +66,7 @@ source $ITEM_DIR/media.sh
 source "$ITEM_DIR/input_source.sh"
 source "$ITEM_DIR/time.sh"
 source "$ITEM_DIR/calendar.sh"
-# source "$ITEM_DIR/network.sh"
-# source "$ITEM_DIR/battery.sh"
-# source "$ITEM_DIR/cpu.sh"
 source "$ITEM_DIR/stats.sh"
-# source "$ITEM_DIR/volume.sh"
 
 sketchybar --hotload on
 

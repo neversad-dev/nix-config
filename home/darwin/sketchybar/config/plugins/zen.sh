@@ -12,7 +12,7 @@ zen_on() {
     --set volume_icon drawing=off \
     --set volume_slider drawing=off \
     --set media drawing=off \
-    --set Stats drawing=off
+    --set "Control Center,CombinedModules" drawing=off
 }
 
 zen_off() {
@@ -27,7 +27,7 @@ zen_off() {
     --set volume_icon drawing=on \
     --set volume_slider drawing=on \
     --set media drawing=on \
-    --set Stats drawing=on
+    --set "Control Center,CombinedModules" drawing=on
 }
 
 if [ "$1" = "on" ]; then
