@@ -54,7 +54,7 @@ in {
       "${flutterDir}/bin"
     ];
 
-    home.activation.copyFlutterSettings = mylib.mkEditableConfig {
+    home.activation.flutterSettings = mylib.mkEditableConfig {
       name = "Flutter";
       configPath = "$HOME/.config/flutter/settings";
       content = ''
