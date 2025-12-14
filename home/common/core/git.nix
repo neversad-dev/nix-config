@@ -109,11 +109,14 @@
 
       delta = {
         enable = true;
-        side-by-side = true;
+        side-by-side = false;
         navigate = true;
         features = "catppuccin-mocha";
         line-numbers = true;
         whitespace-error-style = "22 reverse";
+        hyperlinks = true;
+        hyperlinks-file-link-format = "file://{path}:{line}";
+        hyperlinks-file = "file://{path}";
       };
 
       url = {
