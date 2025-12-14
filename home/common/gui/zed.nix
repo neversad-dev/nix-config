@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   programs.zed-editor = {
-    enable = false; # temporary disable due to issues with home-manager module
+    enable = true;
     package = pkgs.zed-editor;
 
     extensions = [
