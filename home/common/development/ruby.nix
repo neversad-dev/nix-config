@@ -14,10 +14,6 @@ in {
       packages = [
         rubyWithPackages
       ];
-      sessionVariables = {
-      };
-      sessionPath = [
-      ];
     };
   };
 }
