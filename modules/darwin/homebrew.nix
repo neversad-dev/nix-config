@@ -95,7 +95,7 @@
     # For details, see https://github.com/mas-cli/mas
     masApps =
       {
-        # Bitwarden = 1352778147; # Temporarily disabled due to installation error
+        Bitwarden = 1352778147;
         PDFgear = 6469021132;
       }
       // lib.optionalAttrs config.stay-awake.enable {
