@@ -102,7 +102,7 @@
         Amphetamine = 937984704;
       }
       // lib.optionalAttrs config.development.flutter.enable {
-        Xcode = 497799835;
+        # Xcode = 497799835;
       };
   };
 
