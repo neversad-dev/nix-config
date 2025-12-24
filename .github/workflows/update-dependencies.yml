@@ -61,12 +61,19 @@ jobs:
         id: check-pr
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch-name || 'update-dependencies' }}"
+          # Determine base branch from which the workflow was triggered
+          # For scheduled runs, use default branch; for workflow_dispatch, use the branch it was triggered from
+          BASE_BRANCH="${{ github.ref_name }}"
+          # Remove 'refs/heads/' prefix if present
+          BASE_BRANCH="${BASE_BRANCH#refs/heads/}"
+          echo "Using base branch: $BASE_BRANCH"
+
           # Check for existing open PRs with head branch
-          EXISTING_PR=$(gh pr list --base main --state open --head "$BRANCH_NAME" --json number --jq '.[0] // empty')
+          EXISTING_PR=$(gh pr list --base "$BASE_BRANCH" --state open --head "$BRANCH_NAME" --json number --jq '.[0] // empty')
 
           if [ -n "$EXISTING_PR" ]; then
             PR_NUMBER=$(echo "$EXISTING_PR" | jq -r '.number')
-            echo "Found existing PR #$PR_NUMBER on branch $BRANCH_NAME"
+            echo "Found existing PR #$PR_NUMBER on branch $BRANCH_NAME targeting $BASE_BRANCH"
             echo "pr-exists=true" >> $GITHUB_OUTPUT
             echo "pr-number=$PR_NUMBER" >> $GITHUB_OUTPUT
           else
@@ -74,6 +81,7 @@ jobs:
             echo "pr-exists=false" >> $GITHUB_OUTPUT
           fi
           echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "base-branch=$BASE_BRANCH" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -164,6 +172,8 @@ jobs:
       - name: Create Pull Request
         if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' && steps.check-pr.outputs.pr-exists == 'false' }}
         run: |
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
+          BASE_BRANCH="${{ steps.check-pr.outputs.base-branch }}"
           PR_URL=$(gh pr create \
             --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }})" \
             --body "This PR updates the flake dependencies.
@@ -174,8 +184,8 @@ jobs:
           **Testing:**
           - [x] Dependency validation passed
           - [ ] Build check workflow passes" \
-            --head update-dependencies \
-            --base main)
+            --head "$BRANCH_NAME" \
+            --base "$BASE_BRANCH")
 
           # Extract PR number from URL (format: https://github.com/owner/repo/pull/123)
           PR_NUMBER=$(echo "$PR_URL" | sed -E 's/.*\/pull\/([0-9]+).*/\1/')
