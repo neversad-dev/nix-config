@@ -164,8 +164,7 @@ jobs:
       - name: Create Pull Request
         if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' && steps.check-pr.outputs.pr-exists == 'false' }}
         run: |
-          BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
-          PR_NUMBER=$(gh pr create \
+          PR_URL=$(gh pr create \
             --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }})" \
             --body "This PR updates the flake dependencies.
 
@@ -175,9 +174,11 @@ jobs:
           **Testing:**
           - [x] Dependency validation passed
           - [ ] Build check workflow passes" \
-            --head "$BRANCH_NAME" \
-            --base main \
-            --json number --jq '.number')
+            --head update-dependencies \
+            --base main)
+
+          # Extract PR number from URL (format: https://github.com/owner/repo/pull/123)
+          PR_NUMBER=$(echo "$PR_URL" | sed -E 's/.*\/pull\/([0-9]+).*/\1/')
 
           # Set default merge method to squash
           gh api \
