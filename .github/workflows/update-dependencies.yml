@@ -25,6 +25,11 @@ on:
         required: false
         type: boolean
         default: true
+      branch-name:
+        description: "Branch name to use for the update"
+        required: false
+        type: string
+        default: "update-dependencies"
 
 jobs:
   update-dependencies:
@@ -55,24 +60,26 @@ jobs:
       - name: Check for existing PR
         id: check-pr
         run: |
-          # Check for existing open PRs with head branch "update-dependencies"
-          EXISTING_PR=$(gh pr list --base main --state open --head update-dependencies --json number --jq '.[0] // empty')
+          BRANCH_NAME="${{ github.event.inputs.branch-name || 'update-dependencies' }}"
+          # Check for existing open PRs with head branch
+          EXISTING_PR=$(gh pr list --base main --state open --head "$BRANCH_NAME" --json number --jq '.[0] // empty')
 
           if [ -n "$EXISTING_PR" ]; then
             PR_NUMBER=$(echo "$EXISTING_PR" | jq -r '.number')
-            echo "Found existing PR #$PR_NUMBER on branch update-dependencies"
+            echo "Found existing PR #$PR_NUMBER on branch $BRANCH_NAME"
             echo "pr-exists=true" >> $GITHUB_OUTPUT
             echo "pr-number=$PR_NUMBER" >> $GITHUB_OUTPUT
           else
             echo "No existing PR found"
             echo "pr-exists=false" >> $GITHUB_OUTPUT
           fi
+          echo "branch-name=$BRANCH_NAME" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare branch
         run: |
-          BRANCH_NAME="update-dependencies"
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
           if [ "${{ steps.check-pr.outputs.pr-exists }}" == "true" ]; then
             echo "Using existing branch: $BRANCH_NAME"
             # Fetch the remote branch if it exists
@@ -138,7 +145,8 @@ jobs:
           git commit -m "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
 
           # Push the changes
-          git push origin update-dependencies
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
+          git push origin "$BRANCH_NAME"
           echo "has-changes=true" >> $GITHUB_OUTPUT
 
       - name: No changes detected
@@ -156,7 +164,8 @@ jobs:
       - name: Create Pull Request
         if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' && steps.check-pr.outputs.pr-exists == 'false' }}
         run: |
-          gh pr create \
+          BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
+          PR_NUMBER=$(gh pr create \
             --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }})" \
             --body "This PR updates the flake dependencies.
 
@@ -166,8 +175,16 @@ jobs:
           **Testing:**
           - [x] Dependency validation passed
           - [ ] Build check workflow passes" \
-            --head update-dependencies \
-            --base main
+            --head "$BRANCH_NAME" \
+            --base main \
+            --json number --jq '.number')
+
+          # Set default merge method to squash
+          gh api \
+            -X PATCH \
+            repos/${{ github.repository }}/pulls/$PR_NUMBER \
+            -f merge_method=squash
+          echo "✅ Created PR #$PR_NUMBER with squash and merge as default"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
