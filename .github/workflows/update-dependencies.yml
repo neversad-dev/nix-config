@@ -60,13 +60,17 @@ jobs:
       - name: Check for existing PR
         id: check-pr
         run: |
-          BRANCH_NAME="${{ github.event.inputs.branch-name || 'update-dependencies' }}"
           # Determine base branch from which the workflow was triggered
           # For scheduled runs, use default branch; for workflow_dispatch, use the branch it was triggered from
           BASE_BRANCH="${{ github.ref_name }}"
           # Remove 'refs/heads/' prefix if present
           BASE_BRANCH="${BASE_BRANCH#refs/heads/}"
           echo "Using base branch: $BASE_BRANCH"
+
+          # Construct branch name with base branch suffix
+          BASE_BRANCH_NAME="${{ github.event.inputs.branch-name || 'update-dependencies' }}"
+          BRANCH_NAME="${BASE_BRANCH_NAME}-${BASE_BRANCH}"
+          echo "Using branch name: $BRANCH_NAME"
 
           # Check for existing open PRs with head branch
           EXISTING_PR=$(gh pr list --base "$BASE_BRANCH" --state open --head "$BRANCH_NAME" --json number --jq '.[0] // empty')
