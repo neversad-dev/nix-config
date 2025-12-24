@@ -179,7 +179,7 @@ jobs:
           BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
           BASE_BRANCH="${{ steps.check-pr.outputs.base-branch }}"
           PR_URL=$(gh pr create \
-            --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }})" \
+            --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }}) → $BASE_BRANCH" \
             --body "This PR updates the flake dependencies.
 
           **Changes:**
