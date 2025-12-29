@@ -102,6 +102,10 @@
         interHunkContext = 10;
       };
 
+      log = {
+        date = "iso"; # use iso format for date
+      };
+
       interactive = {
         diffFilter = "delta --color-only";
         singlekey = true;
