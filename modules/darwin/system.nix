@@ -21,7 +21,6 @@
   time.timeZone = "Europe/Kyiv";
 
   system = {
-
     # Proper system activation script
     activationScripts.extraActivation.text = ''
       # activateSettings -u will reload the settings from the database and apply them to the current session
@@ -166,6 +165,12 @@
       # All custom entries can be found by running `defaults read` command.
       # or `defaults read xxx` to read a specific domain.
       CustomUserPreferences = {
+        "com.apple.finder" = {
+          ShowExternalHardDrivesOnDesktop = false;
+          ShowHardDrivesOnDesktop = false;
+          ShowMountedServersOnDesktop = false;
+          ShowRemovableMediaOnDesktop = false;
+        };
         "com.apple.desktopservices" = {
           # Avoid creating .DS_Store files on network or USB volumes
           DSDontWriteNetworkStores = true;
@@ -226,11 +231,6 @@
   environment.shells = [
     pkgs.zsh
   ];
-
-  # Set default shell for user
-  users.users.neversad = {
-    shell = pkgs.zsh;
-  };
 
   # Fonts
   fonts.packages = with pkgs; [
