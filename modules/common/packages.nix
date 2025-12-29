@@ -1,8 +1,9 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    vim
+    neovim
     git
     just
     jq
   ];
+  environment.variables.EDITOR = "nvim";
 }
