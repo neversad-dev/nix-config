@@ -21,8 +21,6 @@
   time.timeZone = "Europe/Kyiv";
 
   system = {
-    # Set the primary user for system-wide configurations
-    primaryUser = "neversad";
 
     # Proper system activation script
     activationScripts.extraActivation.text = ''
