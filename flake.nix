@@ -140,16 +140,6 @@
         ];
       };
 
-      "${myvars.username}@tinkerdell" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${linuxSystems.x86_64};
-        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
-        modules = [
-          ./home/linux
-          ./hosts/tinkerdell/home.nix
-          {home.packages = [nvf-config.packages.${linuxSystems.x86_64}.default];}
-        ];
-      };
-
       "${myvars.username}@enduro" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${linuxSystems.x86_64};
         extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};

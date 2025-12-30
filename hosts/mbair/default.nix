@@ -4,7 +4,6 @@ in {
   # Host-specific configuration
   networking.hostName = hostname;
   networking.computerName = hostname;
-  system.defaults.smb.NetBIOSName = hostname;
 
   # User configuration - host specific
   users.users."${myvars.username}" = {
