@@ -39,7 +39,7 @@
     casks =
       [
         # terminal
-        "kitty"
+        # "kitty"
         "ghostty"
 
         # browsers

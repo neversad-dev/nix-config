@@ -8,7 +8,7 @@
     # nix commands replacement utility - using pinned version above
     nh = {
       enable = true;
-      flake = "${config.home.homeDirectory}/nix-darwin";
+      flake = "${config.home.homeDirectory}/nixProjects/nix-config-private";
     };
   };
 }

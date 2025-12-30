@@ -8,6 +8,18 @@
 
     window-inherit-working-directory = "true"
 
+    font-family = "Maple Mono NF CN"
+
+    font-size = 15
+
+    background-opacity = 0.93
+
+    # only supported on macOS
+
+    background-blur-radius = 10
+
+    scrollback-limit = 20000
+
     macos-titlebar-style = "hidden"
 
   '';
