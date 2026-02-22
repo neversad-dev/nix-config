@@ -173,7 +173,9 @@ jobs:
           echo "" >> dependency-updates.md
           root0=$(jq -r '.root // "root"' flake.lock.before)
           root1=$(jq -r '.root // "root"' flake.lock)
-          echo "Lockfile root node: base=$root0, new=$root1"
+          base_inputs=$(jq -r ".nodes[\"$root0\"].inputs // {} | keys | length" flake.lock.before)
+          new_inputs=$(jq -r ".nodes[\"$root1\"].inputs // {} | keys | length" flake.lock)
+          echo "Lockfile root node: base=$root0, new=$root1 (base root inputs: $base_inputs, new: $new_inputs)"
           jq -rs \
             --arg root0 "$root0" --arg root1 "$root1" '
             def short_rev:
@@ -191,6 +193,10 @@ jobs:
             | select($oldRev != $newRev)
             | "- **\($name):** \($oldRev | short_rev) → \($newRev | short_rev)"
           ' flake.lock.before flake.lock >> dependency-updates.md
+          line_count=$(wc -l < dependency-updates.md)
+          if [ "$line_count" -le 2 ]; then
+            echo "- *(no root input revs changed; lockfile may have transitive-only updates)*" >> dependency-updates.md
+          fi
           echo "Updated inputs list: $(wc -l < dependency-updates.md) lines (header + blank + entries)"
 
           echo "Committing update..."
