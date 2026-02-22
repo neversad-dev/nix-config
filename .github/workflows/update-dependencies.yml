@@ -99,23 +99,11 @@ jobs:
       - name: Prepare branch
         run: |
           BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
-          if [ "${{ steps.check-pr.outputs.pr-exists }}" == "true" ]; then
-            echo "Using existing branch: $BRANCH_NAME"
-            # Fetch the remote branch if it exists
-            git fetch origin $BRANCH_NAME:$BRANCH_NAME 2>/dev/null || true
-            # Checkout the branch (create locally if it doesn't exist)
-            git checkout $BRANCH_NAME 2>/dev/null || git checkout -b $BRANCH_NAME
-          else
-            echo "Creating new branch: $BRANCH_NAME"
-            git checkout -b $BRANCH_NAME
-          fi
-
-      - name: Save base branch lockfile
-        run: |
           BASE_BRANCH="${{ steps.check-pr.outputs.base-branch }}"
+          # Always start fresh from target: one commit, full diff, complete change list
           git fetch origin "$BASE_BRANCH" --depth=1
-          git show "origin/$BASE_BRANCH:flake.lock" > flake.lock.before
-          echo "Saved flake.lock from origin/$BASE_BRANCH for diff (all changes vs. target branch)"
+          git checkout "origin/$BASE_BRANCH" -B "$BRANCH_NAME"
+          echo "Branch $BRANCH_NAME reset from origin/$BASE_BRANCH (fresh update)"
 
       - name: Update dependencies
         id: update
@@ -206,9 +194,9 @@ jobs:
           git add flake.lock
           git commit -m "Update dependencies (${{ github.event.inputs.update-type || 'all' }})"
 
-          # Push the changes
+          # Force-push so we overwrite any previous update branch (single commit, fresh from target)
           BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
-          git push origin "$BRANCH_NAME"
+          git push --force origin "$BRANCH_NAME"
           echo "has-changes=true" >> $GITHUB_OUTPUT
 
       - name: No changes detected
