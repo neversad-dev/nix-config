@@ -167,26 +167,32 @@ jobs:
 
           echo "Changes detected, generating updates list from nix flake update output..."
 
-          # Parse "• Updated input 'name':" and old/new revs from Nix output (source of truth)
+          # Parse "• Updated input 'name':" and old/new revs + dates from Nix output (source of truth).
+          # Rev is the path segment before ? (narHash can contain / so we must strip query first).
           echo "## Updated inputs" > dependency-updates.md
           echo "" >> dependency-updates.md
           name=""
           old_rev=""
-          rev_from_url() { echo "$1" | sed -n 's/.*\/\([^/?]*\).*/\1/p' | head -c 7; }
+          old_date=""
+          rev_from_url() { echo "$1" | sed 's/?.*//' | sed -n 's/.*\///p' | head -c 7; }
+          date_from_line() { echo "$1" | sed -n 's/.*(\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)).*/\1/p'; }
           while IFS= read -r line; do
             if [[ "$line" == *"Updated input"* ]]; then
               name=$(echo "$line" | sed -n "s/.*Updated input '\([^']*\)':.*/\1/p")
               old_rev=""
+              old_date=""
             elif [[ -n "$name" && "$line" == *"→"* ]]; then
               rest="${line#*\'}"; new_url="${rest%%\'*}"
               new_rev=$(rev_from_url "$new_url")
+              new_date=$(date_from_line "$line")
               if [[ -n "$old_rev" ]]; then
-                echo "- **$name:** ${old_rev} → ${new_rev}" >> dependency-updates.md
+                echo "- **$name:** ${old_rev} (${old_date}) → ${new_rev} (${new_date})" >> dependency-updates.md
               fi
               name=""
             elif [[ -n "$name" && "$line" == *"'"* ]]; then
               rest="${line#*\'}"; old_url="${rest%%\'*}"
               old_rev=$(rev_from_url "$old_url")
+              old_date=$(date_from_line "$line")
             fi
           done < /tmp/update.log
           echo "Updated inputs list: $(wc -l < dependency-updates.md) lines (header + blank + entries)"
