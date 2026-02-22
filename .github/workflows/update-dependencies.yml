@@ -166,17 +166,23 @@ jobs:
 
           echo "Changes detected, generating updates list..."
 
-          # Generate old -> new version list for PR body (root inputs only)
+          # Generate old -> new version list for PR body (root inputs only).
+          # flake.lock structure: top-level "root" names the root node (e.g. "root");
+          # nodes.<root> has "inputs" (name -> node name); each node has .locked.rev or .locked.url
           echo "## Updated inputs" > dependency-updates.md
           echo "" >> dependency-updates.md
-          jq -rs '
+          root0=$(jq -r '.root // "root"' flake.lock.before)
+          root1=$(jq -r '.root // "root"' flake.lock)
+          echo "Lockfile root node: base=$root0, new=$root1"
+          jq -rs \
+            --arg root0 "$root0" --arg root1 "$root1" '
             def short_rev:
               if type == "string" then
                 if startswith("http") then "tarball" else (if length > 7 then .[0:7] else . end) end
               else "?" end;
-            (.[1].nodes.root.inputs | keys[]) as $name
-            | .[0].nodes.root.inputs[$name] as $oldNode
-            | .[1].nodes.root.inputs[$name] as $newNode
+            (.[1].nodes[$root1].inputs // {} | keys[]) as $name
+            | .[0].nodes[$root0].inputs[$name] as $oldNode
+            | .[1].nodes[$root1].inputs[$name] as $newNode
             | select($oldNode and $newNode)
             | .[0].nodes[$oldNode].locked as $oldLocked
             | .[1].nodes[$newNode].locked as $newLocked
@@ -185,6 +191,7 @@ jobs:
             | select($oldRev != $newRev)
             | "- **\($name):** \($oldRev | short_rev) → \($newRev | short_rev)"
           ' flake.lock.before flake.lock >> dependency-updates.md
+          echo "Updated inputs list: $(wc -l < dependency-updates.md) lines (header + blank + entries)"
 
           echo "Committing update..."
 
