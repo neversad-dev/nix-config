@@ -35,6 +35,14 @@ jobs:
           name: nix-community
           skipPush: true
 
+      - name: Cache Nix store
+        uses: actions/cache@v5
+        with:
+          path: /nix/store
+          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-store-${{ runner.os }}-
+
       - name: Check flake
         run: nix flake check --all-systems --accept-flake-config
 
@@ -56,6 +64,14 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+
+      - name: Cache Nix store
+        uses: actions/cache@v5
+        with:
+          path: /nix/store
+          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-store-${{ runner.os }}-
 
       - name: Discover all configurations
         id: discover
@@ -218,6 +234,14 @@ jobs:
           name: nix-community
           skipPush: true
 
+      - name: Cache Nix store
+        uses: actions/cache@v5
+        with:
+          path: /nix/store
+          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-store-${{ runner.os }}-
+
       - name: Build all Linux configurations
         run: |
           echo "Building Linux configurations..."
@@ -268,6 +292,14 @@ jobs:
         with:
           name: nix-community
           skipPush: true
+
+      - name: Cache Nix store
+        uses: actions/cache@v5
+        with:
+          path: /nix/store
+          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-store-${{ runner.os }}-
 
       - name: Test all packages
         run: |
