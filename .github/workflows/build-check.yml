@@ -36,12 +36,11 @@ jobs:
           skipPush: true
 
       - name: Cache Nix store
-        uses: actions/cache@v5
+        uses: nix-community/cache-nix-action@v7
         with:
-          path: /nix/store
-          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
-          restore-keys: |
-            nix-store-${{ runner.os }}-
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 1G
 
       - name: Check flake
         run: nix flake check --all-systems --accept-flake-config
@@ -66,12 +65,11 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Cache Nix store
-        uses: actions/cache@v5
+        uses: nix-community/cache-nix-action@v7
         with:
-          path: /nix/store
-          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
-          restore-keys: |
-            nix-store-${{ runner.os }}-
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 1G
 
       - name: Discover all configurations
         id: discover
@@ -235,12 +233,11 @@ jobs:
           skipPush: true
 
       - name: Cache Nix store
-        uses: actions/cache@v5
+        uses: nix-community/cache-nix-action@v7
         with:
-          path: /nix/store
-          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
-          restore-keys: |
-            nix-store-${{ runner.os }}-
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 1G
 
       - name: Build all Linux configurations
         run: |
@@ -294,12 +291,11 @@ jobs:
           skipPush: true
 
       - name: Cache Nix store
-        uses: actions/cache@v5
+        uses: nix-community/cache-nix-action@v7
         with:
-          path: /nix/store
-          key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
-          restore-keys: |
-            nix-store-${{ runner.os }}-
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 1G
 
       - name: Test all packages
         run: |
