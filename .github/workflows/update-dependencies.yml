@@ -103,6 +103,13 @@ jobs:
             git checkout -b $BRANCH_NAME
           fi
 
+      - name: Save base branch lockfile
+        run: |
+          BASE_BRANCH="${{ steps.check-pr.outputs.base-branch }}"
+          git fetch origin "$BASE_BRANCH" --depth=1
+          git show "origin/$BASE_BRANCH:flake.lock" > flake.lock.before
+          echo "Saved flake.lock from origin/$BASE_BRANCH for diff (all changes vs. target branch)"
+
       - name: Update dependencies
         id: update
         run: |
@@ -150,7 +157,29 @@ jobs:
             exit 0
           fi
 
-          echo "Changes detected, committing update..."
+          echo "Changes detected, generating updates list..."
+
+          # Generate old -> new version list for PR body (root inputs only)
+          echo "## Updated inputs" > dependency-updates.md
+          echo "" >> dependency-updates.md
+          jq -rs '
+            def short_rev:
+              if type == "string" then
+                if startswith("http") then "tarball" else (if length > 7 then .[0:7] else . end) end
+              else "?" end;
+            (.[1].root.inputs | keys[]) as $name
+            | .[0].root.inputs[$name] as $oldNode
+            | .[1].root.inputs[$name] as $newNode
+            | select($oldNode and $newNode)
+            | .[0].nodes[$oldNode].locked as $oldLocked
+            | .[1].nodes[$newNode].locked as $newLocked
+            | ($oldLocked.rev // $oldLocked.url) as $oldRev
+            | ($newLocked.rev // $newLocked.url) as $newRev
+            | select($oldRev != $newRev)
+            | "- **\($name):** \($oldRev | short_rev) → \($newRev | short_rev)"
+          ' flake.lock.before flake.lock >> dependency-updates.md 2>/dev/null || true
+
+          echo "Committing update..."
 
           # Add the flake.lock changes
           git add flake.lock
@@ -178,16 +207,22 @@ jobs:
         run: |
           BRANCH_NAME="${{ steps.check-pr.outputs.branch-name }}"
           BASE_BRANCH="${{ steps.check-pr.outputs.base-branch }}"
+
+          {
+            echo "This PR updates the flake dependencies."
+            echo ""
+            if [ -s dependency-updates.md ]; then
+              cat dependency-updates.md
+              echo ""
+            fi
+            echo "**Testing:**"
+            echo "- [x] Dependency validation passed"
+            echo "- [ ] Build check workflow passes"
+          } > pr-body.md
+
           PR_URL=$(gh pr create \
             --title "Update dependencies (${{ github.event.inputs.update-type || 'all' }}) → $BASE_BRANCH" \
-            --body "This PR updates the flake dependencies.
-
-          **Changes:**
-          - Updated dependencies (${{ github.event.inputs.update-type || 'all' }})
-
-          **Testing:**
-          - [x] Dependency validation passed
-          - [ ] Build check workflow passes" \
+            --body-file pr-body.md \
             --head "$BRANCH_NAME" \
             --base "$BASE_BRANCH")
 
@@ -206,4 +241,19 @@ jobs:
       - name: Update existing Pull Request
         if: ${{ (github.event.inputs.create-pr || 'true') == 'true' && steps.update.outputs.has-changes == 'true' && steps.check-pr.outputs.pr-exists == 'true' }}
         run: |
-          echo "✅ Updated existing PR #${{ steps.check-pr.outputs.pr-number }} with latest dependency changes"
+          PR_NUMBER="${{ steps.check-pr.outputs.pr-number }}"
+          {
+            echo "This PR updates the flake dependencies."
+            echo ""
+            if [ -s dependency-updates.md ]; then
+              cat dependency-updates.md
+              echo ""
+            fi
+            echo "**Testing:**"
+            echo "- [x] Dependency validation passed"
+            echo "- [ ] Build check workflow passes"
+          } > pr-body.md
+          gh pr edit "$PR_NUMBER" --body-file pr-body.md
+          echo "✅ Updated existing PR #$PR_NUMBER with latest dependency changes"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
