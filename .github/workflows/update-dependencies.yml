@@ -120,40 +120,41 @@ jobs:
       - name: Update dependencies
         id: update
         run: |
+          set -o pipefail
           echo "Updating dependencies..."
 
           case "${{ github.event.inputs.update-type || 'all' }}" in
             "all")
               echo "Updating all dependencies..."
-              nix flake update --accept-flake-config
+              nix flake update --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "nixpkgs")
               echo "Updating nixpkgs..."
-              nix flake update --update-input nixpkgs --accept-flake-config
+              nix flake update --update-input nixpkgs --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "nix-darwin")
               echo "Updating nix-darwin..."
-              nix flake update --update-input nix-darwin --accept-flake-config
+              nix flake update --update-input nix-darwin --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "home-manager")
               echo "Updating home-manager..."
-              nix flake update --update-input home-manager --accept-flake-config
+              nix flake update --update-input home-manager --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "catppuccin")
               echo "Updating catppuccin themes..."
-              nix flake update --update-input catppuccin --update-input catppuccin-vsc --accept-flake-config
+              nix flake update --update-input catppuccin --update-input catppuccin-vsc --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "ghostty")
               echo "Updating ghostty..."
-              nix flake update --update-input ghostty --accept-flake-config
+              nix flake update --update-input ghostty --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "nvf-config")
               echo "Updating nvf-config..."
-              nix flake update --update-input nvf-config --accept-flake-config
+              nix flake update --update-input nvf-config --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "other")
               echo "Updating other dependencies..."
-              nix flake update --accept-flake-config
+              nix flake update --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
           esac
 
@@ -164,39 +165,30 @@ jobs:
             exit 0
           fi
 
-          echo "Changes detected, generating updates list..."
+          echo "Changes detected, generating updates list from nix flake update output..."
 
-          # Generate old -> new version list for PR body (root inputs only).
-          # flake.lock structure: top-level "root" names the root node (e.g. "root");
-          # nodes.<root> has "inputs" (name -> node name); each node has .locked.rev or .locked.url
+          # Parse "• Updated input 'name':" and old/new revs from Nix output (source of truth)
           echo "## Updated inputs" > dependency-updates.md
           echo "" >> dependency-updates.md
-          root0=$(jq -r '.root // "root"' flake.lock.before)
-          root1=$(jq -r '.root // "root"' flake.lock)
-          base_inputs=$(jq -r ".nodes[\"$root0\"].inputs // {} | keys | length" flake.lock.before)
-          new_inputs=$(jq -r ".nodes[\"$root1\"].inputs // {} | keys | length" flake.lock)
-          echo "Lockfile root node: base=$root0, new=$root1 (base root inputs: $base_inputs, new: $new_inputs)"
-          jq -rs \
-            --arg root0 "$root0" --arg root1 "$root1" '
-            def short_rev:
-              if type == "string" then
-                if startswith("http") then "tarball" else (if length > 7 then .[0:7] else . end) end
-              else "?" end;
-            (.[1].nodes[$root1].inputs // {} | keys[]) as $name
-            | .[0].nodes[$root0].inputs[$name] as $oldNode
-            | .[1].nodes[$root1].inputs[$name] as $newNode
-            | select($oldNode and $newNode)
-            | .[0].nodes[$oldNode].locked as $oldLocked
-            | .[1].nodes[$newNode].locked as $newLocked
-            | ($oldLocked.rev // $oldLocked.url) as $oldRev
-            | ($newLocked.rev // $newLocked.url) as $newRev
-            | select($oldRev != $newRev)
-            | "- **\($name):** \($oldRev | short_rev) → \($newRev | short_rev)"
-          ' flake.lock.before flake.lock >> dependency-updates.md
-          line_count=$(wc -l < dependency-updates.md)
-          if [ "$line_count" -le 2 ]; then
-            echo "- *(no root input revs changed; lockfile may have transitive-only updates)*" >> dependency-updates.md
-          fi
+          name=""
+          old_rev=""
+          rev_from_url() { echo "$1" | sed -n 's/.*\/\([^/?]*\).*/\1/p' | head -c 7; }
+          while IFS= read -r line; do
+            if [[ "$line" == *"Updated input"* ]]; then
+              name=$(echo "$line" | sed -n "s/.*Updated input '\([^']*\)':.*/\1/p")
+              old_rev=""
+            elif [[ -n "$name" && "$line" == *"→"* ]]; then
+              rest="${line#*\'}"; new_url="${rest%%\'*}"
+              new_rev=$(rev_from_url "$new_url")
+              if [[ -n "$old_rev" ]]; then
+                echo "- **$name:** ${old_rev} → ${new_rev}" >> dependency-updates.md
+              fi
+              name=""
+            elif [[ -n "$name" && "$line" == *"'"* ]]; then
+              rest="${line#*\'}"; old_url="${rest%%\'*}"
+              old_rev=$(rev_from_url "$old_url")
+            fi
+          done < /tmp/update.log
           echo "Updated inputs list: $(wc -l < dependency-updates.md) lines (header + blank + entries)"
 
           echo "Committing update..."
