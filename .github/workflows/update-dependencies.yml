@@ -186,7 +186,10 @@ jobs:
               new_rev=$(rev_from_url "$new_url")
               new_date=$(date_from_line "$line")
               if [[ -n "$old_rev" ]]; then
-                echo "- **$name:** ${old_rev} (${old_date}) → ${new_rev} (${new_date})" >> dependency-updates.md
+                echo "**$name:**" >> dependency-updates.md
+                echo "-  \`${old_rev}\` (${old_date}) ->" >> dependency-updates.md
+                echo "-  \`${new_rev}\` (${new_date})" >> dependency-updates.md
+                echo "" >> dependency-updates.md
               fi
               name=""
             elif [[ -n "$name" && "$line" == *"'"* ]]; then
