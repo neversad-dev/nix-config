@@ -155,20 +155,39 @@ jobs:
 
           echo "Changes detected, generating updates list from nix flake update output..."
 
-          # Parse "• Updated input 'name':" and old/new revs + dates from Nix output (source of truth).
-          # Rev is the path segment before ? (narHash can contain / so we must strip query first).
+          # Parse "• Updated input 'name':" / "• Added input 'name':" and revs + dates from Nix output.
+          # Updated: two lines (old url, then "→" new url). Added: one line 'url' (date) when there was no lock.
+          # Rev: prefer ?rev= or &rev= (git); else flakehub version from path; else last path segment (7 chars).
           echo "## Updated inputs" > dependency-updates.md
           echo "" >> dependency-updates.md
           name=""
           old_rev=""
           old_date=""
-          rev_from_url() { echo "$1" | sed 's/?.*//' | sed -n 's/.*\///p' | head -c 7; }
+          is_added=""
+          rev_from_url() {
+            local u="$1" v
+            if [[ "$u" == *"rev="* ]]; then
+              echo "$u" | sed -n 's/.*[?&]rev=\([^&]*\).*/\1/p' | head -c 7
+              return
+            fi
+            if [[ "$u" == *"flakehub"* ]]; then
+              v=$(echo "$u" | sed 's/?.*//' | sed -n 's/.*\/\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\/.*/\1/p')
+              [[ -n "$v" ]] && echo "$v" && return
+            fi
+            echo "$u" | sed 's/?.*//' | sed -n 's/.*\///p' | head -c 7
+          }
           date_from_line() { echo "$1" | sed -n 's/.*(\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)).*/\1/p'; }
           while IFS= read -r line; do
-            if [[ "$line" == *"Updated input"* ]]; then
+            if [[ "$line" == *"Added input"* ]]; then
+              name=$(echo "$line" | sed -n "s/.*Added input '\([^']*\)':.*/\1/p")
+              old_rev=""
+              old_date=""
+              is_added=1
+            elif [[ "$line" == *"Updated input"* ]]; then
               name=$(echo "$line" | sed -n "s/.*Updated input '\([^']*\)':.*/\1/p")
               old_rev=""
               old_date=""
+              is_added=""
             elif [[ -n "$name" && "$line" == *"→"* ]]; then
               rest="${line#*\'}"; new_url="${rest%%\'*}"
               new_rev=$(rev_from_url "$new_url")
@@ -180,10 +199,24 @@ jobs:
                 echo "" >> dependency-updates.md
               fi
               name=""
+              is_added=""
             elif [[ -n "$name" && "$line" == *"'"* ]]; then
-              rest="${line#*\'}"; old_url="${rest%%\'*}"
-              old_rev=$(rev_from_url "$old_url")
-              old_date=$(date_from_line "$line")
+              rest="${line#*\'}"; url="${rest%%\'*}"
+              rev=$(rev_from_url "$url")
+              date=$(date_from_line "$line")
+              if [[ -n "$is_added" ]]; then
+                # Skip "follows '...'" lines (no rev/date); only emit when we have a real pin
+                if [[ "$line" != *"follows"* && ( -n "$date" || "$url" == *"github:"* || "$url" == *"git+"* ) ]]; then
+                  echo "**$name:**" >> dependency-updates.md
+                  [[ -n "$date" ]] && echo "-  \`${rev}\` (${date}) (new)" >> dependency-updates.md || echo "-  \`${rev}\` (new)" >> dependency-updates.md
+                  echo "" >> dependency-updates.md
+                fi
+                name=""
+                is_added=""
+              else
+                old_rev="$rev"
+                old_date="$date"
+              fi
             fi
           done < /tmp/update.log
           echo "Updated inputs list: $(wc -l < dependency-updates.md) lines (header + blank + entries)"
