@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }: {
   # Nix instance is managed via Determinate installation
