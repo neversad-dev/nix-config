@@ -1,14 +1,16 @@
-{myvars, ...}: {
+{myvars, ...}: let
+  hostname = "mbair";
+in {
   # Host-specific configuration
-  networking.hostName = "mbair";
-  networking.computerName = "mbair";
+  networking.hostName = hostname;
+  networking.computerName = hostname;
 
   # User configuration - host specific
   users.users."${myvars.username}" = {
     home = "/Users/${myvars.username}";
     description = myvars.username;
   };
-
+  system.primaryUser = myvars.username;
   nix.settings.trusted-users = [myvars.username];
 
   # Host-specific settings can go here
