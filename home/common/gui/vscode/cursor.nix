@@ -6,7 +6,10 @@
   ...
 }: let
   commonSettings = (import ./common.nix {inherit pkgs;}).commonSettings;
-  settingsJson = builtins.toJSON commonSettings;
+  cursorSettings = commonSettings // {
+    "cursor.composer.usageSummaryDisplay" = "always";
+  };
+  settingsJson = builtins.toJSON cursorSettings;
 in {
   config = lib.mkIf config.development.cursor.enable {
     # Copy settings to create an editable file (not a symlink)

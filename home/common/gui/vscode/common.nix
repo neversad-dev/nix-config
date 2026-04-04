@@ -3,7 +3,7 @@
     # Editor settings
     "editor.fontFamily" = "FiraCode Nerd Font Mono";
     "editor.fontLigatures" = true;
-    "editor.fontSize" = 14;
+    "editor.fontSize" = 16;
     "editor.formatOnSave" = true;
     "editor.formatOnPaste" = false;
     "editor.inlineSuggest.enabled" = true;
@@ -26,6 +26,7 @@
     "workbench.editor.showTabs" = "multiple";
     "workbench.iconTheme" = "catppuccin-mocha";
     "workbench.startupEditor" = "newUntitledFile";
+    "catppuccin.italicKeywords" = false;
 
     # Telemetry settings
     "telemetry.telemetryLevel" = "off";
@@ -80,6 +81,10 @@
 
     "[markdown]" = {
       "editor.defaultFormatter" = "DavidAnson.vscode-markdownlint";
+    };
+
+    "[kotlin]" = {
+      "editor.defaultFormatter" = "JetBrains.kotlin";
     };
   };
 }
