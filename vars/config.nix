@@ -24,7 +24,7 @@
             description = ''
               JAVA_HOME for Android tooling. Shells pick this up via Home Manager; on macOS a
               Launch Agent also runs launchctl setenv so GUI apps (e.g. Android Studio) see it.
-              Override per host for OpenJDK 17 from Nix, e.g. `javaHome = "''${pkgs.jdk17}";` (module needs `pkgs`).
+              Override per host with a store path (e.g. OpenJDK 17 via pkgs.jdk17) when the module has pkgs in scope.
             '';
           };
           flutter.enable = lib.mkOption {
