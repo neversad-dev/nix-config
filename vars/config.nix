@@ -18,6 +18,15 @@
             default = false;
             description = "Enable Android Configurations";
           };
+          android.javaHome = lib.mkOption {
+            type = lib.types.str;
+            default = "/Applications/Android Studio.app/Contents/jbr/Contents/Home";
+            description = ''
+              JAVA_HOME for Android tooling. Shells pick this up via Home Manager; on macOS a
+              Launch Agent also runs launchctl setenv so GUI apps (e.g. Android Studio) see it.
+              Override per host for OpenJDK 17 from Nix, e.g. `javaHome = "''${pkgs.jdk17}";` (module needs `pkgs`).
+            '';
+          };
           flutter.enable = lib.mkOption {
             type = lib.types.bool;
             default = false;

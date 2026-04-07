@@ -9,10 +9,14 @@
       enable = true;
       package = pkgs.gradle;
 
-      settings = {
-        # Memory & GC tuning
-        "org.gradle.jvmargs" = "-Xmx12288m -XX:+UseG1GC -Dfile.encoding=UTF-8";
-      };
+      settings =
+        {
+          # Memory & GC tuning
+          "org.gradle.jvmargs" = "-Xmx12288m -XX:+UseG1GC -Dfile.encoding=UTF-8";
+        }
+        // lib.optionalAttrs pkgs.stdenv.isDarwin {
+          "org.gradle.java.home" = config.development.android.javaHome;
+        };
     };
   };
 }

@@ -1,19 +1,17 @@
 {
   config,
-  pkgs,
   lib,
   ...
-}: {
+}: let
+  javaHome = config.development.android.javaHome;
+in {
   config = lib.mkIf config.development.android.enable {
     home = {
-      packages = with pkgs; [
-        zulu17
-      ];
       sessionVariables = {
-        JAVA_HOME = "${pkgs.zulu17}";
+        JAVA_HOME = javaHome;
       };
       sessionPath = [
-        "${pkgs.zulu17}/bin"
+        "${javaHome}/bin"
       ];
     };
   };
