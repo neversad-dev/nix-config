@@ -3,7 +3,7 @@
   # This file is imported by both home.nix and default.nix
 
   development = {
-    vscode.enable = true;
+    vscode.enable = false; # problems on macos
     cursor.enable = true;
     android.enable = false;
     flutter.enable = false;
