@@ -1,4 +1,13 @@
-{pkgs, ...}: {
+{
+  mylib,
+  pkgs,
+  ...
+}: {
+  imports =
+    mylib.scanPaths ./.;
+
+  programs.bat = {enable = true;};
+
   home.packages = with pkgs; [
     # nix related
     #
@@ -8,17 +17,17 @@
     nix-melt # A TUI flake.lock viewer
     nix-tree # A TUI to visualize the dependency graph of a nix derivation
 
-    # misc
+    coreutils
+    fd
+    htop
+    httpie
+    jq
+    yq
+    procs
+    ripgrep
+    zip
     cowsay
     cmatrix
-    yq
     python3
   ];
-
-  programs = {
-    # a cat(1) clone with syntax highlighting and Git integration.
-    bat = {
-      enable = true;
-    };
-  };
 }

@@ -112,7 +112,6 @@ jobs:
 
           # Get all homeConfigurations
           echo "Discovering homeConfigurations..."
-          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
           home_configs_names=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config)
           echo "Home config names: $home_configs_names"
 
@@ -186,7 +185,8 @@ jobs:
           configs='${{ needs.discover-configurations.outputs.darwin-configs }}'
           echo "Configurations to build: $configs"
 
-          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
+          # Local part of user@host keys (same for all configs in this flake)
+          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config | jq -r 'sort | .[0] | split("@")[0]')
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one
@@ -245,7 +245,7 @@ jobs:
           configs='${{ needs.discover-configurations.outputs.linux-configs }}'
           echo "Configurations to build: $configs"
 
-          USERNAME=$(nix eval --raw .#vars.username --accept-flake-config)
+          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config | jq -r 'sort | .[0] | split("@")[0]')
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one

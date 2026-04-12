@@ -68,7 +68,8 @@
     };
   };
 
-  outputs = inputs @ {
+  outputs = {
+    self,
     nix-darwin,
     nixpkgs,
     home-manager,
@@ -77,19 +78,19 @@
     nvf-config,
     nix-lib,
     ...
-  }: let
+  } @ inputs: let
+    inherit (self) outputs;
     inherit (inputs.nixpkgs) lib;
     mylib =
       nix-lib.lib
       // {
         relativeToRoot = lib.path.append ./.;
       };
-    myvars = import ./vars;
 
     specialArgs =
       inputs
       // {
-        inherit myvars mylib;
+        inherit mylib;
       };
 
     darwinSystems = {
@@ -102,20 +103,31 @@
 
     allSystems = builtins.attrValues darwinSystems ++ builtins.attrValues linuxSystems;
     forAllSystems = func: (nixpkgs.lib.genAttrs allSystems func);
+    # Configure nixpkgs with allowUnfree and fetcherVersion for packages output
+    pkgsFor = system:
+      import nixpkgs {
+        inherit system;
+        config = {
+          allowUnfree = true;
+          fetcherVersion = 7;
+        };
+      };
   in {
     # Export modules for use in other flakes
     darwinModules = {
       default = ./modules/darwin;
     };
 
+    # TODO: adjust with new home structure
     homeModules = {
-      darwin = ./home/darwin;
-      linux = ./home/linux;
+      darwin = ./home/export/darwin;
+      linux = ./home/export/linux;
     };
 
-    # Export lib and vars for reuse
+    homeManagerModules = import ./modules/home-manager;
+
+    # Export lib for reuse
     lib = mylib;
-    vars = myvars;
 
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
@@ -130,22 +142,20 @@
     };
 
     homeConfigurations = {
-      "${myvars.username}@mbair" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${darwinSystems.aarch64};
-        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
+      "neversad@mbair" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsFor darwinSystems.aarch64;
+        extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
-          ./home/darwin
-          ./hosts/mbair/home.nix
+          ./home/neversad/mbair.nix
           {home.packages = [nvf-config.packages.${darwinSystems.aarch64}.default];}
         ];
       };
 
-      "${myvars.username}@enduro" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${linuxSystems.x86_64};
-        extraSpecialArgs = specialArgs // {inherit wallpapers inputs;};
+      "neversad@enduro" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgsFor linuxSystems.x86_64;
+        extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
-          ./home/linux
-          ./hosts/enduro/home.nix
+          ./home/neversad/enduro.nix
           {home.packages = [nvf-config.packages.${linuxSystems.x86_64}.default];}
         ];
       };
