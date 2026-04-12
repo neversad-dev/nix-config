@@ -6,7 +6,7 @@ This is a **public Nix configuration repository** that provides cross-platform (
 
 ### Key Facts
 - **Type**: Nix flake configuration repository
-- **Size**: ~54 Nix files across modular structure
+- **Size**: on the order of 60+ `.nix` files in a modular layout
 - **Languages**: Nix (primary), Shell scripts, TOML configs
 - **Platforms**: macOS (nix-darwin and Home Manager), Linux (Home Manager)
 - **Theme**: Catppuccin Mocha throughout all applications
@@ -56,44 +56,52 @@ nix build .#homeConfigurations."neversad@mbair"
 
 ## Project Architecture
 
-### Directory Structure
+### Directory structure
 ```
-├── flake.nix                 # Main flake configuration
-├── Justfile                  # Command runner (like Makefile)
+├── flake.nix                    # Outputs: darwin/home configs, modules, packages, lib
+├── Justfile
 ├── modules/
-│   ├── darwin/              # macOS system modules
-│   └── common/              # Shared system modules
+│   ├── darwin/                  # nix-darwin system modules
+│   └── home-manager/            # Re-exported as flake `homeManagerModules` (wired in home/common)
 ├── home/
-│   ├── darwin/              # macOS user configs
-│   ├── linux/               # Linux user configs
-│   └── common/              # Shared user configs
-├── hosts/                   # Host configurations
-│   ├── mbair/              # MacBook Air config
-│   ├── enduro/             # Linux laptop
-│   └── tinkerdell/         # Linux laptop
-├── lib/                     # Custom library functions
-└── vars/                    # Variables and constants
+│   ├── common/                  # Shared HM baseline (nixpkgs, imports vars/config + homeManagerModules)
+│   ├── features/
+│   │   ├── cli/                 # Shell, CLI tools, tmux, yazi, etc.
+│   │   ├── desktop/             # GUI apps (terminals, editors, wallpapers)
+│   │   ├── darwin/              # macOS-only (aerospace, sketchybar)
+│   │   ├── linux/               # Linux-only HM bits
+│   │   └── development/       # Dev stacks (android, flutter, lsp, ruby, …)
+│   ├── neversad/              # User entrypoints: home.nix, mbair.nix, enduro.nix
+│   └── export/
+│       ├── darwin/              # flake `homeModules.darwin` (consumer-facing bundle)
+│       └── linux/               # flake `homeModules.linux`
+├── hosts/
+│   └── mbair/                   # nix-darwin: default.nix + shared options config.nix
+├── vars/
+│   └── config.nix               # Shared option definitions (development.*, gaming, stay-awake)
+└── lib/                         # Via `nix-lib` input (mylib + relativeToRoot)
 ```
 
-### Key Configuration Files
+### Key configuration files
 
-- **`flake.nix`**: Main entry point, defines all outputs and configurations
-- **`vars/default.nix`**: User variables (username: "neversad", email, etc.)
-- **`lib/default.nix`**: Custom helper functions, including `mkEditableConfig`
-- **`.gitignore`**: Excludes build artifacts, Nix store items, editor files
+- **`flake.nix`**: Main entry point; `homeModules.darwin` / `homeModules.linux` point at `home/export/{darwin,linux}/`
+- **`home/neversad/home.nix`**: Default username (`neversad`), `home.stateVersion`, baseline `home.packages` / session vars
+- **`home/neversad/mbair.nix`** / **`enduro.nix`**: Per-host HM imports (features + optional `hosts/<host>/config.nix` via `mylib.relativeToRoot`)
+- **`hosts/mbair/config.nix`**: Shared feature flags for both nix-darwin and HM on that machine
+- **`vars/config.nix`**: Option schema for `development.*`, `gaming.enable`, `stay-awake.enable`
+- **`.gitignore`**: Build artifacts, store paths, editor noise
 
 ### Modular Design
 
 The configuration is designed for reuse:
-- **Export modules**: `darwinModules.default`, `homeModules.{darwin,linux}`
-- **Export utilities**: `lib` and `vars` for other flakes
-- **Example configs**: Ready-to-use host configurations
+- **Export modules**: `darwinModules.default`, `homeModules.{darwin,linux}`, `homeManagerModules`
+- **Export utilities**: `lib` (from `nix-lib` + `relativeToRoot`)
+- **Example configs**: `darwinConfigurations.mbair`, `homeConfigurations."neversad@mbair"`, `homeConfigurations."neversad@enduro"`
 
 ## Common Issues & Workarounds
 
-### Known Warnings (Safe to Ignore)
-- `warning: unknown flake output 'vars'` - Expected, vars are exported for reuse
-- Multiple `Using lib.generators.toPlist without escape = true is deprecated` - From nix-darwin, harmless
+### Known warnings (safe to ignore)
+- Multiple `Using lib.generators.toPlist without escape = true is deprecated` — from nix-darwin, harmless
 - Cachix substituter warnings on untrusted systems - Expected behavior
 
 ### Environment Setup Issues
@@ -117,13 +125,13 @@ The configuration is designed for reuse:
 ### File Modifications
 
 - **Nix files**: Always use 2-space indentation, format with alejandra
-- **Host configs**: Located in `hosts/` directory, organized by hostname
-- **Shared modules**: Use `modules/common/` for cross-platform code
-- **User configs**: Platform-specific in `home/{darwin,linux}/`
+- **Host configs**: nix-darwin under `hosts/<hostname>/`; HM entry modules under `home/neversad/<hostname>.nix`
+- **System modules**: `modules/darwin/` for macOS
+- **User features**: `home/features/{cli,desktop,darwin,linux,development}/`; shared HM shell in `home/common/`
 
 ### Adding New Features
 
-1. **Check existing modules**: Look in `home/common/` first
+1. **Check existing modules**: Prefer `home/features/` for new programs; use `home/common/` for cross-cutting HM imports
 2. **Use catppuccin theme**: Consistent theming across all applications
 3. **Test on both platforms**: macOS and Linux where applicable
 4. **Update example hosts**: Add to appropriate host configs
@@ -183,18 +191,18 @@ The Android development setup provides a complete development environment:
 - **Environment Setup**: Automatic configuration of `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `ANDROID_NDK_ROOT`
 - **SDK Synchronization**: Automatic sync between Nix-managed SDK and Android Studio location
 
-**Android Configuration Files**:
-- `home/common/development/android/android.nix` - Main Android SDK configuration
-- `home/common/development/android/java.nix` - Java development environment
-- `home/common/development/android/emulators/my-resizable.nix` - Resizable emulator
-- `home/common/development/android/emulators/my-pixel-9.nix` - Pixel 9 emulator
+**Android configuration files**:
+- `home/features/development/android/android.nix` — main Android SDK configuration
+- `home/features/development/android/java.nix` — Java environment
+- `home/features/development/android/emulators/resizable.nix` — resizable emulator definitions
+- `home/features/development/android/emulators/generic.nix` — additional emulator definitions
 
 **Usage**: Enable Android development by setting `development.android.enable = true` in host configuration.
 
-### Recent Package Additions
+### Recent package additions
 
-- **mitmproxy**: HTTP/HTTPS traffic inspection tool added to TUI packages
-  - Location: `home/common/tui/mitmproxy.nix`
+- **mitmproxy**: HTTP/HTTPS inspection CLI
+  - Location: `home/features/cli/mitmproxy.nix`
   - Provides: `mitmproxy`, `mitmdump`, `mitmweb` commands
   - Usage: Traffic inspection, debugging, and testing
 

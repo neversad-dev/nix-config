@@ -30,8 +30,8 @@ cd nix-config
 nix build .#darwinConfigurations.mbair.system
 sudo ./result/sw/bin/darwin-rebuild switch --flake .
 
-# Linux Home Manager  
-nix build .#homeConfigurations."${USER}@linux-vm"
+# Linux Home Manager (see flake.nix for configured names, e.g. neversad@enduro)
+nix build '.#homeConfigurations."neversad@enduro"'
 ./result/activate
 ```
 
@@ -47,7 +47,8 @@ nix build .#homeConfigurations."${USER}@linux-vm"
     };
     
     homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
-      modules = [ nix-config.homeModules.default ];
+      # Use `homeModules.darwin` on macOS or `homeModules.linux` on Linux
+      modules = [ nix-config.homeModules.linux ];
     };
   };
 }
@@ -63,43 +64,57 @@ just update     # Update flake inputs
 just gc         # Garbage collect
 ```
 
-## Example Hosts
+## Example hosts
 
-- `mbair` - Personal MacBook Air (macOS)
-- `enduro` - Linux laptop
-- `tinkerdell` - Linux laptop
+- **`mbair`** — nix-darwin system config under `hosts/mbair/` and matching Home Manager config `neversad@mbair` in `flake.nix`
+- **`enduro`** — Linux Home Manager config `neversad@enduro` in `flake.nix` (entry module `home/neversad/enduro.nix`)
 
 ## Configuration Options
 
 - `development.cursor.enable` - Enable Cursor editor configurations (default: false)
 - `development.vscode.enable` - Enable VSCode editor configurations (default: false)
 - `development.android.enable` - Enable Android development configurations (default: false)
+- `development.flutter.enable` - Enable Flutter configurations (default: false)
+- `development.ruby.enable` - Enable Ruby configurations (default: false)
 - `gaming.enable` - Enable gaming-related packages (default: false)
+- `stay-awake.enable` - Enable stay-awake configurations (default: false)
 
-### Usage Examples
+### Usage examples
 
-**Recommended: Shared Configuration File**
+**Recommended: shared host options**
+
+Define feature flags once in `hosts/<hostname>/config.nix`, then wire that file into both nix-darwin and Home Manager so system and user config stay aligned.
+
 ```nix
-# hosts/myhost/config.nix (shared configuration)
+# hosts/myhost/config.nix — shared options (imported by darwin + HM)
 {
-  development.cursor.enable = true;   # Enable Cursor editor
-  development.vscode.enable = false; # Disable VSCode editor
-  development.android.enable = false; # Disable Android development
-  gaming.enable = false;  # Disable gaming packages
+  development.cursor.enable = true;
+  development.vscode.enable = false;
+  development.android.enable = false;
+  gaming.enable = false;
 }
 
-# hosts/myhost/home.nix (imports shared config)
+# hosts/myhost/default.nix — nix-darwin
 {
   imports = [ ./config.nix ];
+  # ... users, networking, system.stateVersion, etc.
 }
 
-# hosts/myhost/default.nix (imports shared config)
-{
-  imports = [ ./config.nix ];
+# home/neversad/myhost.nix — Home Manager entry (see home/neversad/mbair.nix)
+{ mylib, ... }: {
+  imports = [
+    (mylib.relativeToRoot "hosts/myhost/config.nix")
+    ./home.nix
+    ../common
+    ../features/cli
+    ../features/desktop
+    ../features/darwin # or ../features/linux on Linux
+    ../features/development
+  ];
 }
 ```
 
-**Important**: Use shared config files to avoid duplication and ensure consistency.
+Add a matching `homeConfigurations."user@myhost"` in `flake.nix` that lists `home/neversad/myhost.nix` (and any extra modules, e.g. Neovim from `nvf-config`).
 
 ### Adding New Options
 
@@ -119,21 +134,7 @@ config = lib.mkIf config.myFeature.enable {
 };
 ```
 
-3. **Set the option** in shared host config:
-```nix
-# hosts/myhost/config.nix (shared configuration)
-myFeature.enable = true;
-
-# hosts/myhost/home.nix (imports shared config)
-{
-  imports = [ ./config.nix ];
-}
-
-# hosts/myhost/default.nix (imports shared config)
-{
-  imports = [ ./config.nix ];
-}
-```
+3. **Set the option** in shared host config and keep darwin/HM imports in sync (see usage examples above).
 
 **Rules:**
 - Always use `lib.mkIf` for conditional configurations
@@ -141,18 +142,7 @@ myFeature.enable = true;
 - Document options with clear descriptions
 - Set sensible defaults (usually `false` for optional features)
 
-## Available Configuration Options
-
-The configuration provides several optional features that can be enabled:
-
-- `development.cursor.enable` - Enable Cursor editor configurations (default: false)
-- `development.vscode.enable` - Enable VSCode editor configurations (default: false)
-- `development.android.enable` - Enable Android development configurations (default: false)
-- `development.flutter.enable` - Enable Flutter development configurations (default: false)
-- `gaming.enable` - Enable gaming-related packages (default: false)
-- `stay-awake.enable` - Enable stay awake configurations (default: false)
-
-### Android Development Features
+### Android development features
 
 When `development.android.enable = true`, the configuration provides:
 
@@ -164,13 +154,18 @@ When `development.android.enable = true`, the configuration provides:
 - **Environment Variables**: `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `ANDROID_NDK_ROOT`
 - **SDK Synchronization**: Automatic sync with Android Studio location
 
-## Structure
+## Repository layout
 
-- `modules/` - nix-darwin system modules
-- `home/` - Home Manager modules  
-- `hosts/` - Example host configurations
-- `lib/` - Custom library functions
-- `vars/` - Variables and constants
+- **`flake.nix`** — Outputs: `darwinConfigurations`, `homeConfigurations`, `darwinModules`, `homeModules.{darwin,linux}`, `homeManagerModules`, `packages`, `lib`
+- **`modules/darwin/`** — nix-darwin system modules
+- **`modules/home-manager/`** — Optional Home Manager modules re-exported as `homeManagerModules` (see `home/common/default.nix`)
+- **`hosts/<hostname>/`** — Per-machine nix-darwin config (`default.nix`) and shared options (`config.nix`)
+- **`home/common/`** — Shared Home Manager baseline (nixpkgs, `imports` for `vars/config.nix` and `homeManagerModules`)
+- **`home/features/`** — Feature bundles: `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`
+- **`home/neversad/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …)
+- **`home/export/{darwin,linux}/`** — Flake `homeModules.darwin` / `homeModules.linux` for consumers (re-export layout; see `flake.nix`)
+- **`vars/config.nix`** — Shared `options` (e.g. `development.*`, `gaming.enable`)
+- **`lib/`** — Custom library helpers (via `nix-lib` input)
 
 ---
 

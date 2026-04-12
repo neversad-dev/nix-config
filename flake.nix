@@ -118,7 +118,6 @@
       default = ./modules/darwin;
     };
 
-    # TODO: adjust with new home structure
     homeModules = {
       darwin = ./home/export/darwin;
       linux = ./home/export/linux;
