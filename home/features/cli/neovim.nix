@@ -5,7 +5,8 @@
   nvf-config,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.neovim;
 in {
   options.features.cli.neovim.enable = mkEnableOption "Neovim from nvf-config";

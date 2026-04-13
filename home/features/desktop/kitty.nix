@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.desktop.kitty;
 in {
   options.features.desktop.kitty.enable = mkEnableOption "Kitty terminal";

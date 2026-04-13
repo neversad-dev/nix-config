@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.git;
 in {
   config = mkIf cfg.enable {

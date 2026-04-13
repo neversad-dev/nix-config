@@ -4,7 +4,8 @@
   lib,
   wallpapers,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.desktop.wallpapers;
 in {
   options.features.desktop.wallpapers.enable = mkEnableOption "wallpapers flake checkout in ~/Pictures/Wallpapers";

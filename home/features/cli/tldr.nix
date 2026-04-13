@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.tldr;
 in {
   options.features.cli.tldr.enable = mkEnableOption "tealdeer (tldr) client";

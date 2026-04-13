@@ -6,7 +6,8 @@
   pkgs,
   inputs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.desktop.ghostty;
   defaultConfig = ''
     theme = "Catppuccin Mocha"

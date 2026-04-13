@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.desktop.telegram;
 in {
   options.features.desktop.telegram.enable = mkEnableOption "Telegram Desktop";

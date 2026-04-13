@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.git;
 in {
   options.features.cli.git.enable = mkEnableOption "Git (delta, LFS, aliases)";

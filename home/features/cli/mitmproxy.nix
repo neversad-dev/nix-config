@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.mitmproxy;
 in {
   options.features.cli.mitmproxy.enable = mkEnableOption "mitmproxy (HTTPS debugging proxy)";

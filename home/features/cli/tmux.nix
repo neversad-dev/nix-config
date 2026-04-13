@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.cli.tmux;
   tmux-nerd-font-window-name =
     pkgs.tmuxPlugins.mkTmuxPlugin

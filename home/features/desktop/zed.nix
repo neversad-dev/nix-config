@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: with lib; let
+}:
+with lib; let
   cfg = config.features.desktop.zed;
 in {
   options.features.desktop.zed.enable = mkEnableOption "Zed editor";
