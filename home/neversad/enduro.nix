@@ -8,4 +8,10 @@
   ];
 
   targets.genericLinux.enable = true;
+
+  features = {
+    cli = {
+      neovim.enable = true;
+    };
+  };
 }

@@ -146,7 +146,6 @@
         extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
           ./home/neversad/mbair.nix
-          {home.packages = [nvf-config.packages.${darwinSystems.aarch64}.default];}
         ];
       };
 
@@ -155,7 +154,6 @@
         extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
           ./home/neversad/enduro.nix
-          {home.packages = [nvf-config.packages.${linuxSystems.x86_64}.default];}
         ];
       };
     };
