@@ -5,6 +5,7 @@
     ../features/cli
     ../features/desktop
     ../features/linux
+    ../features/development
   ];
 
   targets.genericLinux.enable = true;
