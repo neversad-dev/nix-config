@@ -1,3 +1,4 @@
+# LazyGit TUI for Git (enabled when git feature is on)
 {
   config,
   lib,

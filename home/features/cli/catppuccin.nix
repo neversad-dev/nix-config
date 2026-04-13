@@ -1,3 +1,4 @@
+# Catppuccin theme for supported terminal and editor integrations
 {catppuccin, ...}: {
   imports = [
     catppuccin.homeModules.catppuccin

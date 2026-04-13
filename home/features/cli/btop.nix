@@ -1,3 +1,4 @@
+# TUI system monitor: CPU, memory, disks, network, and processes (successor to bpytop)
 {...}: {
   programs.btop = {
     enable = true;

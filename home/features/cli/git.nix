@@ -1,3 +1,4 @@
+# Git with delta, LFS, and aliases (opt-in)
 {
   config,
   lib,

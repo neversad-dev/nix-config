@@ -1,3 +1,4 @@
+# Zsh (default login shell) and bash with shared PATH and aliases
 {pkgs, ...}: {
   programs = {
     zsh = {

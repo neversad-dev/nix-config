@@ -6,7 +6,6 @@
 }: {
   home.packages = with pkgs;
     [
-      inputs.ghostty.packages.${pkgs.system}.default
       imagemagick
       firefox
       google-chrome

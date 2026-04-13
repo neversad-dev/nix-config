@@ -1,3 +1,4 @@
+# CLI feature imports plus shared command-line packages
 {
   mylib,
   pkgs,
@@ -9,25 +10,16 @@
   programs.bat = {enable = true;};
 
   home.packages = with pkgs; [
-    # nix related
-    #
-    # It provides the command `nom`, which works just like `nix`
-    # but with more detailed log output.
-    nix-output-monitor
-    nix-melt # A TUI flake.lock viewer
-    nix-tree # A TUI to visualize the dependency graph of a nix derivation
-
-    coreutils
-    fd
-    htop
-    httpie
-    jq
-    yq
-    procs
-    ripgrep
-    zip
-    cowsay
-    cmatrix
-    python3
+    coreutils # GNU basics: ls, cp, mkdir, and related file utilities
+    htop # Interactive process and resource monitor
+    httpie # Human-friendly CLI for HTTP requests (curl-like)
+    jq # Command-line JSON query/filter
+    yq # Command-line YAML (and related) processor
+    procs # Modern ps replacement with colors and search
+    ripgrep # Fast recursive grep (rg)
+    zip # Create and extract .zip archives
+    cowsay # Prints messages in an ASCII cow (or other figures)
+    cmatrix # Terminal “Matrix” digital rain screensaver
+    python3 # Python interpreter and stdlib
   ];
 }

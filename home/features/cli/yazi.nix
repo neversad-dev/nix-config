@@ -1,6 +1,6 @@
+# Terminal file manager (Yazi)
 {...}: {
   programs = {
-    # terminal file manager
     yazi = {
       enable = true;
       settings = {

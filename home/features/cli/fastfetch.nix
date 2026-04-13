@@ -1,3 +1,4 @@
+# System info in the terminal (neofetch-style)
 {pkgs, ...}: {
   home.packages = with pkgs; [
     fastfetch

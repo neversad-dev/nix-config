@@ -1,45 +1,56 @@
-{...}: {
-  programs.kitty = {
-    enable = true;
+# Kitty terminal (opt-in)
+{
+  config,
+  lib,
+  ...
+}: with lib; let
+  cfg = config.features.desktop.kitty;
+in {
+  options.features.desktop.kitty.enable = mkEnableOption "Kitty terminal";
 
-    # Catppuccin theme - using themeFile instead of deprecated theme option
-    themeFile = "Catppuccin-Mocha";
+  config = mkIf cfg.enable {
+    programs.kitty = {
+      enable = true;
 
-    # Font configuration
-    font = {
-      name = "JetBrains Mono";
-      size = 14;
-    };
+      # Catppuccin theme - using themeFile instead of deprecated theme option
+      themeFile = "Catppuccin-Mocha";
 
-    # Basic settings
-    settings = {
-      # Window settings
-      window_padding_width = 8;
-      hide_window_decorations = "titlebar-only";
+      # Font configuration
+      font = {
+        name = "JetBrains Mono";
+        size = 14;
+      };
 
-      # Tab settings
-      tab_bar_style = "powerline";
-      tab_powerline_style = "slanted";
+      # Basic settings
+      settings = {
+        # Window settings
+        window_padding_width = 8;
+        hide_window_decorations = "titlebar-only";
 
-      # Cursor settings
-      cursor_shape = "beam";
-      cursor_blink_interval = 0.5;
+        # Tab settings
+        tab_bar_style = "powerline";
+        tab_powerline_style = "slanted";
 
-      # Scrollback
-      scrollback_lines = 10000;
+        # Cursor settings
+        cursor_shape = "beam";
+        cursor_blink_interval = 0.5;
 
-      # Performance
-      repaint_delay = 10;
-      input_delay = 3;
-      sync_to_monitor = true;
+        # Scrollback
+        scrollback_lines = 10000;
 
-      # Shell integration
-      shell_integration = "enabled";
+        # Performance
+        repaint_delay = 10;
+        input_delay = 3;
+        sync_to_monitor = true;
 
-      # Misc
-      enable_audio_bell = false;
-      visual_bell_duration = 0.0;
-      confirm_os_window_close = 0;
+        # Shell integration
+        shell_integration = "enabled";
+
+        # Misc
+        enable_audio_bell = false;
+        visual_bell_duration = 0.0;
+        confirm_os_window_close = 0;
+      };
     };
   };
 }

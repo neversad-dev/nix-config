@@ -1,3 +1,4 @@
+# Disk usage TUI (du alternative with tree and bar charts)
 {pkgs, ...}: {
   home.packages = with pkgs; [
     dust

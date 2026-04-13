@@ -1,3 +1,4 @@
+# Fuzzy finder (Ctrl-T / history) with fd-backed file search
 {...}: {
   programs.fzf = {
     enable = true;

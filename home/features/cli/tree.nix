@@ -1,3 +1,4 @@
+# Directory tree listing and convenience aliases
 {pkgs, ...}: {
   home.packages = with pkgs; [
     tree

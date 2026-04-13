@@ -1,5 +1,5 @@
+# Smarter cd: jump to frequent and recent directories (z/autojump-style)
 {...}: {
-  # zoxide is a smarter cd command, inspired by z and autojump.
   programs.zoxide = {
     enable = true;
     options = [

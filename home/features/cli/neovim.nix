@@ -1,3 +1,4 @@
+# Neovim from nvf-config flake (opt-in)
 {
   config,
   lib,

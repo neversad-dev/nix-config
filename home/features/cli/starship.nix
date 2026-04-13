@@ -1,8 +1,18 @@
-{...}: {
-  programs.starship = {
-    enable = true;
+# Cross-shell prompt (Starship) (opt-in)
+{
+  config,
+  lib,
+  ...
+}: with lib; let
+  cfg = config.features.cli.starship;
+in {
+  options.features.cli.starship.enable = mkEnableOption "Starship cross-shell prompt";
 
-    settings = {
+  config = mkIf cfg.enable {
+    programs.starship = {
+      enable = true;
+
+      settings = {
       "$schema" = "https://starship.rs/config-schema.json";
 
       format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
@@ -172,6 +182,7 @@
         vimcmd_replace_symbol = "[](bold fg:purple)";
         vimcmd_visual_symbol = "[](bold fg:lavender)";
       };
+    };
     };
   };
 }
