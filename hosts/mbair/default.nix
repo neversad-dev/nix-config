@@ -16,7 +16,7 @@ in {
 
   # Host-specific settings can go here
   imports = [
-    ./config.nix # Shared configuration
+    ./features.nix # Shared configuration
   ];
 
   # System configuration

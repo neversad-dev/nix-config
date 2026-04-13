@@ -7,11 +7,11 @@
   pkgs,
   ...
 }: let
-  javaHome = config.development.android.javaHome;
+  javaHome = config.features.development.android.javaHome;
   homeDir = config.home.homeDirectory;
   jdkLink = "${homeDir}/.local/state/android-jdk-home";
 in {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     home.activation.androidJdkSymlink = lib.hm.dag.entryAfter ["writeBoundary"] ''
       mkdir -p ${lib.escapeShellArg "${homeDir}/.local/state"}
       ln -sfn ${lib.escapeShellArg javaHome} ${lib.escapeShellArg jdkLink}

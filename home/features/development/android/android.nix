@@ -41,7 +41,7 @@
     includeSources = true;
   };
 in {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     # Accept Android SDK license
     nixpkgs.config.android_sdk.accept_license = true;
 

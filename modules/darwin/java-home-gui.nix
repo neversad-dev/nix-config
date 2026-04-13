@@ -8,7 +8,7 @@
   pkgs,
   ...
 }: let
-  javaHome = config.development.android.javaHome;
+  javaHome = config.features.development.android.javaHome;
   setJavaHome = pkgs.writeShellScript "darwin-set-java-home-gui" ''
     set -eu
     java_home=${lib.escapeShellArg javaHome}
@@ -24,7 +24,7 @@
     fi
   '';
 in {
-  config = lib.mkIf (config.development.android.enable && pkgs.stdenv.hostPlatform.isDarwin) {
+  config = lib.mkIf (config.features.development.android.enable && pkgs.stdenv.hostPlatform.isDarwin) {
     launchd.user.agents.set-java-home-for-gui = {
       serviceConfig = {
         ProgramArguments = ["${setJavaHome}"];

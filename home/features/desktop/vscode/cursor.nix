@@ -34,7 +34,7 @@
   };
   permissionsJson = builtins.toJSON permissionsConfig;
 in {
-  config = lib.mkIf config.development.cursor.enable {
+  config = lib.mkIf config.features.development.cursor.enable {
     # Copy settings to create an editable file (not a symlink)
     home.activation.copyCursorSettings = mylib.mkEditableConfig {
       name = "Cursor";

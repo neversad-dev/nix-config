@@ -5,7 +5,7 @@
   lib,
   ...
 }: {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     # Android Studio VM options for optimal performance
     home.activation.androidStudioVmoptions = lib.hm.dag.entryAfter ["writeBoundary"] ''
             # VM Options Configuration

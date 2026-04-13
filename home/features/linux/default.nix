@@ -18,7 +18,7 @@
       obsidian
       bitwarden-desktop
     ]
-    ++ lib.optionals config.development.cursor.enable [
+    ++ lib.optionals config.features.development.cursor.enable [
       code-cursor
     ];
 }

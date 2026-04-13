@@ -251,7 +251,7 @@
   ];
 
   # Stay awake configuration - keep Mac awake on AC power + enable WOL
-  system.activationScripts.stayAwake = lib.mkIf config.stay-awake.enable {
+  system.activationScripts.stayAwake = lib.mkIf config.features.stayAwake.enable {
     text = ''
       pmset -c sleep 0
       pmset -c displaysleep 15

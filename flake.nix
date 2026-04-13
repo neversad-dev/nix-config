@@ -123,8 +123,6 @@
       linux = ./home/export/linux;
     };
 
-    homeManagerModules = import ./modules/home-manager;
-
     # Export lib for reuse
     lib = mylib;
 

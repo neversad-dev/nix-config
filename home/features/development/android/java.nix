@@ -3,9 +3,9 @@
   lib,
   ...
 }: let
-  javaHome = config.development.android.javaHome;
+  javaHome = config.features.development.android.javaHome;
 in {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     home = {
       sessionVariables = {
         JAVA_HOME = javaHome;

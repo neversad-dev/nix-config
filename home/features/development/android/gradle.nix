@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     programs.gradle = {
       enable = true;
       package = pkgs.gradle;
@@ -15,7 +15,7 @@
           "org.gradle.jvmargs" = "-Xmx12288m -XX:+UseG1GC -Dfile.encoding=UTF-8";
         }
         // lib.optionalAttrs pkgs.stdenv.isDarwin {
-          "org.gradle.java.home" = config.development.android.javaHome;
+          "org.gradle.java.home" = config.features.development.android.javaHome;
         };
     };
   };

@@ -118,7 +118,7 @@ Add a matching `homeConfigurations."user@myhost"` in `flake.nix` that lists `hom
 
 ### Adding New Options
 
-1. **Define the option** in `vars/config.nix`:
+1. **Define the option** in `vars/features.nix`:
 ```nix
 myFeature.enable = lib.mkOption {
   type = lib.types.bool;
@@ -156,15 +156,14 @@ When `development.android.enable = true`, the configuration provides:
 
 ## Repository layout
 
-- **`flake.nix`** — Outputs: `darwinConfigurations`, `homeConfigurations`, `darwinModules`, `homeModules.{darwin,linux}`, `homeManagerModules`, `packages`, `lib`
+- **`flake.nix`** — Outputs: `darwinConfigurations`, `homeConfigurations`, `darwinModules`, `homeModules.{darwin,linux}`, `packages`, `lib`
 - **`modules/darwin/`** — nix-darwin system modules
-- **`modules/home-manager/`** — Optional Home Manager modules re-exported as `homeManagerModules` (see `home/common/default.nix`)
 - **`hosts/<hostname>/`** — Per-machine nix-darwin config (`default.nix`) and shared options (`config.nix`)
-- **`home/common/`** — Shared Home Manager baseline (nixpkgs, `imports` for `vars/config.nix` and `homeManagerModules`)
+- **`home/common/`** — Shared Home Manager baseline (nixpkgs, imports `vars/features.nix`)
 - **`home/features/`** — Feature bundles: `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`
 - **`home/neversad/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …)
 - **`home/export/{darwin,linux}/`** — Flake `homeModules.darwin` / `homeModules.linux` for consumers (re-export layout; see `flake.nix`)
-- **`vars/config.nix`** — Shared `options` (e.g. `development.*`, `gaming.enable`)
+- **`vars/features.nix`** — Shared `options` for `features.*` (nix-darwin + Home Manager)
 - **`lib/`** — Custom library helpers (via `nix-lib` input)
 
 ---

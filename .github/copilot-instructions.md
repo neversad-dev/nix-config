@@ -62,9 +62,9 @@ nix build .#homeConfigurations."neversad@mbair"
 ├── Justfile
 ├── modules/
 │   ├── darwin/                  # nix-darwin system modules
-│   └── home-manager/            # Re-exported as flake `homeManagerModules` (wired in home/common)
+│   └── common/                  # Shared nix-darwin bits (imports vars/features.nix)
 ├── home/
-│   ├── common/                  # Shared HM baseline (nixpkgs, imports vars/config + homeManagerModules)
+│   ├── common/                  # Shared HM baseline (nixpkgs, imports vars/features.nix)
 │   ├── features/
 │   │   ├── cli/                 # Shell, CLI tools, tmux, yazi, etc.
 │   │   ├── desktop/             # GUI apps (terminals, editors, wallpapers)
@@ -78,7 +78,7 @@ nix build .#homeConfigurations."neversad@mbair"
 ├── hosts/
 │   └── mbair/                   # nix-darwin: default.nix + shared options config.nix
 ├── vars/
-│   └── config.nix               # Shared option definitions (development.*, gaming, stay-awake)
+│   └── features.nix             # Shared option definitions (features.*)
 └── lib/                         # Via `nix-lib` input (mylib + relativeToRoot)
 ```
 
@@ -88,13 +88,13 @@ nix build .#homeConfigurations."neversad@mbair"
 - **`home/neversad/home.nix`**: Default username (`neversad`), `home.stateVersion`, baseline `home.packages` / session vars
 - **`home/neversad/mbair.nix`** / **`enduro.nix`**: Per-host HM imports (features + optional `hosts/<host>/config.nix` via `mylib.relativeToRoot`)
 - **`hosts/mbair/config.nix`**: Shared feature flags for both nix-darwin and HM on that machine
-- **`vars/config.nix`**: Option schema for `development.*`, `gaming.enable`, `stay-awake.enable`
+- **`vars/features.nix`**: Option schema for `features.*` (darwin + Home Manager)
 - **`.gitignore`**: Build artifacts, store paths, editor noise
 
 ### Modular Design
 
 The configuration is designed for reuse:
-- **Export modules**: `darwinModules.default`, `homeModules.{darwin,linux}`, `homeManagerModules`
+- **Export modules**: `darwinModules.default`, `homeModules.{darwin,linux}`
 - **Export utilities**: `lib` (from `nix-lib` + `relativeToRoot`)
 - **Example configs**: `darwinConfigurations.mbair`, `homeConfigurations."neversad@mbair"`, `homeConfigurations."neversad@enduro"`
 

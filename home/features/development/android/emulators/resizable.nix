@@ -6,7 +6,7 @@
   lib,
   ...
 }: {
-  config = lib.mkIf config.development.android.enable {
+  config = lib.mkIf config.features.development.android.enable {
     home.file = {
       ".android/avd/Resizable.ini" = {
         text = ''

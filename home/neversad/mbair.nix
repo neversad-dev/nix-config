@@ -1,6 +1,6 @@
 {mylib, ...}: {
   imports = [
-    (mylib.relativeToRoot "hosts/mbair/config.nix") # global feature flags
+    (mylib.relativeToRoot "hosts/mbair/features.nix") # global feature flags
     ./home.nix
     ../common
     ../features/cli
@@ -9,6 +9,7 @@
     ../features/development
   ];
 
+  # home manager specific feature flags
   features = {
     cli = {
       neovim.enable = true;

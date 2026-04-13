@@ -1,16 +1,12 @@
 {
-  config,
   lib,
   mylib,
-  outputs,
   pkgs,
   ...
 }: {
-  imports =
-    builtins.attrValues outputs.homeManagerModules
-    ++ [
-      (mylib.relativeToRoot "vars/config.nix")
-    ];
+  imports = [
+    (mylib.relativeToRoot "vars/features.nix")
+  ];
   nixpkgs = {
     # You can add overlays here
     overlays = [

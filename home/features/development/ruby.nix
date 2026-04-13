@@ -9,7 +9,7 @@
       rubyzip
     ]);
 in {
-  config = lib.mkIf config.development.ruby.enable {
+  config = lib.mkIf config.features.development.ruby.enable {
     home = {
       packages = [
         rubyWithPackages

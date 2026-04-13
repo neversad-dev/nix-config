@@ -2,6 +2,6 @@
   imports =
     (mylib.scanPaths ./.)
     ++ [
-      (mylib.relativeToRoot "vars/config.nix")
+      (mylib.relativeToRoot "vars/features.nix")
     ];
 }

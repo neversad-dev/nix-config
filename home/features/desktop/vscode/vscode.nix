@@ -6,7 +6,7 @@
 }: let
   commonSettings = (import ./common.nix {inherit pkgs;}).commonSettings;
 in {
-  programs.vscode = lib.mkIf config.development.vscode.enable {
+  programs.vscode = lib.mkIf config.features.development.vscode.enable {
     enable = true;
     package = pkgs.vscodium;
 

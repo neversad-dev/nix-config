@@ -5,7 +5,7 @@
   pkgs,
   ...
 }: {
-  config = lib.mkIf (config.development.android.enable && pkgs.stdenv.hostPlatform.isDarwin) {
+  config = lib.mkIf (config.features.development.android.enable && pkgs.stdenv.hostPlatform.isDarwin) {
     environment.systemPath = lib.mkBefore [
       "/usr/bin"
       "/bin"

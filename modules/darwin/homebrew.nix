@@ -31,7 +31,7 @@
         "ffmpeg"
         "sketchybar"
       ]
-      ++ lib.optionals config.development.flutter.enable [
+      ++ lib.optionals config.features.development.flutter.enable [
         "cocoapods" # needed for Flutter
       ];
 
@@ -79,13 +79,13 @@
         "font-sf-pro"
         "sf-symbols"
       ]
-      ++ lib.optionals config.development.cursor.enable [
+      ++ lib.optionals config.features.development.cursor.enable [
         "cursor"
       ]
-      ++ lib.optionals config.development.android.enable [
+      ++ lib.optionals config.features.development.android.enable [
         "android-studio"
       ]
-      ++ lib.optionals config.gaming.enable [
+      ++ lib.optionals config.features.gaming.enable [
         "steam"
       ];
 
@@ -98,10 +98,10 @@
         Bitwarden = 1352778147;
         PDFgear = 6469021132;
       }
-      // lib.optionalAttrs config.stay-awake.enable {
+      // lib.optionalAttrs config.features.stayAwake.enable {
         Amphetamine = 937984704;
       }
-      // lib.optionalAttrs config.development.flutter.enable {
+      // lib.optionalAttrs config.features.development.flutter.enable {
         # Xcode = 497799835;
       };
   };

@@ -9,7 +9,7 @@
   flutterVersion = "3.35.4";
   flutterDir = "$HOME/flutter_${flutterVersion}";
 in {
-  config = lib.mkIf config.development.flutter.enable {
+  config = lib.mkIf config.features.development.flutter.enable {
     # Install Flutter via git clone to specific version
     home.activation.installFlutter = lib.hm.dag.entryAfter ["writeBoundary"] ''
       FLUTTER_DIR="${flutterDir}"
