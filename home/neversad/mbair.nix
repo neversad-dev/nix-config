@@ -13,6 +13,7 @@
   features = {
     cli = {
       neovim.enable = true;
+      git.enable = true;
     };
   };
 }
