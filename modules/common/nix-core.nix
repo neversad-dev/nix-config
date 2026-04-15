@@ -1,9 +1,5 @@
 {pkgs, ...}: {
-  # Nix instance is managed via Determinate installation
-
   nix = {
-    enable = false;
-
     package = pkgs.nix;
 
     settings = {
