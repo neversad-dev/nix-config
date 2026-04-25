@@ -9,6 +9,9 @@
       android.enable = false;
       flutter.enable = false;
     };
+    desktop = {
+      fonts.enable = true;
+    };
     gaming.enable = false;
   };
 }

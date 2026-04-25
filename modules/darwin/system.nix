@@ -232,24 +232,6 @@
     pkgs.zsh
   ];
 
-  # Fonts
-  fonts.packages = with pkgs; [
-    # icon fonts
-    material-design-icons
-    font-awesome
-    sketchybar-app-font
-
-    # nerdfonts
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/data/fonts/nerdfonts/shas.nix
-    # symbols icon only
-    nerd-fonts.symbols-only
-    # Characters
-    nerd-fonts.fira-code
-    nerd-fonts.iosevka
-    nerd-fonts.meslo-lg
-    nerd-fonts.hack
-  ];
-
   # Stay awake configuration - keep Mac awake on AC power + enable WOL
   system.activationScripts.stayAwake = lib.mkIf config.features.stayAwake.enable {
     text = ''

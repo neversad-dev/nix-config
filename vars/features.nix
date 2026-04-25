@@ -2,6 +2,9 @@
 with lib; {
   options = {
     features = {
+      desktop = {
+        fonts.enable = mkEnableOption "Rich Fonts - Add NerdFonts Icons, emojis";
+      };
       development = {
         cursor.enable = mkEnableOption "Cursor editor configurations";
         vscode.enable = mkEnableOption "VSCode configurations";
