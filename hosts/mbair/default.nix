@@ -1,4 +1,4 @@
-{...}: let
+{mylib, ...}: let
   hostname = "mbair";
   primaryUser = "neversad";
 in {
@@ -17,10 +17,6 @@ in {
   # Host-specific settings can go here
   imports = [
     ./features.nix # Shared configuration
+    (mylib.relativeToRoot "modules/darwin")
   ];
-
-  # System configuration
-  # Set this to the nix-darwin release version when you first installed this host
-  # See: https://daiderd.com/nix-darwin/manual/index.html#opt-system.stateVersion
-  system.stateVersion = 6;
 }

@@ -131,10 +131,7 @@
       mbair = nix-darwin.lib.darwinSystem {
         inherit specialArgs;
         system = darwinSystems.aarch64;
-        modules = [
-          ./modules/darwin
-          ./hosts/mbair
-        ];
+        modules = [./hosts/mbair];
       };
     };
 
