@@ -26,6 +26,10 @@ in {
 
       nixd # lsp for nix
       alejandra # formatter for nix
+
+      # CLI for editing/rekeying age secrets (agenix module itself is in darwin config)
+      # inputs.agenix.packages.${pkgs.system}.default
+      ragenix # a rust implementation of agenix
     ];
 
     programs.nh = {

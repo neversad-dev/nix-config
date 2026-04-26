@@ -36,6 +36,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # agenix.url = "github:ryantm/agenix";
+    agenix.url = "github:yaxitech/ragenix"; # a rust implementation of agenix
+
     # Shared library functions
     nix-lib = {
       url = "github:neversad-dev/nix-lib";
@@ -55,6 +58,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ########################  My own repositories  #########################################
+
+    # my private secrets, it's a private repository.
+    # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
+    mysecrets = {
+      url = "git+ssh://git@github.com/neversad-dev/nix-secrets.git?shallow=1";
+      flake = false;
+    };
+
     # Custom nvf configuration
     nvf-config = {
       url = "github:neversad-dev/nvf-config";
@@ -72,6 +84,7 @@
     self,
     nix-darwin,
     nixpkgs,
+    agenix,
     home-manager,
     wallpapers,
     ghostty,
@@ -131,7 +144,9 @@
       mbair = nix-darwin.lib.darwinSystem {
         inherit specialArgs;
         system = darwinSystems.aarch64;
-        modules = [./hosts/mbair];
+        modules = [
+          ./hosts/mbair
+        ];
       };
     };
 

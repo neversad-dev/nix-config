@@ -83,27 +83,31 @@ just gc         # Garbage collect
 
 **Recommended: shared host options**
 
-Define feature flags once in `hosts/<hostname>/config.nix`, then wire that file into both nix-darwin and Home Manager so system and user config stay aligned.
+Define feature flags once in `hosts/<hostname>/features.nix`, then wire that file into both nix-darwin and Home Manager so system and user config stay aligned.
 
 ```nix
-# hosts/myhost/config.nix — shared options (imported by darwin + HM)
+# hosts/myhost/features.nix — shared options (imported by darwin + HM)
 {
-  development.cursor.enable = true;
-  development.vscode.enable = false;
-  development.android.enable = false;
-  gaming.enable = false;
+  features = {
+    development = {
+      cursor.enable = true;
+      vscode.enable = false;
+      android.enable = false;
+    };
+    gaming.enable = false;
+  };
 }
 
 # hosts/myhost/default.nix — nix-darwin
 {
-  imports = [ ./config.nix ];
+  imports = [ ./features.nix ];
   # ... users, networking, system.stateVersion, etc.
 }
 
 # home/neversad/myhost.nix — Home Manager entry (see home/neversad/mbair.nix)
 { mylib, ... }: {
   imports = [
-    (mylib.relativeToRoot "hosts/myhost/config.nix")
+    (mylib.relativeToRoot "hosts/myhost/features.nix")
     ./home.nix
     ../common
     ../features/cli
@@ -134,7 +138,7 @@ config = lib.mkIf config.myFeature.enable {
 };
 ```
 
-3. **Set the option** in shared host config and keep darwin/HM imports in sync (see usage examples above).
+3. **Set the option** in shared host `features.nix` and keep darwin/HM imports in sync (see usage examples above).
 
 **Rules:**
 - Always use `lib.mkIf` for conditional configurations
@@ -158,7 +162,8 @@ When `development.android.enable = true`, the configuration provides:
 
 - **`flake.nix`** — Outputs: `darwinConfigurations`, `homeConfigurations`, `darwinModules`, `homeModules.{darwin,linux}`, `packages`, `lib`
 - **`modules/darwin/`** — nix-darwin system modules
-- **`hosts/<hostname>/`** — Per-machine nix-darwin config (`default.nix`) and shared options (`config.nix`)
+- **`hosts/<hostname>/`** — Per-machine nix-darwin config (`default.nix`) and shared feature flags (`features.nix`)
+- **`secrets/`** — nix-darwin agenix/ragenix wiring (`darwin.nix`); see [secrets/README.md](secrets/README.md)
 - **`home/common/`** — Shared Home Manager baseline (nixpkgs, imports `vars/features.nix`)
 - **`home/features/`** — Feature bundles: `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`
 - **`home/neversad/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …)

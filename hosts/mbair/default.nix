@@ -18,5 +18,6 @@ in {
   imports = [
     ./features.nix # Shared configuration
     (mylib.relativeToRoot "modules/darwin")
+    (mylib.relativeToRoot "secrets/darwin.nix")
   ];
 }
