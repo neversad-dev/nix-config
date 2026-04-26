@@ -1,6 +1,10 @@
-{mylib, ...}: let
+{
+  mylib,
+  myvars,
+  ...
+}: let
   hostname = "mbair";
-  primaryUser = "neversad";
+  primaryUser = myvars.primaryUser;
 in {
   # Host-specific configuration
   networking.hostName = hostname;

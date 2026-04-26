@@ -31,6 +31,7 @@ nix build .#darwinConfigurations.mbair.system
 sudo ./result/sw/bin/darwin-rebuild switch --flake .
 
 # Linux Home Manager (see flake.nix for configured names, e.g. neversad@enduro)
+# (the primary user comes from `myvars.primaryUser`, exported by the flake)
 nix build '.#homeConfigurations."neversad@enduro"'
 ./result/activate
 ```
@@ -66,8 +67,8 @@ just gc         # Garbage collect
 
 ## Example hosts
 
-- **`mbair`** — nix-darwin system config under `hosts/mbair/` and matching Home Manager config `neversad@mbair` in `flake.nix`
-- **`enduro`** — Linux Home Manager config `neversad@enduro` in `flake.nix` (entry module `home/neversad/enduro.nix`)
+- **`mbair`** — nix-darwin system config under `hosts/mbair/` and matching Home Manager config `<username>@mbair` in `flake.nix` (in this repo, `<username>` comes from `myvars.primaryUser`)
+- **`enduro`** — Linux Home Manager config `<username>@enduro` in `flake.nix` (entry module `home/<username>/enduro.nix`)
 
 ## Configuration Options
 
@@ -104,7 +105,7 @@ Define feature flags once in `hosts/<hostname>/features.nix`, then wire that fil
   # ... users, networking, system.stateVersion, etc.
 }
 
-# home/neversad/myhost.nix — Home Manager entry (see home/neversad/mbair.nix)
+# home/<username>/myhost.nix — Home Manager entry (see home/<username>/mbair.nix)
 { mylib, ... }: {
   imports = [
     (mylib.relativeToRoot "hosts/myhost/features.nix")
@@ -118,7 +119,7 @@ Define feature flags once in `hosts/<hostname>/features.nix`, then wire that fil
 }
 ```
 
-Add a matching `homeConfigurations."user@myhost"` in `flake.nix` that lists `home/neversad/myhost.nix` (and any extra modules, e.g. Neovim from `nvf-config`).
+Add a matching `homeConfigurations."<username>@myhost"` in `flake.nix` that lists `home/<username>/myhost.nix` (and any extra modules, e.g. Neovim from `nvf-config`).
 
 ### Adding New Options
 
@@ -166,7 +167,7 @@ When `development.android.enable = true`, the configuration provides:
 - **`secrets/`** — nix-darwin agenix/ragenix wiring (`darwin.nix`); see [secrets/README.md](secrets/README.md)
 - **`home/common/`** — Shared Home Manager baseline (nixpkgs, imports `vars/features.nix`)
 - **`home/features/`** — Feature bundles: `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`
-- **`home/neversad/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …)
+- **`home/<username>/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …). In this repo, `<username>` comes from `myvars.primaryUser`.
 - **`home/export/{darwin,linux}/`** — Flake `homeModules.darwin` / `homeModules.linux` for consumers (re-export layout; see `flake.nix`)
 - **`vars/features.nix`** — Shared `options` for `features.*` (nix-darwin + Home Manager)
 - **`lib/`** — Custom library helpers (via `nix-lib` input)

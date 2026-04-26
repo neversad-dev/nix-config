@@ -99,11 +99,12 @@
       // {
         relativeToRoot = lib.path.append ./.;
       };
+    myvars = import ./vars;
 
     specialArgs =
       inputs
       // {
-        inherit mylib;
+        inherit mylib myvars;
       };
 
     darwinSystems = {
@@ -136,8 +137,9 @@
       linux = ./home/export/linux;
     };
 
-    # Export lib for reuse
+    # Export lib and myvars for reuse
     lib = mylib;
+    myvars = myvars;
 
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
@@ -151,19 +153,19 @@
     };
 
     homeConfigurations = {
-      "neversad@mbair" = home-manager.lib.homeManagerConfiguration {
+      "${myvars.primaryUser}@mbair" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgsFor darwinSystems.aarch64;
         extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
-          ./home/neversad/mbair.nix
+          ./home/${myvars.primaryUser}/mbair.nix
         ];
       };
 
-      "neversad@enduro" = home-manager.lib.homeManagerConfiguration {
+      "${myvars.primaryUser}@enduro" = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgsFor linuxSystems.x86_64;
         extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
         modules = [
-          ./home/neversad/enduro.nix
+          ./home/${myvars.primaryUser}/enduro.nix
         ];
       };
     };

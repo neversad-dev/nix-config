@@ -2,9 +2,10 @@
   config,
   lib,
   pkgs,
+  myvars,
   ...
 }: {
-  home.username = lib.mkDefault "neversad";
+  home.username = lib.mkDefault myvars.primaryUser;
   home.homeDirectory = lib.mkDefault (
     if pkgs.stdenv.isDarwin
     then "/Users/${config.home.username}"
