@@ -3,16 +3,21 @@
   programs.eza = {
     enable = true;
     git = true;
+    # Keep defaults compatible with `ls` expectations:
+    # - show permissions/user/group when `-l` is requested
+    # - don't force long format for plain `ls`
     extraOptions = [
       "--icons=always"
       "--color=always"
-      "--long"
-      "--no-filesize"
-      "--no-time"
-      "--no-user"
-      "--no-permissions"
       "--group-directories-first"
-      "--header"
     ];
+  };
+
+  # Make `ls` resolve to eza consistently, while preserving `ls -l` output
+  # including permissions and owner/group.
+  home.shellAliases = {
+    ls = "eza -1";
+    ll = "eza -l";
+    la = "eza -la";
   };
 }
