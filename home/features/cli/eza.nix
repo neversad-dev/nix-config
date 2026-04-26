@@ -10,6 +10,8 @@
       "--icons=always"
       "--color=always"
       "--group-directories-first"
+      "--no-time"
+      "--header"
     ];
   };
 
