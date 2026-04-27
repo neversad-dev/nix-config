@@ -16,11 +16,9 @@ on:
         required: false
         type: string
 
-# GitHub Actions has no SSH key for git@github.com; override private mysecrets with a stub tree.
-defaults:
-  run:
-    env:
-      NIX_MYSECRETS_OVERRIDE: path:${{ github.workspace }}/secrets/ci-stub-for-flake
+# Runners have no SSH key for private nix-secrets; Nix commands use this with --override-input.
+env:
+  NIX_MYSECRETS_OVERRIDE: path:${{ github.workspace }}/secrets/ci-stub-for-flake
 
 jobs:
   check:
