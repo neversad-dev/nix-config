@@ -1,4 +1,4 @@
-# Nix Configuration
+# Nix config
 
 [![Built with Nix](https://img.shields.io/badge/Built_With-Nix-5277C3.svg?logo=nixos&labelColor=73C3D5)](https://nixos.org)
 [![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=F0F0F0)](https://www.apple.com/macos)
@@ -8,170 +8,73 @@
 [![Catppuccin](https://img.shields.io/badge/Catppuccin-302D41?logo=catppuccin&logoColor=DDB6F2)](https://github.com/catppuccin)
 [![Home Manager](https://img.shields.io/badge/Home_Manager-blue.svg?logo=nixos&logoColor=white)](https://github.com/nix-community/home-manager)
 
-Public nix-darwin and home-manager configuration that can be used standalone or imported into other flakes.
+Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). I can point another flake at this repo as an input if I need reuse; day-to-day I work from this tree.
 
-## Features
+## What lives here
 
-- **Cross-platform**: macOS (nix-darwin) and Linux support
-- **Modular**: Mix-and-match modules 
-- **Modern**: Latest Nix flakes and best practices
-- **Catppuccin themed**: Consistent theming across applications
-- **Development ready**: Includes Neovim configuration and dev tools
+- macOS and Linux Home Manager paths share the same `features.*` toggles where it matters.
+- Catppuccin across apps, CLI/desktop/dev bundles under `home/features/`.
+- Primary username and related identity bits come from `myvars` (`import ./vars` in `flake.nix`).
 
-## Quick Start
-
-### Standalone Usage
+## Builds and switches
 
 ```bash
-git clone https://github.com/neversad-dev/nix-config.git
-cd nix-config
-
-# macOS
+# macOS (mbair is my darwin host name)
 nix build .#darwinConfigurations.mbair.system
 sudo ./result/sw/bin/darwin-rebuild switch --flake .
 
-# Linux Home Manager (see flake.nix for configured names, e.g. neversad@enduro)
-# (the primary user comes from `myvars.primaryUser`, exported by the flake)
+# Linux HM — output name is in flake.nix, e.g. <primaryUser>@enduro
 nix build '.#homeConfigurations."neversad@enduro"'
 ./result/activate
 ```
 
-### As Flake Input
+`just` wraps the usual flows (`just` for the list).
 
-```nix
-{
-  inputs.nix-config.url = "github:neversad-dev/nix-config";
-  
-  outputs = { nix-config, ... }: {
-    darwinConfigurations.myhost = nix-darwin.lib.darwinSystem {
-      modules = [ nix-config.darwinModules.default ];
-    };
-    
-    homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
-      # Use `homeModules.darwin` on macOS or `homeModules.linux` on Linux
-      modules = [ nix-config.homeModules.linux ];
-    };
-  };
-}
-```
+## Reusing this flake elsewhere
 
-## Essential Commands (with just)
+Only when I need it — import `github:neversad-dev/nix-config` (or a path), then `darwinModules.default` / `homeModules.darwin` or `homeModules.linux` from the flake outputs.
 
-```bash
-just            # List all commands
-just build      # Build the system
-just switch     # Apply configuration  
-just update     # Update flake inputs
-just gc         # Garbage collect
-```
+## My hosts (mental map)
 
-## Example hosts
+- **`mbair`** — `hosts/mbair/` + HM `flake.nix` output `"<primaryUser>@mbair"` → `home/<primaryUser>/mbair.nix`.
+- **`enduro`** — Linux HM only: `"<primaryUser>@enduro"` → `home/<primaryUser>/enduro.nix`.
 
-- **`mbair`** — nix-darwin system config under `hosts/mbair/` and matching Home Manager config `<username>@mbair` in `flake.nix` (in this repo, `<username>` comes from `myvars.primaryUser`)
-- **`enduro`** — Linux Home Manager config `<username>@enduro` in `flake.nix` (entry module `home/<username>/enduro.nix`)
+`<primaryUser>` is always `myvars.primaryUser` from `vars/default.nix`.
 
-## Configuration Options
+## `features.*` cheat sheet
 
-- `development.cursor.enable` - Enable Cursor editor configurations (default: false)
-- `development.vscode.enable` - Enable VSCode editor configurations (default: false)
-- `development.android.enable` - Enable Android development configurations (default: false)
-- `development.flutter.enable` - Enable Flutter configurations (default: false)
-- `development.ruby.enable` - Enable Ruby configurations (default: false)
-- `gaming.enable` - Enable gaming-related packages (default: false)
-- `stay-awake.enable` - Enable stay-awake configurations (default: false)
+Defaults and real wiring live in `vars/features.nix` and each host’s `hosts/<hostname>/features.nix`. Rough list:
 
-### Usage examples
+- `features.desktop.fonts.enable`
+- `features.development.cursor.enable`
+- `features.development.vscode.enable`
+- `features.development.android.enable`
+- `features.development.flutter.enable`
+- `features.development.ruby.enable`
+- `features.gaming.enable`
+- `features.stayAwake.enable`
 
-**Recommended: shared host options**
+How to wire shared `features.nix` into both stacks and how to add new options: [vars/README.md](vars/README.md).
 
-Define feature flags once in `hosts/<hostname>/features.nix`, then wire that file into both nix-darwin and Home Manager so system and user config stay aligned.
+## Android stack reminder
 
-```nix
-# hosts/myhost/features.nix — shared options (imported by darwin + HM)
-{
-  features = {
-    development = {
-      cursor.enable = true;
-      vscode.enable = false;
-      android.enable = false;
-    };
-    gaming.enable = false;
-  };
-}
+With `features.development.android.enable`, I get SDK bits, env vars (`ANDROID_*`), emulators I defined (e.g. resizable / Pixel profile names in the modules), and Java alignment — details drift in code; grep `android` under `home/features/development/` when I change machines.
 
-# hosts/myhost/default.nix — nix-darwin
-{
-  imports = [ ./features.nix ];
-  # ... users, networking, system.stateVersion, etc.
-}
+## Repo layout (where I put things)
 
-# home/<username>/myhost.nix — Home Manager entry (see home/<username>/mbair.nix)
-{ mylib, ... }: {
-  imports = [
-    (mylib.relativeToRoot "hosts/myhost/features.nix")
-    ./home.nix
-    ../common
-    ../features/cli
-    ../features/desktop
-    ../features/darwin # or ../features/linux on Linux
-    ../features/development
-  ];
-}
-```
+- **`flake.nix`** — outputs: darwin + HM configs, `darwinModules`, `homeModules.{darwin,linux}`, packages, `lib`, exported `myvars`.
+- **`modules/darwin/`** — system modules I stack on darwin hosts.
+- **`hosts/<hostname>/`** — `default.nix` + shared `features.nix` for that machine.
+- **`secrets/`** — ragenix/agenix wiring; [secrets/README.md](secrets/README.md).
+- **`home/common/`** — HM baseline (imports `vars/features.nix` for options).
+- **`home/features/`** — `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`.
+- **`home/<username>/`** — per-user entrypoints (`home.nix`, host-specific imports).
+- **`home/export/{darwin,linux}/`** — what the flake exposes as `homeModules.*`.
+- **`vars/`** — `myvars` + `features` option schema; [vars/README.md](vars/README.md).
+- **`lib/`** — helpers via `nix-lib` input.
 
-Add a matching `homeConfigurations."<username>@myhost"` in `flake.nix` that lists `home/<username>/myhost.nix` (and any extra modules, e.g. Neovim from `nvf-config`).
-
-### Adding New Options
-
-1. **Define the option** in `vars/features.nix`:
-```nix
-myFeature.enable = lib.mkOption {
-  type = lib.types.bool;
-  default = false;
-  description = "Enable My Feature";
-};
-```
-
-2. **Use the option** in modules:
-```nix
-config = lib.mkIf config.myFeature.enable {
-  # Your configuration here
-};
-```
-
-3. **Set the option** in shared host `features.nix` and keep darwin/HM imports in sync (see usage examples above).
-
-**Rules:**
-- Always use `lib.mkIf` for conditional configurations
-- Follow the `featureName.enable` naming convention
-- Document options with clear descriptions
-- Set sensible defaults (usually `false` for optional features)
-
-### Android development features
-
-When `development.android.enable = true`, the configuration provides:
-
-- **Complete Android SDK**: Build tools, platform tools, NDK, and emulator
-- **Pre-configured Emulators**: 
-  - `MyResizable` - Resizable emulator with multiple form factors
-  - `MyPixel9` - Pixel 9 device emulator with Google APIs
-- **Java Development**: Zulu OpenJDK 21 automatically configured
-- **Environment Variables**: `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `ANDROID_NDK_ROOT`
-- **SDK Synchronization**: Automatic sync with Android Studio location
-
-## Repository layout
-
-- **`flake.nix`** — Outputs: `darwinConfigurations`, `homeConfigurations`, `darwinModules`, `homeModules.{darwin,linux}`, `packages`, `lib`
-- **`modules/darwin/`** — nix-darwin system modules
-- **`hosts/<hostname>/`** — Per-machine nix-darwin config (`default.nix`) and shared feature flags (`features.nix`)
-- **`secrets/`** — nix-darwin agenix/ragenix wiring (`darwin.nix`); see [secrets/README.md](secrets/README.md)
-- **`home/common/`** — Shared Home Manager baseline (nixpkgs, imports `vars/features.nix`)
-- **`home/features/`** — Feature bundles: `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`
-- **`home/<username>/`** — User-specific entrypoints (`home.nix`, `mbair.nix`, `enduro.nix`, …). In this repo, `<username>` comes from `myvars.primaryUser`.
-- **`home/export/{darwin,linux}/`** — Flake `homeModules.darwin` / `homeModules.linux` for consumers (re-export layout; see `flake.nix`)
-- **`vars/features.nix`** — Shared `options` for `features.*` (nix-darwin + Home Manager)
-- **`lib/`** — Custom library helpers (via `nix-lib` input)
+CI behavior when I forget: [.github/workflows/README.md](.github/workflows/README.md).
 
 ---
 
-MIT License - Open source configuration for the Nix community.
+MIT License.

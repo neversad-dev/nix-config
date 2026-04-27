@@ -1,18 +1,18 @@
-# Secrets Management
+# Secrets — reminder
 
-> App and website passwords live in a password manager; here I only track **machine secrets** (tokens, keys, etc.) that Nix should deploy.
+App/site passwords stay in a password manager. Here I only care about **machine secrets** Nix should materialize (tokens, deploy keys, etc.).
 
-Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)** (private). This flake pulls it as **`mysecrets`** and decrypts on the Mac with **[agenix](https://github.com/ryantm/agenix)-style** options via **[ragenix](https://github.com/yaxitech/ragenix)** (`inputs.agenix`, module `agenix.darwinModules.default`).
+Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)** (private). This flake pulls it as **`mysecrets`** and decrypts on the Mac with ragenix (agenix-compatible module; `inputs.agenix` → `agenix.darwinModules.default`).
 
-I encrypt for host pubkeys from **`/etc/ssh/ssh_host_ed25519_key.pub`**; decryption uses **`/etc/ssh/ssh_host_ed25519_key`** (root-only, stays on the machine). Stuff in `/nix/store` stays encrypted until activation.
+I encrypt for host pubkeys from **`/etc/ssh/ssh_host_ed25519_key.pub`**; activation reads **`/etc/ssh/ssh_host_ed25519_key`** (root-only). Store paths stay ciphertext until activation.
 
-**In this repo:** `README.md` + **`darwin.nix`** (wired from `hosts/mbair/default.nix`). No `nixos.nix` yet - mirror the same pattern on NixOS if I ever need it.
+**In this tree:** wire secrets in **`secrets/darwin.nix`** (or whatever I import from `hosts/.../default.nix`). No NixOS secrets module wired yet — copy the same idea if I add a NixOS host.
 
-**Current `age.secrets`:** see `darwin.nix` (`secret1`, `neversad-secrets` and paths there). Any new `.age` file needs a matching entry there **and** in [`nix-secrets`](https://github.com/neversad-dev/nix-secrets/blob/main/secrets.nix), then `just darwin`.
+**What names exist:** open `secrets/darwin.nix` for the current `age.secrets` map. Every new `.age` blob needs a matching entry there **and** in `nix-secrets`’s `secrets.nix`, then rebuild.
 
 ## When I add or change a secret
 
-Work happens in **`nix-secrets`**, not here. I use **`secrets.nix`** + agenix or ragenix:
+Work in **`nix-secrets`**, not in cleartext here.
 
 ```bash
 nix shell github:ryantm/agenix#agenix
@@ -20,10 +20,9 @@ nix shell github:ryantm/agenix#agenix
 nix shell github:yaxitech/ragenix#ragenix
 ```
 
-1. In `nix-secrets`, extend **`secrets.nix`** for `./xxx.age` (pubkeys = hosts / recovery / whatever I still use).
+1. Extend **`secrets.nix`** in nix-secrets for `./xxx.age` (pubkeys = hosts + recovery key I still use).
 
 ```nix
-# CLI only — not imported by nix-darwin
 
 let
   mbair = "ssh-ed25519 AAAA... root@mbair";
@@ -40,37 +39,33 @@ in {
 }
 ```
 
-2. Edit or create the file:
+2. Edit ciphertext:
 
 ```shell
 sudo agenix -e ./xxx.age -i /etc/ssh/ssh_host_ed25519_key
-# or pipe plaintext:
+# or
 cat xxx | sudo agenix -e ./xxx.age -i /etc/ssh/ssh_host_ed25519_key
 ```
 
-3. Commit/push **`nix-secrets`**, then in **this** repo add **`age.secrets`** in `darwin.nix` if it is a new name, bump flake lock if I care about revision pinning, and **`darwin-rebuild switch`**.
+3. Commit/push **nix-secrets**, then here: add/update **`age.secrets`** in my darwin secrets module, bump lock if I pin that input, **`darwin-rebuild switch`**.
 
 ## When I add another Mac
 
-1. New machine: `cat /etc/ssh/ssh_host_ed25519_key.pub` (or `sudo ssh-keygen -A` first).
-2. On a box that can decrypt: add pubkey to `secrets.nix` for each relevant `.age`, then `sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key`, commit/push **`nix-secrets`**.
-3. New machine: same flake + `darwinConfiguration` (or shared `secrets/darwin.nix`), then `sudo darwin-rebuild switch --flake .`.
+1. Grab `cat /etc/ssh/ssh_host_ed25519_key.pub` (or `sudo ssh-keygen -A` first if keys missing).
+2. On a machine that can decrypt: add the new pubkey to `secrets.nix` for each relevant `.age`, run `sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key`, commit/push **nix-secrets**.
+3. On the new Mac: same flake + new `darwinConfiguration`, then `sudo darwin-rebuild switch --flake .`.
 
-## If something breaks
+## If activation misbehaves
 
-**Darwin —** agenix activate logs:
+**Darwin** — agenix/ragenix logs:
 
 ```bash
 tail -n 100 /Library/Logs/org.nixos.activate-agenix.stderr.log
 tail -n 100 /Library/Logs/org.nixos.activate-agenix.stdout.log
 ```
 
-**NixOS —** if I ever wire it:
-
-```bash
-journalctl | grep agenix
-```
+**NixOS** (if I ever wire it): `journalctl | grep agenix`.
 
 ## Why ragenix
 
-Same module surface as agenix; Rust CLI tends to give less cryptic errors than the bash agenix when I typo `secrets.nix`.
+Same module surface as agenix; Rust CLI errors are usually easier to parse when I typo `secrets.nix`.
