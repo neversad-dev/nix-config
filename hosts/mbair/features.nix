@@ -12,6 +12,6 @@
     desktop = {
       fonts.enable = true;
     };
-    gaming.enable = false;
+    gaming.enable = true;
   };
 }
