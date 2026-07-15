@@ -7,15 +7,26 @@
     enable = true;
 
     taps = [
-      "nikitabobko/tap"
-      "FelixKratz/formulae"
+      {
+        name = "FelixKratz/formulae";
+        # Instructs the generated Brewfile to explicitly trust this tap
+        trusted = true;
+      }
+      {
+        name = "nikitabobko/tap";
+        # Recommended to prevent future trust issues with Aerospace
+        trusted = true;
+      }
     ];
 
     onActivation = {
-      autoUpdate = true; # Fetch the newest stable branch of Homebrew's git repo
-      upgrade = true; # Upgrade outdated casks, formulae, and App Store apps
-      # 'zap': uninstalls all formulae(and related files) not listed in the generated Brewfile
-      cleanup = "zap";
+      # Set to false to make `darwin-rebuild switch` fast and idempotent.
+      # You can run `brew upgrade` manually in your terminal when you want updates.
+      autoUpdate = false;
+      upgrade = false;
+
+      # 'uninstall' removes unlisted packages; 'zap' aggressively deletes config/data files too.
+      cleanup = "uninstall";
     };
 
     # `brew install`
