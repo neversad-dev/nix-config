@@ -19,7 +19,6 @@
     desktop = {
       zed.enable = true;
       wallpapers.enable = false;
-      telegram.enable = false;
       ghostty.enable = true;
       kitty.enable = true;
     };
