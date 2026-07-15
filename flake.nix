@@ -46,12 +46,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # terminal
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     ########################  My own repositories  #########################################
 
     # Shared library functions
@@ -87,7 +81,6 @@
     agenix,
     home-manager,
     wallpapers,
-    ghostty,
     nvf-config,
     nix-lib,
     ...

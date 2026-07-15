@@ -16,7 +16,6 @@ on:
           - "nix-darwin"
           - "home-manager"
           - "catppuccin"
-          - "ghostty"
           - "nvf-config"
           - "other"
         default: "all"
@@ -131,10 +130,6 @@ jobs:
             "catppuccin")
               echo "Updating catppuccin themes..."
               nix flake update --update-input catppuccin --update-input catppuccin-vsc --accept-flake-config 2>&1 | tee /tmp/update.log
-              ;;
-            "ghostty")
-              echo "Updating ghostty..."
-              nix flake update --update-input ghostty --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "nvf-config")
               echo "Updating nvf-config..."

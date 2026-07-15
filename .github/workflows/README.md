@@ -12,7 +12,7 @@ What runs in CI for this repo and what I touch when I change behavior.
 ## `update-dependencies.yml`
 
 - **When:** weekly cron + manual dispatch.
-- **What it does:** bumps inputs (nixpkgs, nix-darwin, home-manager, theme pins, ghostty, etc. — see workflow inputs), optionally opens a PR.
+- **What it does:** bumps inputs (nixpkgs, nix-darwin, home-manager, theme pins, etc. — see workflow inputs), optionally opens a PR.
 - **Manual run:** Actions tab → workflow → “Run workflow” → `update-type`, `create-pr`, optional **`branch-name`** (defaults to `update-dependencies`).
 
 Inputs map to flake input IDs I defined; if I rename inputs in `flake.nix`, update the workflow’s choice list too.
