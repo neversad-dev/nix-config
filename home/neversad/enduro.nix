@@ -19,7 +19,7 @@
     desktop = {
       zed.enable = true;
       wallpapers.enable = false;
-      ghostty.enable = true;
+      ghostty.enable = false;
       kitty.enable = true;
     };
     development = {

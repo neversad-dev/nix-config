@@ -4,7 +4,6 @@
   lib,
   mylib,
   pkgs,
-  inputs,
   ...
 }:
 with lib; let
@@ -44,10 +43,5 @@ in {
         pkgs = pkgs;
       };
     }
-    (mkIf pkgs.stdenv.hostPlatform.isLinux {
-      home.packages = [
-        inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
-      ];
-    })
   ]);
 }
