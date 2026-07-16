@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  inputs,
   ...
 }: {
   home.packages = with pkgs;
@@ -15,7 +14,6 @@
       handbrake
       onlyoffice-desktopeditors
       obsidian
-      bitwarden-desktop
     ]
     ++ lib.optionals config.features.development.cursor.enable [
       code-cursor
