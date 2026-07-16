@@ -23,5 +23,9 @@
     secret1 = {
       file = "${mysecrets}/secret1.age";
     };
+    neversad-secrets = {
+      file = "${mysecrets}/neversad-secrets.age";
+      owner = "neversad";
+    };
   };
 }
