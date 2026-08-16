@@ -98,6 +98,8 @@
         "android-studio"
       ]
       ++ lib.optionals config.features.gaming.enable [
+        "retroarch"
+        "es-de"
         "steam"
       ];
 
