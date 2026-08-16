@@ -85,6 +85,7 @@
         "monitorcontrol"
         "balenaetcher"
         "rustdesk"
+        "megasync" # https://mega.io/desktop
 
         # fonts
         "font-sf-pro"
