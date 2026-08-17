@@ -57,6 +57,7 @@
         "firefox"
         "google-chrome"
         "zen"
+        "helium-browser"
 
         # messengers
         "signal"
@@ -85,6 +86,7 @@
         "monitorcontrol"
         "balenaetcher"
         "rustdesk"
+        "vlc"
         "megasync" # https://mega.io/desktop
 
         # fonts
