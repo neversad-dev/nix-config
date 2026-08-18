@@ -328,6 +328,10 @@ if.app-id = 'com.brave.Browser'
 run = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
+if.app-id = 'net.imput.helium'
+run = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
 if.app-id = 'org.torproject.torbrowser'
 run = 'move-node-to-workspace 7'
 

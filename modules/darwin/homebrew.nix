@@ -41,6 +41,7 @@
         "imagemagick"
         "ffmpeg"
         "sketchybar"
+        "thaw" # menu bar organizer
       ]
       ++ lib.optionals config.features.development.flutter.enable [
         "cocoapods" # needed for Flutter
@@ -55,9 +56,10 @@
 
         # browsers
         "firefox"
-        "google-chrome"
         "zen"
+        "google-chrome"
         "helium-browser"
+        "tor-browser"
 
         # messengers
         "signal"
@@ -88,6 +90,8 @@
         "rustdesk"
         "vlc"
         "megasync" # https://mega.io/desktop
+        "torguard" # vpn client
+        "protonvpn"
 
         # fonts
         "font-sf-pro"
