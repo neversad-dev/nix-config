@@ -98,6 +98,8 @@
         "ab-download-manager"
         "qbittorrent"
         "thaw" # menu bar organizer (cask)
+        "dangerzone" # sandbox for suspicious AppleShowAllFiles
+        "kde-connect"
 
 
         # fonts
