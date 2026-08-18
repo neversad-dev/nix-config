@@ -96,6 +96,7 @@
         "torguard" # vpn client
         "protonvpn"
         "ab-download-manager"
+        "qbittorrent"
         "thaw" # menu bar organizer (cask)
 
 
