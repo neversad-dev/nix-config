@@ -17,6 +17,10 @@
         # Recommended to prevent future trust issues with Aerospace
         trusted = true;
       }
+      {
+        name = "amir1376/tap";
+        trusted = true;
+      }
     ];
 
     onActivation = {
@@ -41,7 +45,6 @@
         "imagemagick"
         "ffmpeg"
         "sketchybar"
-        "thaw" # menu bar organizer
       ]
       ++ lib.optionals config.features.development.flutter.enable [
         "cocoapods" # needed for Flutter
@@ -92,6 +95,9 @@
         "megasync" # https://mega.io/desktop
         "torguard" # vpn client
         "protonvpn"
+        "ab-download-manager"
+        "thaw" # menu bar organizer (cask)
+
 
         # fonts
         "font-sf-pro"
