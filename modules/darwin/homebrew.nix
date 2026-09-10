@@ -44,7 +44,6 @@
         "borders"
         "imagemagick"
         "ffmpeg"
-        "sketchybar"
       ]
       ++ lib.optionals config.features.development.flutter.enable [
         "cocoapods" # needed for Flutter
@@ -100,7 +99,6 @@
         "thaw" # menu bar organizer (cask)
         "dangerzone" # sandbox for suspicious AppleShowAllFiles
         "kde-connect"
-
 
         # fonts
         "font-sf-pro"
