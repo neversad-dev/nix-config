@@ -38,3 +38,5 @@ yarn-error.log*
 # Optional: nix cache directory
 .nix-cache/
 
+# direnv cache
+.direnv/

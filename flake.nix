@@ -204,5 +204,28 @@
     formatter = forAllSystems (
       system: nixpkgs.legacyPackages.${system}.alejandra
     );
+
+    # Dev shell for working on this nix config
+    # Packages here are only needed during nix-config development, not system-wide
+    # Usage: `nix develop`
+    devShells = forAllSystems (system: let
+      pkgs = pkgsFor system;
+    in {
+      default = pkgs.mkShell {
+        name = "nix-config";
+        packages = with pkgs; [
+          nh # nix helper (darwin/home switch, clean, etc.)
+          alejandra # nix formatter
+          nix-melt # TUI flake.lock viewer
+          nix-tree # TUI dependency graph for a derivation
+          just # command runner (repo Justfile)
+          ragenix # agenix-compatible secrets CLI
+        ];
+        shellHook = ''
+          export FLAKE="."          # used by nh as the default flake path
+          export NH_NO_CHECKS="1"   # nix-community/nh#305
+        '';
+      };
+    });
   };
 }
