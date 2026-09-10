@@ -5,7 +5,6 @@ with lib; {
       development = {
         cursor.enable = mkEnableOption "Cursor editor configurations";
         vscode.enable = mkEnableOption "VSCode configurations";
-        ruby.enable = mkEnableOption "Ruby";
         android.enable = mkEnableOption "Android development";
       };
       gaming.enable = mkEnableOption "Gaming-related packages";

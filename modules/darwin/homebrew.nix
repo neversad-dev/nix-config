@@ -70,6 +70,10 @@
         "handbrake-app" # Open-source video transcoder available for Linux, Mac, and Windows
         "imageoptim" # Tool to optimise images to a smaller size
         "onlyoffice" # Document editor
+        "vlc"
+        "ab-download-manager"
+        "qbittorrent"
+        "dangerzone" # sandbox for suspicious AppleShowAllFiles
 
         # productivity
         "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
@@ -84,14 +88,10 @@
         "monitorcontrol"
         "balenaetcher"
         "rustdesk"
-        "vlc"
         "megasync" # https://mega.io/desktop
         "torguard" # vpn client
         "protonvpn"
-        "ab-download-manager"
-        "qbittorrent"
-        "thaw" # menu bar organizer (cask)
-        "dangerzone" # sandbox for suspicious AppleShowAllFiles
+        "thaw" # menu bar organizer
         "kde-connect"
 
         # fonts
