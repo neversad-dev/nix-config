@@ -5,7 +5,7 @@
 }:
 with lib; {
   config = {
-    homebrew.brews = [ "sketchybar" ];
+    homebrew.brews = ["sketchybar"];
 
     fonts.packages = with pkgs; [
       sketchybar-app-font

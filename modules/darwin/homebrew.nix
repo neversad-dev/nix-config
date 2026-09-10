@@ -32,17 +32,16 @@
     };
 
     # `brew install`
-    brews =
-      [
-        # "git"
-        # "git-lfs"
-        "wget" # download tool
-        "curl" # no not install curl via nixpkgs, it's not working well on macOS!
+    brews = [
+      # "git"
+      # "git-lfs"
+      "wget" # download tool
+      "curl" # no not install curl via nixpkgs, it's not working well on macOS!
 
-        "borders"
-        "imagemagick"
-        "ffmpeg"
-      ];
+      "borders"
+      "imagemagick"
+      "ffmpeg"
+    ];
 
     # `brew install --cask`
     casks =
