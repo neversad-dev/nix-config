@@ -18,17 +18,19 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). I can point an
 
 ## Builds and switches
 
-```bash
-# macOS (mbair is my darwin host name)
-nix build .#darwinConfigurations.mbair.system
-sudo ./result/sw/bin/darwin-rebuild switch --flake .
+All development tooling (`nh`, `just`, `nom`, `alejandra`, etc.) is provided by the `devShell` defined in `flake.nix`. 
+Because `direnv` and `nix-direnv` are configured, simply `cd` into this repository to automatically activate the environment.
 
-# Linux HM — output name is in flake.nix, e.g. <primaryUser>@enduro
-nix build '.#homeConfigurations."neversad@enduro"'
-./result/activate
+Then you can use `just` to build and switch:
+
+```bash
+just darwin  # build and switch macOS (via nh)
+just home    # build and switch Home Manager (via nh)
+just up      # update flake inputs
+just         # list all commands
 ```
 
-`just` wraps the usual flows (`just` for the list).
+*(Manual fallback if direnv is disabled: run `nix develop` first to get access to `nh` and `just`, or use raw `nix build ...` commands).*
 
 ## Reusing this flake elsewhere
 
@@ -48,7 +50,6 @@ Defaults and real wiring live in `vars/features.nix` and each host’s `hosts/<h
 - `features.development.cursor.enable`
 - `features.development.vscode.enable`
 - `features.development.android.enable`
-- `features.development.ruby.enable`
 - `features.gaming.enable`
 - `features.stayAwake.enable`
 
