@@ -24,15 +24,16 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/master";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -119,6 +120,14 @@
           fetcherVersion = 7;
         };
       };
+    pkgsUnstableFor = system:
+      import inputs.nixpkgs-unstable {
+        inherit system;
+        config = {
+          allowUnfree = true;
+          fetcherVersion = 7;
+        };
+      };
   in {
     # Export modules for use in other flakes
     darwinModules = {
@@ -136,31 +145,54 @@
 
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
-      mbair = nix-darwin.lib.darwinSystem {
-        inherit specialArgs;
+      mbair = let
         system = darwinSystems.aarch64;
-        modules = [
-          ./hosts/mbair
-        ];
-      };
+      in
+        nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs =
+            specialArgs
+            // {
+              "pkgs-unstable" = pkgsUnstableFor system;
+            };
+          modules = [
+            ./hosts/mbair
+          ];
+        };
     };
 
     homeConfigurations = {
-      "${myvars.primaryUser}@mbair" = home-manager.lib.homeManagerConfiguration {
-        pkgs = pkgsFor darwinSystems.aarch64;
-        extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
-        modules = [
-          ./home/${myvars.primaryUser}/mbair.nix
-        ];
-      };
+      "${myvars.primaryUser}@mbair" = let
+        system = darwinSystems.aarch64;
+      in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsFor system;
+          extraSpecialArgs =
+            specialArgs
+            // {
+              inherit outputs wallpapers inputs;
+              "pkgs-unstable" = pkgsUnstableFor system;
+            };
+          modules = [
+            ./home/${myvars.primaryUser}/mbair.nix
+          ];
+        };
 
-      "${myvars.primaryUser}@enduro" = home-manager.lib.homeManagerConfiguration {
-        pkgs = pkgsFor linuxSystems.x86_64;
-        extraSpecialArgs = specialArgs // {inherit outputs wallpapers inputs;};
-        modules = [
-          ./home/${myvars.primaryUser}/enduro.nix
-        ];
-      };
+      "${myvars.primaryUser}@enduro" = let
+        system = linuxSystems.x86_64;
+      in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsFor system;
+          extraSpecialArgs =
+            specialArgs
+            // {
+              inherit outputs wallpapers inputs;
+              "pkgs-unstable" = pkgsUnstableFor system;
+            };
+          modules = [
+            ./home/${myvars.primaryUser}/enduro.nix
+          ];
+        };
     };
 
     # standalone neovim package for each system

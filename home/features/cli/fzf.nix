@@ -1,12 +1,12 @@
 # Fuzzy finder (Ctrl-T / history) with fd-backed file search
-{...}: {
+{pkgs-unstable, ...}: {
   programs.fzf = {
     enable = true;
+    package = pkgs-unstable.fzf;
 
     tmux.enableShellIntegration = true;
-    historyWidget.command = "";
 
     defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
-    fileWidget.command = "fd --hidden --strip-cwd-prefix --exclude .git"; # CTRL-T
+    fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git"; # CTRL-T
   };
 }
