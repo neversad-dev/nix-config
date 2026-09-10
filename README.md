@@ -45,11 +45,9 @@ Only when I need it — import `github:neversad-dev/nix-config` (or a path), the
 
 Defaults and real wiring live in `vars/features.nix` and each host’s `hosts/<hostname>/features.nix`. Rough list:
 
-- `features.desktop.fonts.enable`
 - `features.development.cursor.enable`
 - `features.development.vscode.enable`
 - `features.development.android.enable`
-- `features.development.flutter.enable`
 - `features.development.ruby.enable`
 - `features.gaming.enable`
 - `features.stayAwake.enable`

@@ -24,13 +24,11 @@
     ];
 
     onActivation = {
-      # Set to false to make `darwin-rebuild switch` fast and idempotent.
-      # You can run `brew upgrade` manually in your terminal when you want updates.
-      autoUpdate = false;
-      upgrade = false;
+      autoUpdate = true;
+      upgrade = true;
 
       # 'uninstall' removes unlisted packages; 'zap' aggressively deletes config/data files too.
-      cleanup = "uninstall";
+      cleanup = "zap";
     };
 
     # `brew install`
@@ -44,9 +42,6 @@
         "borders"
         "imagemagick"
         "ffmpeg"
-      ]
-      ++ lib.optionals config.features.development.flutter.enable [
-        "cocoapods" # needed for Flutter
       ];
 
     # `brew install --cask`
@@ -127,9 +122,6 @@
       }
       // lib.optionalAttrs config.features.stayAwake.enable {
         Amphetamine = 937984704;
-      }
-      // lib.optionalAttrs config.features.development.flutter.enable {
-        # Xcode = 497799835;
       };
   };
 

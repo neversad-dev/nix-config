@@ -5,13 +5,9 @@
   features = {
     development = {
       vscode.enable = false; # problems on macos
-      cursor.enable = true;
+      cursor.enable = false;
       android.enable = false;
-      flutter.enable = false;
     };
-    desktop = {
-      fonts.enable = true;
-    };
-    gaming.enable = true;
+    gaming.enable = false;
   };
 }
