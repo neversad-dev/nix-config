@@ -92,7 +92,7 @@
         "megasync" # https://mega.io/desktop
         "torguard" # vpn client
         "protonvpn"
-        "thaw" # menu bar organizer
+        "hiddenbar" # menu bar organizer
         "kde-connect"
 
         # fonts
