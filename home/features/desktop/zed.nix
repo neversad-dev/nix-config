@@ -2,6 +2,7 @@
 {
   config,
   lib,
+  pkgs,
   pkgs-unstable,
   ...
 }:
@@ -11,6 +12,13 @@ in {
   options.features.desktop.zed.enable = mkEnableOption "Zed editor";
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      alejandra
+      prettier
+      shfmt
+      ruff
+    ];
+
     programs.zed-editor = {
       enable = true;
       package = pkgs-unstable.zed-editor;
@@ -64,8 +72,36 @@ in {
           copilot = true;
         };
         languages = {
+          Nix = {
+            formatter = {
+              external = {
+                command = "alejandra";
+                arguments = ["--quiet" "-"];
+              };
+            };
+            format_on_save = "on";
+          };
           Markdown = {
             formatter = "prettier";
+            format_on_save = "on";
+          };
+          Shell = {
+            formatter = {
+              external = {
+                command = "shfmt";
+                arguments = ["-i" "2" "-"];
+              };
+            };
+            format_on_save = "on";
+          };
+
+          Python = {
+            formatter = {
+              external = {
+                command = "ruff";
+                arguments = ["format" "-"];
+              };
+            };
             format_on_save = "on";
           };
         };
