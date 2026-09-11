@@ -2,7 +2,7 @@
 {
   config,
   lib,
-  pkgs,
+  pkgs-unstable,
   ...
 }:
 with lib; let
@@ -13,7 +13,7 @@ in {
   config = mkIf cfg.enable {
     programs.zed-editor = {
       enable = true;
-      package = pkgs.zed-editor;
+      package = pkgs-unstable.zed-editor;
 
       extensions = [
         "catppuccin"

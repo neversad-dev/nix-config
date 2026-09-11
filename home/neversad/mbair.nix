@@ -20,7 +20,7 @@
       tmux.enable = false;
     };
     desktop = {
-      zed.enable = false;
+      zed.enable = true;
       wallpapers.enable = true;
       ghostty.enable = true;
       kitty.enable = true;
