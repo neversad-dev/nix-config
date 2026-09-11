@@ -18,8 +18,8 @@ in {
 
       # Font configuration
       font = {
-        name = "JetBrains Mono";
-        size = 14;
+        name = config.myFonts.main;
+        size = 15;
       };
 
       # Basic settings

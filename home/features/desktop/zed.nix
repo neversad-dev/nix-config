@@ -47,7 +47,7 @@ in {
           };
         };
         tab_bar = {
-          show = false;
+          show = true;
           show_nav_history_buttons = false;
         };
 
@@ -56,7 +56,7 @@ in {
           120
         ];
         terminal = {
-          font_family = "FiraCode Nerd Font Mono";
+          font_family = config.myFonts.main;
         };
         soft_wrap = "editor_width";
         format_on_save = "on";
@@ -73,10 +73,10 @@ in {
           metrics = false;
         };
         vim_mode = true;
-        ui_font_size = 16;
-        buffer_font_size = 16;
+        ui_font_size = 12;
+        buffer_font_size = 14;
 
-        buffer_font_family = "FiraCode Nerd Font Mono";
+        buffer_font_family = config.myFonts.main;
       };
     };
   };

@@ -1,9 +1,9 @@
 {pkgs, ...}: {
   commonSettings = {
     # Editor settings
-    "editor.fontFamily" = "FiraCode Nerd Font Mono";
+    "editor.fontFamily" = config.myFonts.main;
     "editor.fontLigatures" = true;
-    "editor.fontSize" = 16;
+    "editor.fontSize" = 14;
     "editor.formatOnSave" = true;
     "editor.formatOnPaste" = false;
     "editor.inlineSuggest.enabled" = true;

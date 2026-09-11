@@ -6,6 +6,7 @@
 }: {
   imports = [
     (mylib.relativeToRoot "vars/features.nix")
+    (mylib.relativeToRoot "vars/fonts.nix")
   ];
   nixpkgs = {
     # You can add overlays here

@@ -13,7 +13,7 @@ with lib; let
 
     window-inherit-working-directory = "true"
 
-    font-family = "Maple Mono NF CN"
+    font-family = "${config.myFonts.main}"
 
     font-size = 15
 
@@ -33,15 +33,13 @@ in {
     Ghostty terminal: installs the Nix package on Linux; on macOS only writes ~/.config/ghostty/config (use Homebrew for the app)
   '';
 
-  config = mkIf cfg.enable (mkMerge [
-    {
-      # Copy config to create an editable file (not a symlink)
-      home.activation.copyGhosttyConfig = mylib.mkEditableConfig {
-        name = "Ghostty";
-        configPath = "$HOME/.config/ghostty/config";
-        content = defaultConfig;
-        pkgs = pkgs;
-      };
-    }
-  ]);
+  config = mkIf cfg.enable {
+    # Copy config to create an editable file (not a symlink)
+    home.activation.copyGhosttyConfig = mylib.mkEditableConfig {
+      name = "Ghostty";
+      configPath = "$HOME/.config/ghostty/config";
+      content = defaultConfig;
+      pkgs = pkgs;
+    };
+  };
 }

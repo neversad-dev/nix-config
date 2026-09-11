@@ -2,6 +2,7 @@
   imports = [
     (mylib.relativeToRoot "hosts/mbair/features.nix") # global feature flags
     ./home.nix
+    ./fonts.nix
     ../common
     ../features/cli
     ../features/desktop
