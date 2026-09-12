@@ -60,6 +60,7 @@
         # messengers
         "signal"
         "slack"
+        "whatsapp"
         # "zoom"
 
         # media & files

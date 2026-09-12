@@ -270,6 +270,14 @@ if.window-title-regex-substring = 'Extension.*Bitwarden'
 check-further-callbacks = true
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'ch.protonvpn.mac'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'eu.exelban.Stats'
+run = 'layout floating'
+
 
 # Window to workspace bindings
 
@@ -303,6 +311,10 @@ run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.autodesk.fusion360'
+run = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
+if.app-id = 'org.freecad.FreeCAD'
 run = 'move-node-to-workspace 6'
 
 ## Browsers
@@ -395,6 +407,9 @@ run = 'move-node-to-workspace 10'
 if.app-id = 'com.microsoft.Outlook'
 run = 'move-node-to-workspace 10'
 
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace 10'
 
 # Workspaces to Display bindings
 
