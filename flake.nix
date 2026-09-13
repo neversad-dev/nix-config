@@ -222,7 +222,7 @@
           ragenix # agenix-compatible secrets CLI
         ];
         shellHook = ''
-          export FLAKE="."          # used by nh as the default flake path
+          export NH_FLAKE="."       # used by nh as the default flake path
           export NH_NO_CHECKS="1"   # nix-community/nh#305
         '';
       };
