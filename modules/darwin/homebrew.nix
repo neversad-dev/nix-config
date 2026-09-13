@@ -76,6 +76,7 @@
         "qbittorrent"
         "dangerzone" # sandbox for suspicious AppleShowAllFiles
         "syncthing-app"
+        "cryptomator"
 
         # productivity
         "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)

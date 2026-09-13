@@ -278,6 +278,10 @@ run = 'layout floating'
 if.app-id = 'eu.exelban.Stats'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'org.cryptomator'
+run = 'layout floating'
+
 
 # Window to workspace bindings
 
