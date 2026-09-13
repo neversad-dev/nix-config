@@ -30,6 +30,7 @@ in {
         "just"
         "basher"
         "xml"
+        "git-firefly"
       ];
 
       userKeymaps = [
@@ -109,6 +110,7 @@ in {
           metrics = false;
         };
         vim_mode = true;
+        relative_line_numbers = "enabled";
         ui_font_size = 12;
         buffer_font_size = 14;
 
