@@ -50,6 +50,12 @@ in {
         #   dock = "right";
         # };
 
+        indent_guides = {
+          enabled = true;
+          coloring = "indent_aware";
+          background_coloring = "disabled";
+        };
+
         autosave = {
           after_delay = {
             milliseconds = 1000;
@@ -109,6 +115,8 @@ in {
         telemetry = {
           metrics = false;
         };
+        colorize_brackets = true;
+
         vim_mode = true;
         relative_line_numbers = "enabled";
         ui_font_size = 12;
