@@ -30,6 +30,7 @@ in {
         "just"
         "basher"
         "xml"
+        "toml"
         "git-firefly"
       ];
 
