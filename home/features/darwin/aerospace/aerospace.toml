@@ -288,6 +288,9 @@ if.window-title-regex-substring = 'Settings'
 check-further-callbacks = true
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'net.ankiweb.anki'
+run = 'layout floating'
 
 # Window to workspace bindings
 
