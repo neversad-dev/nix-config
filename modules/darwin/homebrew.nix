@@ -96,6 +96,7 @@
         "protonvpn"
         "hiddenbar" # menu bar organizer
         "kde-connect"
+        "creality-print"
 
         # fonts
         "font-sf-pro"
