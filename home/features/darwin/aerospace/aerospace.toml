@@ -282,6 +282,12 @@ run = 'layout floating'
 if.app-id = 'org.cryptomator'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+if.window-title-regex-substring = 'Settings'
+check-further-callbacks = true
+run = 'layout floating'
+
 
 # Window to workspace bindings
 
