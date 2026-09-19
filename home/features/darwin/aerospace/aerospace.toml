@@ -7,23 +7,23 @@
 # sketchbar has a built-in detection of already running process,
 # so it won't be run twice on AeroSpace restart
 after-startup-command = [
-    'exec-and-forget sketchybar',
-    'exec-and-forget sketchybar --reload',
-    'exec-and-forget sh -c "sleep 2 && borders active_color=0xFFfab387 inactive_color=0x00000000 width=5.0"',
+        'exec-and-forget sketchybar',
+        'exec-and-forget sketchybar --reload',
+        'exec-and-forget sh -c "sleep 2 && borders active_color=0xFFfab387 inactive_color=0x00000000 width=5.0"',
 ]
 
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = [
-    '/bin/bash',
-    '-c',
-    'sketchybar --trigger aerospace_workspace_change AEROSPACE_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSPACE_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
+        '/bin/bash',
+        '-c',
+        'sketchybar --trigger aerospace_workspace_change AEROSPACE_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSPACE_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
 ]
 
 # Start AeroSpace at login
 start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
-enable-normalization-flatten-containers = true
+enable-normalization-flatten-containers                         = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
@@ -66,11 +66,11 @@ preset = 'qwerty'
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
 inner.horizontal = 6
-inner.vertical = 6
-outer.left = 6
-outer.bottom = 6
-outer.top = [{ monitor."built-in" = 14 }, 44]
-outer.right = 6
+inner.vertical   = 6
+outer.left       = 6
+outer.bottom     = 6
+outer.top        = [{ monitor."built-in" = 14 }, 44]
+outer.right      = 6
 
 [exec]
 inherit-env-vars = true
@@ -171,23 +171,23 @@ alt-tab = 'workspace-back-and-forth'
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-alt-e = 'balance-sizes'          # Balance sizes of all windows in the current workspace
-alt-f = 'layout floating tiling' # Toggle between floating and tiling layout
-alt-m = 'fullscreen'
+alt-e       = 'balance-sizes'          # Balance sizes of all windows in the current workspace
+alt-f       = 'layout floating tiling' # Toggle between floating and tiling layout
+alt-m       = 'fullscreen'
 alt-shift-r = 'reload-config'
 
-cmd-h = []     # Disable "hide application"
+cmd-h     = [] # Disable "hide application"
 cmd-alt-h = [] # Disable "hide others"
 
 alt-r = [
-    'mode resize',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change AEROSPACE_MODE="r"',
+        'mode resize',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change AEROSPACE_MODE="r"',
 ]
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = [
-    'mode service',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change AEROSPACE_MODE="s"',
+        'mode service',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change AEROSPACE_MODE="s"',
 ]
 
 # Declare 'resize' binding mode
@@ -197,12 +197,12 @@ j = 'resize height +50'
 k = 'resize height -50'
 l = 'resize width +50'
 enter = [
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 esc = [
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 
 
@@ -210,8 +210,8 @@ esc = [
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
 esc = [
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 
 
@@ -219,24 +219,24 @@ esc = [
 #s = ['layout sticky tiling', 'mode main']
 
 alt-shift-h = [
-    'join-with left',
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'join-with left',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 alt-shift-j = [
-    'join-with down',
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'join-with down',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 alt-shift-k = [
-    'join-with up',
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'join-with up',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 alt-shift-l = [
-    'join-with right',
-    'mode main',
-    'exec-and-forget sketchybar --trigger aerospace_mode_change',
+        'join-with right',
+        'mode main',
+        'exec-and-forget sketchybar --trigger aerospace_mode_change',
 ]
 
 
@@ -244,53 +244,53 @@ alt-shift-l = [
 
 [[on-window-detected]]
 if.app-id = 'com.apple.ActivityMonitor'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.bitwarden.desktop'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Preview'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'app.zen-browser.zen'
+if.app-id                       = 'app.zen-browser.zen'
 if.window-title-regex-substring = 'Picture-in-Picture'
-check-further-callbacks = true
-run = 'layout floating'
+check-further-callbacks         = true
+run                             = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'app.zen-browser.zen'
+if.app-id                       = 'app.zen-browser.zen'
 if.window-title-regex-substring = 'Extension.*Bitwarden'
-check-further-callbacks = true
-run = 'layout floating'
+check-further-callbacks         = true
+run                             = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'ch.protonvpn.mac'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'eu.exelban.Stats'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'org.cryptomator'
-run = 'layout floating'
+run       = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'md.obsidian'
+if.app-id                       = 'md.obsidian'
 if.window-title-regex-substring = 'Settings'
-check-further-callbacks = true
-run = 'layout floating'
+check-further-callbacks         = true
+run                             = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'net.ankiweb.anki'
-run = 'layout floating'
+run       = 'layout floating'
 
 # Window to workspace bindings
 
@@ -298,142 +298,142 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace 1'
+run       = 'move-node-to-workspace 1'
 
 ## Terminals
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
-run = 'move-node-to-workspace 2'
+run       = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Terminal'
-run = 'move-node-to-workspace 2'
+run       = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
-run = 'move-node-to-workspace 2'
+run       = 'move-node-to-workspace 2'
 
 ## Orca
 
 [[on-window-detected]]
 if.app-id = 'com.softfever3d.orca-slicer'
-run = 'move-node-to-workspace 5'
+run       = 'move-node-to-workspace 5'
 
 ## 3D
 
 [[on-window-detected]]
 if.app-id = 'com.autodesk.fusion360'
-run = 'move-node-to-workspace 6'
+run       = 'move-node-to-workspace 6'
 
 [[on-window-detected]]
 if.app-id = 'org.freecad.FreeCAD'
-run = 'move-node-to-workspace 6'
+run       = 'move-node-to-workspace 6'
 
 ## Browsers
 
 [[on-window-detected]]
 if.app-id = 'app.zen-browser.zen'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'net.imput.helium'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 [[on-window-detected]]
 if.app-id = 'org.torproject.torbrowser'
-run = 'move-node-to-workspace 7'
+run       = 'move-node-to-workspace 7'
 
 ## IDE
 
 [[on-window-detected]]
 if.app-id = 'com.google.android.studio'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij.ce'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
 if.app-id = 'com.jetbrains.intellij'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
 if.app-id = 'dev.zed.Zed'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
 if.app-id = 'com.vscodium'
-run = 'move-node-to-workspace 8'
+run       = 'move-node-to-workspace 8'
 
 [[on-window-detected]]
-if.app-id = 'com.todesktop.230313mzl4w4u92'  # cursor
-run = 'move-node-to-workspace 8'
+if.app-id = 'com.todesktop.230313mzl4w4u92' # cursor
+run       = 'move-node-to-workspace 8'
 
 ## Chats
 
 [[on-window-detected]]
 if.app-id = 'com.viber.osx'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'org.whispersystems.signal-desktop'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'com.tdesktop.Telegram'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'pw.kmr.amd'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
-run = 'move-node-to-workspace 10'
+run       = 'move-node-to-workspace 10'
 
 # Workspaces to Display bindings
 
 [workspace-to-monitor-force-assignment]
-1 = '^built-in retina display$'
-2 = '^built-in retina display$'
-3 = '^built-in retina display$'
-4 = '^built-in retina display$'
-5 = '^built-in retina display$'
-6 = '^lg hdr wqhd$'
-7 = '^lg hdr wqhd$'
-8 = '^lg hdr wqhd$'
-9 = '^lg hdr wqhd$'
+1  = '^built-in retina display$'
+2  = '^built-in retina display$'
+3  = '^built-in retina display$'
+4  = '^built-in retina display$'
+5  = '^built-in retina display$'
+6  = '^lg hdr wqhd$'
+7  = '^lg hdr wqhd$'
+8  = '^lg hdr wqhd$'
+9  = '^lg hdr wqhd$'
 10 = '^lg hdr wqhd$'
