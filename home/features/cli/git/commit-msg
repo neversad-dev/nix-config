@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(head -n1 "$COMMIT_MSG_FILE")
+
+# Skip validation for merge commits
+if [[ $COMMIT_MSG == Merge* ]]; then
+  exit 0
+fi
+
+# Conventional Commits regex pattern
+# Matches: type(scope)!: description OR type: description
+PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_.-]+\))?!?: .+"
+
+if [[ ! $COMMIT_MSG =~ $PATTERN ]]; then
+  echo -e "\e[31m❌ Error: Commit message does not follow Conventional Commits format.\e[0m"
+  echo -e "Expected format: \e[33m<type>[optional scope]: <description>\e[0m"
+  echo -e "Example:         \e[32mfeat(api): add user endpoint\e[0m"
+  echo -e "\nCheck the commented template in your editor for allowed types."
+  exit 1
+fi

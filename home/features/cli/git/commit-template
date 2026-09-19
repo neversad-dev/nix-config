@@ -1,0 +1,17 @@
+
+
+# <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+#
+# Types:
+# feat:     A new feature         (ex: feat(auth): add login)
+# fix:      A bug fix             (ex: fix(ui): resolve overlap)
+# docs:     Documentation only    (ex: docs: update readme)
+# style:    Formatting, spaces    (ex: style: remove trailing spaces)
+# refactor: Code changes          (ex: refactor: simplify loop)
+# perf:     Performance tweak     (ex: perf: optimize query)
+# test:     Tests addition        (ex: test(api): add auth tests)
+# chore:    Build/auxiliary tools (ex: chore: update deps)

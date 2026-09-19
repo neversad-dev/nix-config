@@ -83,7 +83,7 @@ in {
     };
 
     home.shellAliases = {
-      lg = "lazygit";
+      gg = "lazygit";
     };
   };
 }
