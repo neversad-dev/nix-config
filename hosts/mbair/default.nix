@@ -8,6 +8,7 @@
 in {
   # Host-specific configuration
   networking.hostName = hostname;
+  networking.localHostName = hostname;
   networking.computerName = hostname;
 
   # User configuration - host specific
