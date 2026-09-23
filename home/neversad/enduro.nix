@@ -22,8 +22,5 @@
       ghostty.enable = false;
       kitty.enable = true;
     };
-    development = {
-      nix.enable = true;
-    };
   };
 }
