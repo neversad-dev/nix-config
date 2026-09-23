@@ -8,6 +8,6 @@
       cursor.enable = false;
       android.enable = false;
     };
-    gaming.enable = false;
+    gaming.enable = true;
   };
 }
