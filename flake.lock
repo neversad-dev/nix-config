@@ -407,11 +407,11 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1790448143,
-        "narHash": "sha256-9xKFiTJoS2afboKm/Jv74QZW2kJ0T/L+7SQtn0EXONw=",
+        "lastModified": 1790449605,
+        "narHash": "sha256-kg7SdE+BRrhmtRwWNeoyW2VLSoxVQfj8vcfBnB5WAZg=",
         "owner": "neversad-dev",
         "repo": "nvf-config",
-        "rev": "1438b0f150801eb382a1be7c727124bed8ec63a2",
+        "rev": "25b892cdb18626d6109b1667af60a913c32f71ad",
         "type": "github"
       },
       "original": {
