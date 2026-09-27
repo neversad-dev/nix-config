@@ -129,6 +129,14 @@
         };
       };
   in {
+    packages = forAllSystems (
+      system:
+        (import ./pkgs nixpkgs.legacyPackages.${system})
+        // {
+          nvim = nvf-config.packages.${system}.default;
+        }
+    );
+    overlays = import ./overlays {inherit inputs;};
     # Export modules for use in other flakes
     darwinModules = {
       default = ./modules/darwin;
@@ -194,11 +202,6 @@
           ];
         };
     };
-
-    # standalone neovim package for each system
-    packages = forAllSystems (system: {
-      nvim = nvf-config.packages.${system}.default;
-    });
 
     # Format the nix code in this flake
     formatter = forAllSystems (
