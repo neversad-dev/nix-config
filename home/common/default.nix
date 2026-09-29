@@ -5,6 +5,7 @@
   ...
 }: {
   imports = [
+    ./secrets.nix
     (mylib.relativeToRoot "vars/features.nix")
     (mylib.relativeToRoot "vars/fonts.nix")
   ];

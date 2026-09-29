@@ -57,7 +57,7 @@
 
     # my private secrets, it's a private repository.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
-    mysecrets = {
+    nix-secrets = {
       url = "git+ssh://git@github.com/neversad-dev/nix-secrets.git?shallow=1";
       flake = false;
     };
@@ -79,7 +79,6 @@
     self,
     nix-darwin,
     nixpkgs,
-    agenix,
     home-manager,
     wallpapers,
     nvf-config,
@@ -213,7 +212,6 @@
           nix-melt # TUI flake.lock viewer
           nix-tree # TUI dependency graph for a derivation
           just # command runner (repo Justfile)
-          ragenix # agenix-compatible secrets CLI
         ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path
