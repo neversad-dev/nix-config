@@ -7,7 +7,7 @@ WALLPAPERS_STUB="${2:-stub-flake-for-ci/wallpapers}"
 # Generate nix-secrets stubs based on ${mysecrets} references in the codebase
 mkdir -p "$NIX_SECRETS_STUB"
 
-grep -r '\${mysecrets}' home/ hosts/ secrets/ modules/ 2>/dev/null |
+grep -r '\${mysecrets}' home/ hosts/ secrets/ modules/ 2> /dev/null |
   sed -n 's/.*\${mysecrets}\/\([^"'"'"'; ]*\).*/\1/p' | sort -u | while read -r p; do
   mkdir -p "$NIX_SECRETS_STUB/$(dirname "$p")"
   touch "$NIX_SECRETS_STUB/$p"
