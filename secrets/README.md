@@ -66,9 +66,12 @@ age.secrets."my-secret" = {
   path = "${config.xdg.dataHome}/secrets/my-secret";  # optional explicit path
 };
 
-# Reference it
-xdg.configFile."app/config.json".text = builtins.toJSON {
-  api_key = "!cat ${config.age.secrets."my-secret".path}";
+# Pi supports command-backed credential values; other applications need their own runtime loading mechanism.
+home.file.".pi/agent/auth.json".text = builtins.toJSON {
+  openrouter = {
+    type = "api_key";
+    key = "!cat ${config.age.secrets."my-secret".path}";
+  };
 };
 ```
 
