@@ -102,6 +102,11 @@ gcroot:
         ls -al /nix/var/nix/gcroots/auto/
 
 [group('tools')]
+gen-stubs:
+        # Generate CI stub directories for nix-secrets and wallpapers
+        bash scripts/gen-stubs.sh
+
+[group('tools')]
 fmt:
         # Format Nix files with alejandra
         nix fmt . --accept-flake-config

@@ -28,6 +28,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Generate CI stubs
+        run: bash scripts/gen-stubs.sh
+
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
@@ -62,6 +65,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Generate CI stubs
+        run: bash scripts/gen-stubs.sh
 
       - name: Install Nix
         uses: cachix/install-nix-action@v31
@@ -173,6 +179,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Generate CI stubs
+        run: bash scripts/gen-stubs.sh
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -224,6 +233,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Generate CI stubs
+        run: bash scripts/gen-stubs.sh
 
       - name: Install Nix
         uses: cachix/install-nix-action@v31
@@ -282,6 +294,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Generate CI stubs
+        run: bash scripts/gen-stubs.sh
 
       - name: Install Nix
         uses: cachix/install-nix-action@v31
