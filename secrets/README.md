@@ -6,12 +6,13 @@ Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)
 
 ## Two levels of decryption
 
-| Level | Identity key | Where declared | Use for |
-|-------|-------------|----------------|---------|
-| **System (Darwin)** | `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix` | Root-level secrets (VPNs, system certs, etc.) |
-| **User** | `~/.ssh/id_ed25519` | Any home-manager module via `age.secrets` | API keys, app configs, user tokens |
+| Level               | Identity key                    | Where declared                            | Use for                                       |
+| ------------------- | ------------------------------- | ----------------------------------------- | --------------------------------------------- |
+| **System (Darwin)** | `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix`                | Root-level secrets (VPNs, system certs, etc.) |
+| **User**            | `~/.ssh/id_ed25519`             | Any home-manager module via `age.secrets` | API keys, app configs, user tokens            |
 
 **In this tree:**
+
 - `secrets/darwin.nix` — imports the agenix Darwin module and sets the **system-level** identity path. No `age.secrets` declarations here anymore.
 - `home/common/secrets.nix` — imports the agenix home-manager module and sets the **user-level** identity path.
 - `hosts/<host>/secrets.nix` — host-specific system secrets.
@@ -59,6 +60,7 @@ agenix -e shared/openrouter-pi.age -i ~/.ssh/id_ed25519
 ### 3. Wire it in this repo
 
 **User-level** (home-manager):
+
 ```nix
 # home/features/some-feature/default.nix
 age.secrets."my-secret" = {
@@ -76,6 +78,7 @@ home.file.".pi/agent/auth.json".text = builtins.toJSON {
 ```
 
 **System-level** (darwin/nixos):
+
 ```nix
 # hosts/mbair/secrets.nix
 age.secrets."work-vpn" = {
