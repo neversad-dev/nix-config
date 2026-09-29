@@ -108,8 +108,6 @@ gen-stubs:
         # Generate CI stub directories for nix-secrets and wallpapers
         bash scripts/gen-stubs.sh
 
-# Kept for backward compatibility; alias to gen-stubs
-gen-secrets-stub: gen-stubs
 
 [group('tools')]
 fmt:
