@@ -98,7 +98,7 @@
     specialArgs =
       inputs
       // {
-        inherit mylib myvars;
+        inherit outputs mylib myvars;
       };
 
     darwinSystems = {
@@ -111,10 +111,16 @@
 
     allSystems = builtins.attrValues darwinSystems ++ builtins.attrValues linuxSystems;
     forAllSystems = func: (nixpkgs.lib.genAttrs allSystems func);
+    overlays = import ./overlays {inherit inputs;};
+
     # Configure nixpkgs with allowUnfree and fetcherVersion for packages output
     pkgsFor = system:
       import nixpkgs {
         inherit system;
+        overlays = [
+          overlays.additions
+          overlays.modifications
+        ];
         config = {
           allowUnfree = true;
           fetcherVersion = 7;
@@ -123,26 +129,16 @@
     pkgsUnstableFor = system:
       import inputs.nixpkgs-unstable {
         inherit system;
+        overlays = [
+          overlays.additions
+          overlays.modifications
+        ];
         config = {
           allowUnfree = true;
           fetcherVersion = 7;
         };
       };
   in {
-    # Export modules for use in other flakes
-    darwinModules = {
-      default = ./modules/darwin;
-    };
-
-    homeModules = {
-      darwin = ./home/export/darwin;
-      linux = ./home/export/linux;
-    };
-
-    # Export lib and myvars for reuse
-    lib = mylib;
-    myvars = myvars;
-
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
       mbair = let
@@ -194,11 +190,6 @@
           ];
         };
     };
-
-    # standalone neovim package for each system
-    packages = forAllSystems (system: {
-      nvim = nvf-config.packages.${system}.default;
-    });
 
     # Format the nix code in this flake
     formatter = forAllSystems (
