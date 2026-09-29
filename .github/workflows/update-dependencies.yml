@@ -30,6 +30,9 @@ on:
         type: string
         default: "update-dependencies"
 
+env:
+  NIX_WALLPAPERS_OVERRIDE: path:${{ github.workspace }}/stub-flake-for-ci/wallpapers
+
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
@@ -236,7 +239,7 @@ jobs:
         if: steps.update.outputs.has-changes == 'true'
         run: |
           echo "Testing updated dependencies..."
-          nix flake check --accept-flake-config
+          nix flake check --accept-flake-config --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE"
           echo "✅ Dependency update validation passed"
 
       - name: Create Pull Request
