@@ -42,7 +42,7 @@ just clean           # Garbage collect old generations
 ```bash
 # Validation (ALWAYS run before committing)
 nix flake check --accept-flake-config
-nix fmt . --accept-flake-config --check
+just fmt-check
 
 # Manual builds (if just fails)
 nix build .#darwinConfigurations.mbair.system
@@ -51,7 +51,7 @@ nix build .#homeConfigurations."neversad@mbair"
 
 ### Build Order & Dependencies
 
-1. **ALWAYS** run `nix fmt .` before committing changes
+1. **ALWAYS** run `just fmt` before committing changes
 2. **ALWAYS** run `nix flake check` to validate configuration
 3. For system changes: `just darwin-build` → test → `just darwin`
 4. For user changes: `just home-build` → test → `just home`
@@ -117,7 +117,7 @@ The configuration is designed for reuse:
 
 ### Build Failures
 
-- **Always check formatting first**: Run `nix fmt .` before debugging
+- **Always check formatting first**: Run `just fmt` before debugging
 - **Flake lock issues**: Run `just up` to update inputs
 
 ## Development Guidelines
@@ -220,7 +220,7 @@ The Android development setup provides a complete development environment:
 The build check workflow validates:
 
 1. **Flake structure**: `nix flake check --all-systems`
-2. **Code formatting**: `nix fmt . --check`
+2. **Code formatting**: `just fmt-check` (or `nix develop --command just fmt-check`)
 3. **All configurations**: Auto-discovered darwin/home configs
 4. **Cross-platform**: Tests on macOS and Linux runners
 5. **Package builds**: Standalone packages like nvim
@@ -230,6 +230,6 @@ The build check workflow validates:
 ```bash
 # Full validation sequence
 nix flake check --accept-flake-config
-nix fmt . --accept-flake-config --check
+just fmt-check
 just darwin-build  # or just home-build
 ```
