@@ -50,7 +50,7 @@ jobs:
         run: nix flake check --all-systems --accept-flake-config --override-input mysecrets "$NIX_MYSECRETS_OVERRIDE"
 
       - name: Check formatting
-        run: nix fmt . --accept-flake-config --override-input mysecrets "$NIX_MYSECRETS_OVERRIDE" -- --check
+        run: nix develop --accept-flake-config --override-input mysecrets "$NIX_MYSECRETS_OVERRIDE" --command just fmt-check
 
   discover-configurations:
     runs-on: ubuntu-latest

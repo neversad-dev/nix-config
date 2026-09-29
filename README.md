@@ -18,7 +18,7 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). Day-to-day I w
 
 ## Builds and switches
 
-All development tooling (`nh`, `just`, `nom`, `alejandra`, etc.) is provided by the `devShell` defined in `flake.nix`. 
+All development tooling (`nh`, `just`, `alejandra`, `prettier`, `shfmt`, `taplo`, etc.) is provided by the `devShell` defined in `flake.nix`.
 Because `direnv` and `nix-direnv` are configured, simply `cd` into this repository to automatically activate the environment.
 
 Then you can use `just` to build and switch:
@@ -30,7 +30,7 @@ just up      # update flake inputs
 just         # list all commands
 ```
 
-*(Manual fallback if direnv is disabled: run `nix develop` first to get access to `nh` and `just`, or use raw `nix build ...` commands).*
+_(Manual fallback if direnv is disabled: run `nix develop` first to get access to `nh` and `just`, or use raw `nix build ...` commands)._
 
 ## My hosts (mental map)
 

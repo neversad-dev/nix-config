@@ -5,6 +5,7 @@
 This is a **public Nix configuration repository** that provides cross-platform (macOS and Linux) system configurations using nix-darwin and Home Manager. The repository is designed as a modular flake that can be used standalone or imported into other Nix flakes.
 
 ### Key Facts
+
 - **Type**: Nix flake configuration repository
 - **Size**: on the order of 60+ `.nix` files in a modular layout
 - **Languages**: Nix (primary), Shell scripts, TOML configs
@@ -15,9 +16,10 @@ This is a **public Nix configuration repository** that provides cross-platform (
 ## Build System & Commands
 
 ### Prerequisites
+
 - **Nix version**: 2.28.3+ with experimental features (`nix-command flakes`)
 - **Required tools**: `just` (command runner), `nh` (nix helper)
-- **macOS**: nix-darwin for system-level changes and Home Manager for user-level configurations 
+- **macOS**: nix-darwin for system-level changes and Home Manager for user-level configurations
 - **Linux**: Home Manager for user-level configurations
 
 ### Essential Commands (via just)
@@ -28,10 +30,10 @@ This is a **public Nix configuration repository** that provides cross-platform (
 just                 # List all available commands
 just darwin-build    # Build macOS system (safe, no activation)
 just darwin          # Build and activate macOS system
-just home-build      # Build Home Manager config (safe, no activation)  
+just home-build      # Build Home Manager config (safe, no activation)
 just home            # Build and activate Home Manager config
 just up              # Update all flake inputs
-just fmt             # Format all Nix code with alejandra
+just fmt             # Format code (Nix, Markdown/YAML, Shell, TOML)
 just clean           # Garbage collect old generations
 ```
 
@@ -40,7 +42,7 @@ just clean           # Garbage collect old generations
 ```bash
 # Validation (ALWAYS run before committing)
 nix flake check --accept-flake-config
-nix fmt . --accept-flake-config --check
+just fmt-check
 
 # Manual builds (if just fails)
 nix build .#darwinConfigurations.mbair.system
@@ -49,7 +51,7 @@ nix build .#homeConfigurations."neversad@mbair"
 
 ### Build Order & Dependencies
 
-1. **ALWAYS** run `nix fmt .` before committing changes
+1. **ALWAYS** run `just fmt` before committing changes
 2. **ALWAYS** run `nix flake check` to validate configuration
 3. For system changes: `just darwin-build` → test → `just darwin`
 4. For user changes: `just home-build` → test → `just home`
@@ -57,6 +59,7 @@ nix build .#homeConfigurations."neversad@mbair"
 ## Project Architecture
 
 ### Directory structure
+
 ```
 ├── flake.nix                    # Outputs: darwin/home configs, modules, packages, lib
 ├── Justfile
@@ -94,6 +97,7 @@ nix build .#homeConfigurations."neversad@mbair"
 ### Modular Design
 
 The configuration is designed for reuse:
+
 - **Export modules**: `darwinModules.default`, `homeModules.{darwin,linux}`
 - **Export utilities**: `lib` (from `nix-lib` + `relativeToRoot`)
 - **Example configs**: `darwinConfigurations.mbair`, `homeConfigurations."neversad@mbair"`, `homeConfigurations."neversad@enduro"`
@@ -101,30 +105,33 @@ The configuration is designed for reuse:
 ## Common Issues & Workarounds
 
 ### Known warnings (safe to ignore)
+
 - Multiple `Using lib.generators.toPlist without escape = true is deprecated` — from nix-darwin, harmless
 - Cachix substituter warnings on untrusted systems - Expected behavior
 
 ### Environment Setup Issues
+
 - **Trusted user required**: For cachix substituters to work properly
 - **Experimental features**: Must enable `nix-command flakes` in nix.conf
 - **just/nh missing**: Install via `nix profile install nixpkgs#just nixpkgs#nh`
 
 ### Build Failures
-- **Always check formatting first**: Run `nix fmt .` before debugging
+
+- **Always check formatting first**: Run `just fmt` before debugging
 - **Flake lock issues**: Run `just up` to update inputs
 
 ## Development Guidelines
 
 ### Making Changes
 
-1. **Format code**: `just fmt` (uses alejandra formatter)
+1. **Format code**: `just fmt` (uses alejandra, prettier, shfmt, taplo formatters)
 2. **Validate changes**: `nix flake check --accept-flake-config`
 3. **Test build**: `just darwin-build` or `just home-build`
 4. **Apply carefully**: `just darwin` or `just home`
 
 ### File Modifications
 
-- **Nix files**: Always use 2-space indentation, format with alejandra
+- **Nix files**: Always use 2-space indentation, format with alejandra (format all code via `just fmt`)
 - **Host configs**: nix-darwin under `hosts/<hostname>/`; HM entry modules under `home/neversad/<hostname>.nix`
 - **System modules**: `modules/darwin/` for macOS
 - **User features**: `home/features/{cli,desktop,darwin,linux,development}/`; shared HM shell in `home/common/`
@@ -174,6 +181,7 @@ When adding any package/program, follow this configuration priority:
    - Example: `home.file.".config/app/config.json".source = ./config.json;`
 
 **Configuration Philosophy**: Keep configurations **minimal and focused**
+
 - Prefer package defaults over extensive customization
 - Only override settings that are truly useful, recommended, or specifically requested
 - Avoid over-configuring packages - maintain simplicity and maintainability
@@ -184,7 +192,7 @@ The Android development setup provides a complete development environment:
 
 - **Conditional Loading**: All Android configurations use `lib.mkIf config.development.android.enable`
 - **Complete SDK**: Android SDK with build tools, platform tools, NDK, and emulator
-- **Pre-configured Emulators**: 
+- **Pre-configured Emulators**:
   - `MyResizable` - Resizable emulator with multiple form factors (phone, foldable, tablet, desktop)
   - `MyPixel9` - Pixel 9 device emulator with Google APIs
 - **Java Development**: Zulu OpenJDK 21 automatically configured
@@ -192,6 +200,7 @@ The Android development setup provides a complete development environment:
 - **SDK Synchronization**: Automatic sync between Nix-managed SDK and Android Studio location
 
 **Android configuration files**:
+
 - `home/features/development/android/android.nix` — main Android SDK configuration
 - `home/features/development/android/java.nix` — Java environment
 - `home/features/development/android/emulators/resizable.nix` — resizable emulator definitions
@@ -209,16 +218,18 @@ The Android development setup provides a complete development environment:
 ## Validation Pipeline
 
 The build check workflow validates:
+
 1. **Flake structure**: `nix flake check --all-systems`
-2. **Code formatting**: `nix fmt . --check`
+2. **Code formatting**: `just fmt-check` (or `nix develop --command just fmt-check`)
 3. **All configurations**: Auto-discovered darwin/home configs
 4. **Cross-platform**: Tests on macOS and Linux runners
 5. **Package builds**: Standalone packages like nvim
 
 ### Manual Validation
+
 ```bash
 # Full validation sequence
 nix flake check --accept-flake-config
-nix fmt . --accept-flake-config --check
+just fmt-check
 just darwin-build  # or just home-build
 ```

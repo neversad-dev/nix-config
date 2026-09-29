@@ -207,6 +207,9 @@
         packages = with pkgs; [
           nh # nix helper (darwin/home switch, clean, etc.)
           alejandra # nix formatter
+          prettier # markdown/yaml/json formatter
+          shfmt # shell script formatter
+          taplo # toml formatter
           nix-melt # TUI flake.lock viewer
           nix-tree # TUI dependency graph for a derivation
           just # command runner (repo Justfile)
