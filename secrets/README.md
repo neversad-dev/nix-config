@@ -105,13 +105,13 @@ just darwin   # or just home, depending on where the secret is declared
 CI runners have no SSH access to `nix-secrets`. The workflow auto-generates empty `.age` stub files from all `${nix-secrets}` references so evaluation succeeds:
 
 ```bash
-just gen-secrets-stub   # local equivalent
+just gen-stubs   # local equivalent (also generates wallpapers stub)
 ```
 
-Stubs are created in `secrets/ci-stub-for-flake/` (gitignored) and overridden via:
+Stubs are created in `stub-flake-for-ci/nix-secrets/` (gitignored) and overridden via:
 
 ```
---override-input nix-secrets path:./secrets/ci-stub-for-flake
+--override-input nix-secrets path:./stub-flake-for-ci/nix-secrets
 ```
 
 ## Troubleshooting activation

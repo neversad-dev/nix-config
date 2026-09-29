@@ -11,6 +11,6 @@ in {
   options.features.desktop.wallpapers.enable = mkEnableOption "wallpapers flake checkout in ~/Pictures/Wallpapers";
 
   config = mkIf cfg.enable {
-    home.file."Pictures/Wallpapers".source = "${wallpapers}";
+    home.file."Pictures/Wallpapers".source = "${wallpapers}/desktop";
   };
 }
