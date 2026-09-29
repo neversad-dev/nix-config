@@ -8,7 +8,7 @@
 [![Catppuccin](https://img.shields.io/badge/Catppuccin-302D41?logo=catppuccin&logoColor=DDB6F2)](https://github.com/catppuccin)
 [![Home Manager](https://img.shields.io/badge/Home_Manager-blue.svg?logo=nixos&logoColor=white)](https://github.com/nix-community/home-manager)
 
-Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). I can point another flake at this repo as an input if I need reuse; day-to-day I work from this tree.
+Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). Day-to-day I work from this tree.
 
 ## What lives here
 
@@ -57,7 +57,7 @@ With `features.development.android.enable`, I get SDK bits, env vars (`ANDROID_*
 
 ## Repo layout (where I put things)
 
-- **`flake.nix`** — outputs: darwin + HM configs, packages, overlays, devShells, formatter.
+- **`flake.nix`** — outputs: darwin + HM configs, devShells, formatter.
 - **`modules/darwin/`** — system modules I stack on darwin hosts.
 - **`hosts/<hostname>/`** — `default.nix` + shared `features.nix` for that machine.
 - **`secrets/`** — ragenix/agenix wiring; [secrets/README.md](secrets/README.md).

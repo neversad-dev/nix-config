@@ -139,15 +139,6 @@
         };
       };
   in {
-    packages = forAllSystems (
-      system:
-        (import ./pkgs {pkgs = nixpkgs.legacyPackages.${system};})
-        // {
-          nvim = nvf-config.packages.${system}.default;
-        }
-    );
-    inherit overlays;
-
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
       mbair = let
