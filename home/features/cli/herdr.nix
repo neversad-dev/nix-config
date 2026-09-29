@@ -57,7 +57,7 @@
   };
 
   # Declaratively link the plugin during Home Manager activation
-  home.activation.linkHerdrNavPlugin = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.linkHerdrNavPlugin = lib.hm.dag.entryAfter ["linkGeneration"] ''
     # Reference the exact Herdr binary and XDG data path dynamically
     HERDR_BIN="${config.programs.herdr.package}/bin/herdr"
     PLUGIN_PATH="${config.xdg.dataHome}/herdr/plugins/aimdevlee/herdr-nvim-nav"
