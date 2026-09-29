@@ -101,6 +101,11 @@ gc-legacy:
 gcroot:
         ls -al /nix/var/nix/gcroots/auto/
 
+# Generate dummy .age stub files for CI so the flake evaluates without the private nix-secrets repo
+[group('tools')]
+gen-secrets-stub:
+        @bash scripts/gen-secrets-stub.sh
+
 [group('tools')]
 fmt:
         # Format Nix files with alejandra

@@ -40,3 +40,6 @@ yarn-error.log*
 
 # direnv cache
 .direnv/
+
+# CI stub for private nix-secrets repo (auto-generated)
+/secrets/ci-stub-for-flake/

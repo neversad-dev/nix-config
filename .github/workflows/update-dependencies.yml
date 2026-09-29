@@ -30,6 +30,10 @@ on:
         type: string
         default: "update-dependencies"
 
+# Runners have no SSH key for private nix-secrets; Nix commands use this with --override-input.
+env:
+  NIX_SECRETS_OVERRIDE: path:${{ github.workspace }}/secrets/ci-stub-for-flake
+
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
@@ -232,11 +236,14 @@ jobs:
         run: |
           echo "✅ Dependencies are already up to date - no changes needed"
 
+      - name: Generate secrets stubs for CI
+        run: bash scripts/gen-secrets-stub.sh
+
       - name: Test updated dependencies
         if: steps.update.outputs.has-changes == 'true'
         run: |
           echo "Testing updated dependencies..."
-          nix flake check --accept-flake-config
+          nix flake check --all-systems --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE"
           echo "✅ Dependency update validation passed"
 
       - name: Create Pull Request
