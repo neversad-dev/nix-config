@@ -103,8 +103,26 @@ gcroot:
 
 [group('tools')]
 fmt:
-        # format the nix files in this repo
+        # Format Nix files with alejandra
         nix fmt . --accept-flake-config
+        # Format Markdown, YAML, and JSON files with prettier
+        prettier --write --no-error-on-unmatched-pattern "**/*.md" "**/*.yml" "**/*.yaml" "**/*.json"
+        # Format Shell scripts with shfmt
+        shfmt -w -i 2 -sr .
+        # Format TOML files with taplo
+        git ls-files "*.toml" | xargs -r taplo fmt
+
+[group('tools')]
+fmt-check:
+        # Check Nix files with alejandra
+        nix fmt . --accept-flake-config -- --check
+        # Check Markdown, YAML, and JSON files with prettier
+        prettier --check --no-error-on-unmatched-pattern "**/*.md" "**/*.yml" "**/*.yaml" "**/*.json"
+        # Check Shell scripts with shfmt
+        shfmt -d -i 2 -sr .
+        # Check TOML files with taplo
+        git ls-files "*.toml" | xargs -r taplo fmt --check
+
 
 [group('tools')]
 nvim:

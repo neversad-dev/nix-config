@@ -6,7 +6,7 @@ What runs in CI for this repo and what I touch when I change behavior.
 
 - **When:** pushes + PRs to `main`, plus **workflow_dispatch** with optional **`darwin-hosts`** / **`linux-hosts`** (comma-separated; leave empty to auto-detect from the flake).
 - **Why I care:** validates the flake, formatting, discovers darwin/linux outputs, builds/dry-runs so I do not merge a broken lock or module set.
-- **Private `mysecrets` on CI:** the workflow sets `NIX_MYSECRETS_OVERRIDE` to `secrets/ci-stub-for-flake` so evaluation does not need my real nix-secrets checkout. If I add new secret *names* required at eval time, stub or override accordingly.
+- **Private `mysecrets` on CI:** the workflow sets `NIX_MYSECRETS_OVERRIDE` to `secrets/ci-stub-for-flake` so evaluation does not need my real nix-secrets checkout. If I add new secret _names_ required at eval time, stub or override accordingly.
 - **If discovery breaks:** grep this file for hard-coded host names or job filters.
 
 ## `update-dependencies.yml`
