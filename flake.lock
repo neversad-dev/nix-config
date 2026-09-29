@@ -489,11 +489,11 @@
     "wallpapers": {
       "flake": false,
       "locked": {
-        "lastModified": 1747176584,
-        "narHash": "sha256-7S84eTltD9dk8mUje+P5G/cwTlQ5ArVq7FJW/yPY+ro=",
+        "lastModified": 1790709181,
+        "narHash": "sha256-ood+pu5d8etFsy9hdUAjMgX8V6WNRuSuWW7ya5fsko4=",
         "owner": "neversad-dev",
         "repo": "wallpapers",
-        "rev": "597bd667b03b59c621041bb78bb11d67e1bedc65",
+        "rev": "ba54c3482f9c0d243e71ea3da908e6b5bdeff7ed",
         "type": "github"
       },
       "original": {
