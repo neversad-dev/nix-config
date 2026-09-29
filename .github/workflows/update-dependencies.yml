@@ -30,6 +30,10 @@ on:
         type: string
         default: "update-dependencies"
 
+# Runners have no SSH key for private nix-secrets; Nix commands use this with --override-input.
+env:
+  NIX_SECRETS_OVERRIDE: path:${{ github.workspace }}/secrets/ci-stub-for-flake
+
 jobs:
   update-dependencies:
     runs-on: ubuntu-latest
@@ -104,16 +108,29 @@ jobs:
           git checkout "origin/$BASE_BRANCH" -B "$BRANCH_NAME"
           echo "Branch $BRANCH_NAME reset from origin/$BASE_BRANCH (fresh update)"
 
+      - name: Generate secrets stubs for CI
+        run: bash scripts/gen-secrets-stub.sh
+
       - name: Update dependencies
         id: update
         run: |
           set -o pipefail
           echo "Updating dependencies..."
 
+          # Build --update-input args for every direct input except nix-secrets (private SSH repo, not reachable in CI)
+          build_update_args() {
+            local args=""
+            for input in $(nix flake metadata --json | jq -r '.locks.nodes.root.inputs | keys[] | select(. != "nix-secrets")'); do
+              args="$args --update-input $input"
+            done
+            echo "$args"
+          }
+
           case "${{ github.event.inputs.update-type || 'all' }}" in
             "all")
-              echo "Updating all dependencies..."
-              nix flake update --accept-flake-config 2>&1 | tee /tmp/update.log
+              echo "Updating all dependencies except nix-secrets..."
+              update_args=$(build_update_args)
+              nix flake update $update_args --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
             "nixpkgs")
               echo "Updating nixpkgs..."
@@ -137,7 +154,8 @@ jobs:
               ;;
             "other")
               echo "Updating other dependencies..."
-              nix flake update --accept-flake-config 2>&1 | tee /tmp/update.log
+              update_args=$(build_update_args)
+              nix flake update $update_args --accept-flake-config 2>&1 | tee /tmp/update.log
               ;;
           esac
 
@@ -236,7 +254,7 @@ jobs:
         if: steps.update.outputs.has-changes == 'true'
         run: |
           echo "Testing updated dependencies..."
-          nix flake check --accept-flake-config
+          nix flake check --all-systems --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE"
           echo "✅ Dependency update validation passed"
 
       - name: Create Pull Request

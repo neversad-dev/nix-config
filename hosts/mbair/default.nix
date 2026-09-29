@@ -22,6 +22,7 @@ in {
   # Host-specific settings can go here
   imports = [
     ./features.nix # Shared configuration
+    ./secrets.nix
     (mylib.relativeToRoot "modules/darwin")
     (mylib.relativeToRoot "secrets/darwin.nix")
   ];

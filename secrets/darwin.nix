@@ -1,31 +1,16 @@
-{
-  agenix,
-  mysecrets,
-  ...
-}: {
+{agenix, ...}: {
   imports = [
     agenix.darwinModules.default
   ];
 
-  # enable logs for debugging
+  # Enable logs for debugging
   launchd.daemons."activate-agenix".serviceConfig = {
     StandardErrorPath = "/Library/Logs/org.nixos.activate-agenix.stderr.log";
     StandardOutPath = "/Library/Logs/org.nixos.activate-agenix.stdout.log";
   };
 
-  # if you changed this key, you need to regenerate all encrypt files from the decrypt contents!
+  # Default identity path for all Darwin machines
   age.identityPaths = [
-    # Generate manually via `sudo ssh-keygen -A`
-    "/etc/ssh/ssh_host_ed25519_key" # macOS, using the host key for decryption
+    "/etc/ssh/ssh_host_ed25519_key"
   ];
-
-  age.secrets = {
-    secret1 = {
-      file = "${mysecrets}/secret1.age";
-    };
-    neversad-secrets = {
-      file = "${mysecrets}/neversad-secrets.age";
-      owner = "neversad";
-    };
-  };
 }

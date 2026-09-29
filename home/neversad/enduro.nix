@@ -2,6 +2,7 @@
   imports = [
     ./home.nix
     ../common
+    ../features/ai
     ../features/cli
     ../features/desktop
     ../features/linux
