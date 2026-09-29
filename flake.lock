@@ -212,23 +212,6 @@
         "type": "github"
       }
     },
-    "mysecrets": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1777239734,
-        "narHash": "sha256-MG5xWaDDJTl4+CnWZG9wfFNq2y69LcQSOhI4s1iF5iU=",
-        "ref": "refs/heads/main",
-        "rev": "fa3789e746b8f92d531485bcfd4cad9aa70e3a9b",
-        "shallow": true,
-        "type": "git",
-        "url": "ssh://git@github.com/neversad-dev/nix-secrets.git"
-      },
-      "original": {
-        "shallow": true,
-        "type": "git",
-        "url": "ssh://git@github.com/neversad-dev/nix-secrets.git"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -286,6 +269,23 @@
         "owner": "neversad-dev",
         "repo": "nix-lib",
         "type": "github"
+      }
+    },
+    "nix-secrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790698184,
+        "narHash": "sha256-NaLHN4lq2FpNcO2GsAXUxTkLYQuQ5XY+f0oza94t7Wc=",
+        "ref": "refs/heads/main",
+        "rev": "86bda08c0af7f26f0609beafa26c3d7c6ecf09e3",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/neversad-dev/nix-secrets.git"
+      },
+      "original": {
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/neversad-dev/nix-secrets.git"
       }
     },
     "nixpkgs": {
@@ -426,9 +426,9 @@
         "catppuccin": "catppuccin",
         "catppuccin-vsc": "catppuccin-vsc",
         "home-manager": "home-manager_2",
-        "mysecrets": "mysecrets",
         "nix-darwin": "nix-darwin",
         "nix-lib": "nix-lib",
+        "nix-secrets": "nix-secrets",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nvf-config": "nvf-config",

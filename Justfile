@@ -101,10 +101,15 @@ gc-legacy:
 gcroot:
         ls -al /nix/var/nix/gcroots/auto/
 
+# Generate dummy .age stub files for CI so the flake evaluates without the private nix-secrets repo
+[group('tools')]
 [group('tools')]
 gen-stubs:
         # Generate CI stub directories for nix-secrets and wallpapers
         bash scripts/gen-stubs.sh
+
+# Kept for backward compatibility; alias to gen-stubs
+gen-secrets-stub: gen-stubs
 
 [group('tools')]
 fmt:

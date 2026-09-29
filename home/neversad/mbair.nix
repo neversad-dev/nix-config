@@ -4,6 +4,7 @@
     ./home.nix
     ./fonts.nix
     ../common
+    ../features/ai
     ../features/cli
     ../features/desktop
     ../features/darwin
@@ -12,6 +13,7 @@
 
   # home manager specific feature flags
   features = {
+    ai.enable = true;
     cli = {
       neovim.enable = true;
       git.enable = true;
