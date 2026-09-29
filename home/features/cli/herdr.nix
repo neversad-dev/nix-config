@@ -22,6 +22,7 @@
         toast = {
           delivery = "system";
         };
+        status_indicators = "symbols";
       };
       keys = {
         # Unbind default navigation so the plugin can intercept the keys
