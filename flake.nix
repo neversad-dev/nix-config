@@ -147,19 +147,6 @@
         }
     );
     inherit overlays;
-    # Export modules for use in other flakes
-    darwinModules = {
-      default = ./modules/darwin;
-    };
-
-    homeModules = {
-      darwin = ./home/export/darwin;
-      linux = ./home/export/linux;
-    };
-
-    # Export lib and myvars for reuse
-    lib = mylib;
-    myvars = myvars;
 
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {

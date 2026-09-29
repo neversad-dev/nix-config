@@ -32,10 +32,6 @@ just         # list all commands
 
 *(Manual fallback if direnv is disabled: run `nix develop` first to get access to `nh` and `just`, or use raw `nix build ...` commands).*
 
-## Reusing this flake elsewhere
-
-Only when I need it — import `github:neversad-dev/nix-config` (or a path), then `darwinModules.default` / `homeModules.darwin` or `homeModules.linux` from the flake outputs.
-
 ## My hosts (mental map)
 
 - **`mbair`** — `hosts/mbair/` + HM `flake.nix` output `"<primaryUser>@mbair"` → `home/<primaryUser>/mbair.nix`.
@@ -61,14 +57,13 @@ With `features.development.android.enable`, I get SDK bits, env vars (`ANDROID_*
 
 ## Repo layout (where I put things)
 
-- **`flake.nix`** — outputs: darwin + HM configs, `darwinModules`, `homeModules.{darwin,linux}`, packages, `lib`, exported `myvars`.
+- **`flake.nix`** — outputs: darwin + HM configs, packages, overlays, devShells, formatter.
 - **`modules/darwin/`** — system modules I stack on darwin hosts.
 - **`hosts/<hostname>/`** — `default.nix` + shared `features.nix` for that machine.
 - **`secrets/`** — ragenix/agenix wiring; [secrets/README.md](secrets/README.md).
 - **`home/common/`** — HM baseline (imports `vars/features.nix` for options).
 - **`home/features/`** — `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`.
 - **`home/<username>/`** — per-user entrypoints (`home.nix`, host-specific imports).
-- **`home/export/{darwin,linux}/`** — what the flake exposes as `homeModules.*`.
 - **`vars/`** — `myvars` + `features` option schema; [vars/README.md](vars/README.md).
 - **`lib/`** — helpers via `nix-lib` input.
 
