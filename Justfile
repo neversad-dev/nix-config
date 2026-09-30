@@ -25,7 +25,7 @@ todo:
 # Usage: just todo-add "Review PR +project @work due:tomorrow"
 [group('project')]
 todo-add text:
-  tuxedo add "{{ text }}"
+  TODO_FILE=./todo.txt tuxedo add "{{ text }}"
 
 # List project tasks (optionally filter by project/context/free text)
 [group('project')]
