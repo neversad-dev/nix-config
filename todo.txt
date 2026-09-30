@@ -4,4 +4,5 @@
 (A) Set up YubiKey integration for secure authentication +yubikey @security
 (A) Switch to pkgs-unstable as default and use overlay-based stable overrides for specific packages +nixpkgs @refactor
 (A) Unify hotkeys across apps and levels and document the philosophy in a dedicated .md file +hotkeys @docs
+(B) Add GitHub CLI (gh) and configure access token +gh @dev
 (C) Consider moving nvf-config and nix-lib into this repository +deps @consider
