@@ -1,5 +1,7 @@
-(C) Implement Aerospace sticky window workaround for Finder +aerospace https://github.com/nikitabobko/AeroSpace/issues/2#issuecomment-3041947801
+(C) Implement Aerospace sticky window workaround for Finder +aerospace @ui https://github.com/nikitabobko/AeroSpace/issues/2#issuecomment-3041947801
 (B) Set up passwordstore (pass) for password management +pass @security https://www.passwordstore.org/ https://github.com/ryan4yin/nix-config/blob/306741c2a727c57cd78ed76d2d85f907f423ec72/home/base/tui/password-store/default.nix
 (B) Set up authorized users for accessing all machines securely +users @security https://github.com/ryan4yin/nix-config/blob/306741c2a727c57cd78ed76d2d85f907f423ec72/modules/base/users.nix
 (A) Set up YubiKey integration for secure authentication +yubikey @security
 (A) Switch to pkgs-unstable as default and use overlay-based stable overrides for specific packages +nixpkgs @refactor
+(A) Unify hotkeys across apps and levels and document the philosophy in a dedicated .md file +hotkeys @docs
+(C) Consider moving nvf-config and nix-lib into this repository +deps @consider
