@@ -402,7 +402,7 @@
       "inputs": {
         "nix-lib": "nix-lib_2",
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-unstable"
         ],
         "nvf": "nvf"
       },
