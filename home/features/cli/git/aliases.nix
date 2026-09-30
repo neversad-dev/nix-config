@@ -7,6 +7,11 @@ with lib; let
   cfg = config.features.cli.git;
 in {
   config = mkIf cfg.enable {
+    home.file."bin/gcb" = {
+      source = ./gcb.sh;
+      executable = true;
+    };
+
     programs = {
       git.settings = {
         url = {
@@ -22,27 +27,29 @@ in {
         };
       };
 
-      zsh.shellAliases = {
-        gs = "git status --short";
-        gd = "git diff";
-        gds = "git diff --staged";
+      zsh = {
+        shellAliases = {
+          gs = "git status --short";
+          gd = "git diff";
+          gds = "git diff --staged";
 
-        ga = "git add";
-        gaa = "git add --all";
-        gap = "git add --patch"; # y - stage; n - skip; s - split; e = edit
+          ga = "git add";
+          gaa = "git add --all";
+          gap = "git add --patch"; # y - stage; n - skip; s - split; e = edit
 
-        gc = "git commit";
-        gcm = "git commit -m";
-        gca = "git commit --amend";
+          gc = "git commit";
+          gcm = "git commit -m";
+          gca = "git commit --amend";
 
-        gp = "git push";
-        gP = "git pull";
+          gp = "git push";
+          gP = "git pull";
 
-        gl = "git log --graph --all --pretty=format:'%C(auto)%h %C(white) %an %ar %C(auto)%D%n%s%n' --abbrev-commit";
-        gb = "git branch";
+          gl = "git log --graph --all --pretty=format:'%C(auto)%h %C(white) %an %ar %C(auto)%D%n%s%n' --abbrev-commit";
+          gb = "git branch";
 
-        gini = "git init";
-        gcl = "git clone";
+          gini = "git init";
+          gcl = "git clone";
+        };
       };
     };
   };
