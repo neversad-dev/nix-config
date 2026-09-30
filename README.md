@@ -53,6 +53,15 @@ just todo-archive   # move done tasks to done.txt
 
 Personal tasks live under `~/.todo` via the tuxedo home-manager feature (`home/features/cli/tuxedo/`).
 
+### todo.txt conventions in this repo
+
+Since `todo.txt` lives inside the repo, we don't use `+nix-config` as a project. Instead:
+
+- **`+project`** — names the specific tool, program, or subsystem being worked on (e.g., `+aerospace`, `+pass`, `+yubikey`, `+nixpkgs`)
+- **`@tag`** — marks cross-cutting category or type of work (e.g., `@security` for auth/secrets/keys, `@refactor` for structural changes)
+
+This keeps filtering useful: `just todo-ls +aerospace` for aerospace items, `just todo-ls @security` for all security work.
+
 ## `features.*` cheat sheet
 
 Defaults and real wiring live in `vars/features.nix` and each host’s `hosts/<hostname>/features.nix`. Rough list:
