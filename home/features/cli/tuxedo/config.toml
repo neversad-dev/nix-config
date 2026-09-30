@@ -7,4 +7,4 @@ show_done = true
 show_future = true
 sort_mode = "priority"
 recurrence_builder = true
-notes_dir = "~/notes"
+notes_dir = "~/.obsidian/tvault/notes"

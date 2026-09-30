@@ -23,7 +23,7 @@ in {
   };
 
   # Ensure ~/.todo exists with 0700 permissions (owner-only access)
-  home.activation.createTodoDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.tuxedoSetup = lib.hm.dag.entryAfter ["writeBoundary"] ''
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${todoDir}"
     $DRY_RUN_CMD chmod $VERBOSE_ARG 700 "${todoDir}"
   '';
