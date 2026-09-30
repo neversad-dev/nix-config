@@ -1,0 +1,10 @@
+theme = "Terminal"
+density = "cozy"
+show_left_pane = true
+show_right_pane = true
+line_numbers = true
+show_done = true
+show_future = true
+sort_mode = "priority"
+recurrence_builder = true
+notes_dir = "~/notes"

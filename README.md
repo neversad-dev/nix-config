@@ -18,7 +18,7 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). Day-to-day I w
 
 ## Builds and switches
 
-All development tooling (`nh`, `just`, `alejandra`, `prettier`, `shfmt`, `taplo`, etc.) is provided by the `devShell` defined in `flake.nix`.
+All development tooling (`nh`, `just`, `alejandra`, `prettier`, `shfmt`, `taplo`, `tuxedo`, etc.) is provided by the `devShell` defined in `flake.nix`.
 Because `direnv` and `nix-direnv` are configured, simply `cd` into this repository to automatically activate the environment.
 
 Then you can use `just` to build and switch:
@@ -38,6 +38,20 @@ _(Manual fallback if direnv is disabled: run `nix develop` first to get access t
 - **`enduro`** — Linux HM only: `"<primaryUser>@enduro"` → `home/<primaryUser>/enduro.nix`.
 
 `<primaryUser>` is always `myvars.primaryUser` from `vars/default.nix`.
+
+## Project task management (tuxedo)
+
+This repo uses a `todo.txt` file for project tasks instead of GitHub issues. [tuxedo](https://github.com/webstonehq/tuxedo) (a fast terminal UI for todo.txt) is included in the dev shell, and `just` commands wrap the most common operations:
+
+```bash
+just todo           # open project todo.txt in tuxedo TUI
+just todo-add "..." # add a task (supports natural language)
+just todo-ls        # list tasks
+just todo-done 3    # mark task #3 complete
+just todo-archive   # move done tasks to done.txt
+```
+
+Personal tasks live under `~/.todo` via the tuxedo home-manager feature (`home/features/cli/tuxedo/`).
 
 ## `features.*` cheat sheet
 

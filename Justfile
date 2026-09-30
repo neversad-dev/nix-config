@@ -8,6 +8,42 @@ default:
 
 ############################################################################
 #
+#  Project todo.txt (tuxedo)
+#
+#  Manage project tasks with tuxedo instead of GitHub issues.
+#  Commands below operate on ./todo.txt in this repo.
+#  Tuxedo is available in the nix develop shell.
+#
+############################################################################
+
+# Open project todo.txt in tuxedo TUI
+[group('project')]
+todo:
+  tuxedo ./todo.txt
+
+# Add a task to project todo.txt (supports natural language)
+# Usage: just todo-add "Review PR +project @work due:tomorrow"
+[group('project')]
+todo-add text:
+  tuxedo add "{{ text }}"
+
+# List project tasks (optionally filter by project/context/free text)
+[group('project')]
+todo-ls *term:
+  tuxedo ls {{ term }}
+
+# Mark task number N as done
+[group('project')]
+todo-done n:
+  tuxedo do {{ n }}
+
+# Move completed tasks to done.txt
+[group('project')]
+todo-archive:
+  tuxedo archive
+
+############################################################################
+#
 #  Darwin related commands
 #
 ############################################################################

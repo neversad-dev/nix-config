@@ -200,19 +200,24 @@
     # Usage: `nix develop`
     devShells = forAllSystems (system: let
       pkgs = pkgsFor system;
+      pkgs-unstable = pkgsUnstableFor system;
     in {
       default = pkgs.mkShell {
         name = "nix-config";
-        packages = with pkgs; [
-          nh # nix helper (darwin/home switch, clean, etc.)
-          alejandra # nix formatter
-          prettier # markdown/yaml/json formatter
-          shfmt # shell script formatter
-          taplo # toml formatter
-          nix-melt # TUI flake.lock viewer
-          nix-tree # TUI dependency graph for a derivation
-          just # command runner (repo Justfile)
-        ];
+        packages = with pkgs;
+          [
+            nh # nix helper (darwin/home switch, clean, etc.)
+            alejandra # nix formatter
+            prettier # markdown/yaml/json formatter
+            shfmt # shell script formatter
+            taplo # toml formatter
+            nix-melt # TUI flake.lock viewer
+            nix-tree # TUI dependency graph for a derivation
+            just # command runner (repo Justfile)
+          ]
+          ++ [
+            pkgs-unstable.tuxedo # project TODO manager (todo.txt)
+          ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path
           export NH_NO_CHECKS="1"   # nix-community/nh#305
