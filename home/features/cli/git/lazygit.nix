@@ -2,6 +2,7 @@
 {
   config,
   lib,
+  pkgs-unstable,
   ...
 }:
 with lib; let
@@ -10,6 +11,7 @@ in {
   config = mkIf cfg.enable {
     programs.lazygit = {
       enable = true;
+      package = pkgs-unstable.lazygit;
       settings = {
         # Config relating to the Lazygit UI
         gui = {
@@ -42,24 +44,24 @@ in {
         git = {
           # See https://github.com/jesseduffield/lazygit/blob/master/docs/Custom_Pagers.md
           # Multiple pagers are supported; you can cycle through them with the `|` key
-          pagers = [
+          diffRenderers = [
             # delta view with hyperlinks
             {
-              pager = "delta --paging=never --features catppuccin-mocha --navigate --line-numbers --whitespace-error-style \"22 reverse\" --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
+              command = "delta --paging=never --features catppuccin-mocha --navigate --line-numbers --whitespace-error-style \"22 reverse\" --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
             }
             # delta side-by-side view with hyperlinks
             {
-              pager = "delta --paging=never --side-by-side --features catppuccin-mocha --navigate --line-numbers --whitespace-error-style \"22 reverse\" --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
+              command = "delta --paging=never --side-by-side --features catppuccin-mocha --navigate --line-numbers --whitespace-error-style \"22 reverse\" --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
             }
 
             # Example: diff-so-fancy
             # {
-            #   pager = "diff-so-fancy";
+            #   command = "diff-so-fancy";
             # }
 
             # Example: ydiff (side-by-side)
             # {
-            #   pager = "ydiff -p cat -s --wrap --width={{columnWidth}}";
+            #   command = "ydiff -p cat -s --wrap --width={{columnWidth}}";
             #   colorArg = "never";
             # }
 

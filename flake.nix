@@ -65,7 +65,7 @@
     # Custom nvf configuration
     nvf-config = {
       url = "github:neversad-dev/nvf-config";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # my wallpapers
