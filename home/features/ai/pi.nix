@@ -4,13 +4,20 @@
   pkgs-unstable,
   pkgs,
   nix-secrets,
+  catppuccin-pi,
   ...
 }:
 with lib; let
   cfg = config.features.ai;
   jsonFormat = pkgs.formats.json {};
-in
-  mkIf cfg.enable {
+in {
+  imports = [
+    catppuccin-pi.homeManagerModules.default
+  ];
+
+  config = mkIf cfg.enable {
+    programs.pi.catppuccin.enable = true;
+
     age.secrets."openrouter-pi" = {
       file = "${nix-secrets}/shared/openrouter-pi.age";
       path = "${config.xdg.dataHome}/secrets/openrouter-pi";
@@ -48,4 +55,5 @@ in
     home.activation.atuinPiExtension = lib.hm.dag.entryAfter ["linkGeneration"] ''
       run ${lib.getExe config.programs.atuin.package} hook install pi
     '';
-  }
+  };
+}
