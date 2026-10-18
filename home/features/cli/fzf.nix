@@ -7,6 +7,7 @@
     tmux.enableShellIntegration = true;
 
     defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
-    fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git"; # CTRL-T
+    fileWidget.command = "fd --hidden --strip-cwd-prefix --exclude .git"; # CTRL-T
+    historyWidget.command = ""; # disable fzf Ctrl-R, atuin owns it
   };
 }
