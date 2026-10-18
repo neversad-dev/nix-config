@@ -43,11 +43,8 @@ in
 
     # Herdr hook: installs the herdr pi integration during activation.
     home.activation.herdrPiIntegration = lib.hm.dag.entryAfter ["linkGeneration"] ''
-      HERDR_BIN="${config.programs.herdr.package}/bin/herdr"
-
-      if [ -x "$HERDR_BIN" ]; then
-        $DRY_RUN_CMD "$HERDR_BIN" integration install pi 2>/dev/null || true
-      fi
+      run ${lib.getExe config.programs.herdr.package} integration install pi
+    '';
 
     # Atuin hook: writes ~/.pi/agent/extensions/atuin.ts from the bundled
     # extension inside the atuin binary, so it always matches the atuin we run.
