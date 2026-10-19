@@ -48,6 +48,11 @@ in {
     #   force = true;
     # };
 
+    # Herdr hook: installs the herdr pi integration during activation.
+    home.activation.herdrPiIntegration = lib.hm.dag.entryAfter ["linkGeneration"] ''
+      run ${lib.getExe config.programs.herdr.package} integration install pi
+    '';
+
     # Atuin hook: writes ~/.pi/agent/extensions/atuin.ts from the bundled
     # extension inside the atuin binary, so it always matches the atuin we run.
     # Must NOT be managed by home.file — the installer can't write through a
