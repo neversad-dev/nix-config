@@ -46,6 +46,10 @@
       url = "https://flakehub.com/f/catppuccin/vscode/*.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    catppuccin-pi = {
+      url = "github:otahontas/pi-coding-agent-catppuccin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     ########################  My own repositories  #########################################
 
