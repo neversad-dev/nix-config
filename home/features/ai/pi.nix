@@ -11,17 +11,28 @@ with lib; let
   cfg = config.features.ai;
   jsonFormat = pkgs.formats.json {};
 in {
+  # Installs the catppuccin-pi theme files but also brings in an activation hook
+  # that mutates ~/.pi/agent/settings.json (bad). We disable that hook below.
   imports = [
     catppuccin-pi.homeManagerModules.default
   ];
 
   config = mkIf cfg.enable {
+    # Required by the imported catppuccin-pi module. Enables theme support.
     programs.pi.catppuccin.enable = true;
+
+    # The module above tries to mutate settings.json at activation time.
+    # Override its hook to a no-op since we set the theme declaratively in settings.
+    home.activation.setPiTheme = lib.mkForce (lib.hm.dag.entryAfter [] "");
 
     age.secrets."openrouter-pi" = {
       file = "${nix-secrets}/shared/openrouter-pi.age";
       path = "${config.xdg.dataHome}/secrets/openrouter-pi";
     };
+
+    # The previous activation hook left a regular file here; let HM overwrite it
+    # once so the declarative symlink can take over.
+    home.file."${config.programs.pi-coding-agent.configDir}/settings.json".force = true;
 
     programs.pi-coding-agent = {
       enable = true;
@@ -29,6 +40,7 @@ in {
 
       settings = {
         defaultProvider = "openrouter";
+        theme = "catppuccin-mocha";
       };
     };
 
