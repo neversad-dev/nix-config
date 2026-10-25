@@ -180,6 +180,11 @@ When adding any package/program, follow this configuration priority:
    - Example: `xdg.configFile."app/config.toml".text = "...";`
    - Example: `home.file.".config/app/config.json".source = ./config.json;`
 
+3. **Stable package fallback**
+   - The default nixpkgs is `nixos-unstable`; if a package is broken or behaves badly, pin it via the `stable` overlay:
+   - `pkgs.stable.<package>` pulls from `nixos-26.05`
+   - Example: `home.packages = [ pkgs.stable.some-package ];`
+
 **Configuration Philosophy**: Keep configurations **minimal and focused**
 
 - Prefer package defaults over extensive customization

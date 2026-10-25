@@ -24,17 +24,17 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+      url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs"; # Default packages remain stable
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # agenix.url = "github:ryantm/agenix";
@@ -69,7 +69,7 @@
     # Custom nvf configuration
     nvf-config = {
       url = "github:neversad-dev/nvf-config";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # my wallpapers
@@ -83,6 +83,7 @@
     self,
     nix-darwin,
     nixpkgs,
+    nixpkgs-stable,
     home-manager,
     wallpapers,
     nvf-config,
@@ -123,18 +124,7 @@
         overlays = [
           overlays.additions
           overlays.modifications
-        ];
-        config = {
-          allowUnfree = true;
-          fetcherVersion = 7;
-        };
-      };
-    pkgsUnstableFor = system:
-      import inputs.nixpkgs-unstable {
-        inherit system;
-        overlays = [
-          overlays.additions
-          overlays.modifications
+          overlays.stable-packages
         ];
         config = {
           allowUnfree = true;
@@ -148,12 +138,8 @@
         system = darwinSystems.aarch64;
       in
         nix-darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs =
-            specialArgs
-            // {
-              "pkgs-unstable" = pkgsUnstableFor system;
-            };
+          inherit system specialArgs;
+          pkgs = pkgsFor system;
           modules = [
             ./hosts/mbair
           ];
@@ -170,7 +156,6 @@
             specialArgs
             // {
               inherit outputs wallpapers inputs;
-              "pkgs-unstable" = pkgsUnstableFor system;
             };
           modules = [
             ./home/${myvars.primaryUser}/mbair.nix
@@ -186,7 +171,6 @@
             specialArgs
             // {
               inherit outputs wallpapers inputs;
-              "pkgs-unstable" = pkgsUnstableFor system;
             };
           modules = [
             ./home/${myvars.primaryUser}/enduro.nix
@@ -204,24 +188,20 @@
     # Usage: `nix develop`
     devShells = forAllSystems (system: let
       pkgs = pkgsFor system;
-      pkgs-unstable = pkgsUnstableFor system;
     in {
       default = pkgs.mkShell {
         name = "nix-config";
-        packages = with pkgs;
-          [
-            nh # nix helper (darwin/home switch, clean, etc.)
-            alejandra # nix formatter
-            prettier # markdown/yaml/json formatter
-            shfmt # shell script formatter
-            taplo # toml formatter
-            nix-melt # TUI flake.lock viewer
-            nix-tree # TUI dependency graph for a derivation
-            just # command runner (repo Justfile)
-          ]
-          ++ [
-            pkgs-unstable.tuxedo # project TODO manager (todo.txt)
-          ];
+        packages = with pkgs; [
+          nh # nix helper (darwin/home switch, clean, etc.)
+          alejandra # nix formatter
+          prettier # markdown/yaml/json formatter
+          shfmt # shell script formatter
+          taplo # toml formatter
+          nix-melt # TUI flake.lock viewer
+          nix-tree # TUI dependency graph for a derivation
+          just # command runner (repo Justfile)
+          tuxedo # project TODO manager (todo.txt)
+        ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path
           export NH_NO_CHECKS="1"   # nix-community/nh#305

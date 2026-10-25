@@ -78,6 +78,23 @@ How to wire shared `features.nix` into both stacks and how to add new options: [
 
 With `features.development.android.enable`, I get SDK bits, env vars (`ANDROID_*`), emulators I defined (e.g. resizable / Pixel profile names in the modules), and Java alignment — details drift in code; grep `android` under `home/features/development/` when I change machines.
 
+## Nixpkgs channels
+
+- **Default (`pkgs`)**: `nixos-unstable` — used everywhere unless overridden.
+- **Stable (`pkgs.stable`)**: `nixos-26.05` — available via the `stable-packages` overlay for packages that need to stay pinned.
+
+Install from stable selectively:
+
+```nix
+home.packages = [ pkgs.stable.some-package ];
+```
+
+Or override a program’s package:
+
+```nix
+programs.some-program.package = pkgs.stable.some-program;
+```
+
 ## Repo layout (where I put things)
 
 - **`flake.nix`** — outputs: darwin + HM configs, devShells, formatter.

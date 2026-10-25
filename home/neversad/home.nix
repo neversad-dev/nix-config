@@ -28,7 +28,7 @@
     # wofi
     # firefox
     # n8n-custom
-    # stable.n8n
+    # stable.n8n  # use pkgs.stable.* to pin a package to nixos-26.05
     # n8n
 
     # # Adds the 'hello' command to your environment. It prints a friendly

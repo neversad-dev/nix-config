@@ -11,10 +11,12 @@
     # });
   };
 
-  # stable-packages = final: _prev: {
-  #   stable = import inputs.nixpkgs-stable {
-  #     system = final.system;
-  #     config.allowUnfree = true;
-  #   };
-  # };
+  # Expose the stable nixpkgs branch as `pkgs.stable` so individual
+  # packages can be pinned when needed regardless of the default channel.
+  stable-packages = final: _prev: {
+    stable = import inputs.nixpkgs-stable {
+      system = final.system;
+      config.allowUnfree = true;
+    };
+  };
 }

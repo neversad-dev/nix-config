@@ -1,8 +1,4 @@
-{
-  pkgs,
-  pkgs-unstable,
-  ...
-}: let
+{pkgs, ...}: let
   configPath =
     if pkgs.stdenv.isLinux
     then ".config/superfile/config.toml"
@@ -12,7 +8,7 @@
     then ".config/superfile/hotkeys.toml"
     else "Library/Application Support/superfile/hotkeys.toml";
 in {
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     superfile
   ];
 
