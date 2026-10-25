@@ -1,10 +1,10 @@
 {pkgs, ...}: let
   configPath =
-    if pkgs.stdenv.isLinux
+    if pkgs.stdenv.hostPlatform.isLinux
     then ".config/superfile/config.toml"
     else "Library/Application Support/superfile/config.toml";
   hotkeysPath =
-    if pkgs.stdenv.isLinux
+    if pkgs.stdenv.hostPlatform.isLinux
     then ".config/superfile/hotkeys.toml"
     else "Library/Application Support/superfile/hotkeys.toml";
 in {

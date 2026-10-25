@@ -52,10 +52,18 @@ in {
       force = true;
     };
 
-    home.file."${config.programs.pi-coding-agent.configDir}/extensions/worktrunk.ts" = {
-      source = "${pkgs.worktrunk.src}/dev/pi-extension.ts";
-      force = true;
-    };
+    # Worktrunk hook: installs the worktrunk pi plugin during activation.
+    # The worktrunk CLI internally invokes `git --version` to detect if it is
+    # running inside a git repository, so `git` must be available in PATH.
+    # Home Manager's activation environment has a minimal PATH without git.
+    #
+    # The installer interactively prompts for confirmation, so we pipe "y" to
+    # auto-accept.  We run from $HOME so the git-detection does not pick up the
+    # nix-config repository.
+    home.activation.worktrunkPiIntegration = lib.hm.dag.entryAfter ["linkGeneration"] ''
+      export PATH="${lib.makeBinPath [pkgs.git]}:$PATH"
+      run sh -c 'cd "$HOME" && echo "y" | ${lib.getExe config.programs.worktrunk.package} config plugins pi install'
+    '';
 
     # Herdr hook: installs the herdr pi integration during activation.
     home.activation.herdrPiIntegration = lib.hm.dag.entryAfter ["linkGeneration"] ''
