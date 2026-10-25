@@ -52,11 +52,10 @@ in {
       force = true;
     };
 
-    # uncomment and test after worktrunk update to v0.80.0
-    # home.file."${config.programs.pi-coding-agent.configDir}/extensions/worktrunk.ts" = {
-    #   source = "${pkgs.worktrunk}/share/worktrunk/extensions/pi.ts";
-    #   force = true;
-    # };
+    home.file."${config.programs.pi-coding-agent.configDir}/extensions/worktrunk.ts" = {
+      source = "${pkgs.worktrunk.src}/dev/pi-extension.ts";
+      force = true;
+    };
 
     # Herdr hook: installs the herdr pi integration during activation.
     home.activation.herdrPiIntegration = lib.hm.dag.entryAfter ["linkGeneration"] ''
