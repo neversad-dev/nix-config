@@ -2,12 +2,12 @@
 {
   config,
   lib,
-  pkgs-unstable,
+  pkgs,
   ...
 }: let
   todoDir = "${config.home.homeDirectory}/.todo";
 in {
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     tuxedo
   ];
 

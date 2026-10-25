@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs-unstable,
   ...
 }:
 with lib; let
@@ -10,7 +9,6 @@ in {
   config = mkIf cfg.enable {
     programs.worktrunk = {
       enable = true;
-      package = pkgs-unstable.worktrunk;
       enableZshIntegration = true;
       settings = {
       };

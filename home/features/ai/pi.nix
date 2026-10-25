@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs-unstable,
   pkgs,
   nix-secrets,
   catppuccin-pi,
@@ -36,7 +35,6 @@ in {
 
     programs.pi-coding-agent = {
       enable = true;
-      package = pkgs-unstable.pi-coding-agent;
 
       settings = {
         defaultProvider = "openrouter";
@@ -55,7 +53,7 @@ in {
     };
 
     home.file."${config.programs.pi-coding-agent.configDir}/extensions/worktrunk.ts" = {
-      source = "${pkgs-unstable.worktrunk.src}/dev/pi-extension.ts";
+      source = "${pkgs.worktrunk.src}/dev/pi-extension.ts";
       force = true;
     };
 

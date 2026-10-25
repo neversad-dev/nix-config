@@ -2,7 +2,6 @@
 {
   config,
   lib,
-  pkgs-unstable,
   ...
 }:
 with lib; let
@@ -11,7 +10,6 @@ in {
   config = mkIf cfg.enable {
     programs.lazygit = {
       enable = true;
-      package = pkgs-unstable.lazygit;
       settings = {
         # Config relating to the Lazygit UI
         gui = {

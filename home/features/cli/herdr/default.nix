@@ -1,13 +1,8 @@
-{
-  pkgs-unstable,
-  mylib,
-  ...
-}: {
+{mylib, ...}: {
   imports = mylib.scanPaths ./.;
 
   programs.herdr = {
     enable = true;
-    package = pkgs-unstable.herdr;
     settings = {
       onboarding = false;
       theme = {

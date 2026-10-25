@@ -1,8 +1,7 @@
 # Fuzzy finder (Ctrl-T / history) with fd-backed file search
-{pkgs-unstable, ...}: {
+{...}: {
   programs.fzf = {
     enable = true;
-    package = pkgs-unstable.fzf;
 
     tmux.enableShellIntegration = true;
 

@@ -3,7 +3,6 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   ...
 }:
 with lib; let
@@ -21,7 +20,6 @@ in {
 
     programs.zed-editor = {
       enable = true;
-      package = pkgs-unstable.zed-editor;
 
       extensions = [
         "catppuccin"
