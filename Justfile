@@ -1,6 +1,7 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
 
 hostname := `hostname`
+user := env_var_or_default("USER", `whoami`)
 
 # List all the just commands
 default:
@@ -49,16 +50,16 @@ todo-archive:
 ############################################################################
 
 [group('desktop')]
-darwin:
-  nh darwin switch .
+darwin host="":
+  nh darwin switch .{{ if host != "" { " -H " + host } else { "" } }}
 
 [group('desktop')]
-darwin-build:
-  nh darwin build . 
+darwin-build host="":
+  nh darwin build .{{ if host != "" { " -H " + host } else { "" } }}
 
 [group('desktop')]
-darwin-debug:
-  nh darwin switch . --verbose
+darwin-debug host="":
+  nh darwin switch . --verbose{{ if host != "" { " -H " + host } else { "" } }}
 
 # Legacy darwin command (kept for compatibility)
 [group('desktop')]
@@ -76,12 +77,12 @@ darwin-legacy:
 ############################################################################
 
 [group('home-manager')]
-home:
-  nh home switch .
+home host="":
+  nh home switch .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}
 
 [group('home-manager')]
-home-build:
-  nh home build .
+home-build host="":
+  nh home build .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}
 
 # Legacy home-manager command (kept for compatibility)
 [group('home-manager')]
