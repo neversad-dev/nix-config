@@ -17,6 +17,35 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
 - Catppuccin across apps, CLI/desktop/dev bundles under `home/features/`.
 - Primary username and related identity bits come from `myvars` (`import ./vars` in `flake.nix`).
 
+## First-time setup on a new machine
+
+1. **Generate a per-machine SSH keypair** (one per host, never copied between devices):
+   ```bash
+   ssh-keygen -t ed25519 -a 256 -C "neversad@$(hostname)" -f ~/.ssh/id_ed25519
+   ```
+2. **Add the public key to GitHub:**
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+   Paste it into GitHub Settings → SSH and GPG keys → New SSH key.
+3. **Clone this repository via SSH** so flake inputs resolve:
+   ```bash
+   git clone git@github.com:neversad-dev/nix-config.git
+   cd nix-config
+   ```
+   _(This repo depends on a private `nix-secrets` input fetched over SSH; CI stubs it out, local builds require working Git+SSH auth.)_
+4. **Load the key into the agent and macOS Keychain** (first unlock only; after that, `UseKeychain yes` in the declarative SSH config handles it):
+   ```bash
+   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+   ssh -T git@github.com   # verify
+   ```
+   On Linux, `ssh-add ~/.ssh/id_ed25519` once per session or rely on your desktop keyring.
+5. **Generate the host SSH key for agenix** (Darwin only; NixOS handles this automatically):
+   ```bash
+   sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
+   ```
+   Agenix uses this to decrypt system-level secrets. Without it, darwin activation fails.
+
 ## Builds and switches
 
 All development tooling (`nh`, `just`, `alejandra`, `prettier`, `shfmt`, `taplo`, `tuxedo`, etc.) is provided by the `devShell` defined in `flake.nix`.
