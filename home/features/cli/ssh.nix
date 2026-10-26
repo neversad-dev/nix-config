@@ -47,6 +47,14 @@
         IdentityFile = "~/.ssh/id_ed25519";
         PreferredAuthentications = "publickey";
       };
+      # Future VPS: add host aliases here. Follow the same pattern as GitHub:
+      #
+      # "my-vps" = {
+      #   HostName = "1.2.3.4";
+      #   User = "neversad";
+      #   IdentityFile = "~/.ssh/id_ed25519";
+      #   Port = 22;
+      # };
     };
   };
 
@@ -64,5 +72,16 @@
       ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" > "$HOME/.ssh/known_hosts"
     fi
     ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/known_hosts"
+  '';
+
+  # Bootstrap safety check: warn if the per-machine SSH key is missing.
+  # Agenix decryption, GitHub auth, and commit signing all depend on it.
+  home.activation.checkSshKey = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+      ${pkgs.coreutils}/bin/printf '\n\033[1;33mWARNING:\033[0m No ~/.ssh/id_ed25519 found.\n' >&2
+      ${pkgs.coreutils}/bin/printf '  Run:  ssh-keygen -t ed25519 -a 256 -C "neversad@mbair" -f ~/.ssh/id_ed25519\n' >&2
+      ${pkgs.coreutils}/bin/printf '  Then: ssh-add --apple-use-keychain ~/.ssh/id_ed25519\n' >&2
+      ${pkgs.coreutils}/bin/printf '  And:  cat ~/.ssh/id_ed25519.pub → GitHub SSH settings\n\n' >&2
+    fi
   '';
 }
