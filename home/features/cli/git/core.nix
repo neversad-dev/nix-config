@@ -16,11 +16,15 @@ in {
       activation.sshAllowedSigners = lib.hm.dag.entryAfter ["linkGeneration"] ''
         PUBKEY="$HOME/.ssh/id_ed25519.pub"
         if [ -f "$PUBKEY" ]; then
-          ${pkgs.coreutils}/bin/printf '%s\t%s\n' \
-            "7419136+neversad-dev@users.noreply.github.com" \
-            "$(${pkgs.coreutils}/bin/cat "$PUBKEY")" \
-            > "$HOME/.ssh/allowed_signers"
-          ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/allowed_signers"
+          if [[ -v DRY_RUN ]]; then
+            echo "[dry-run] would update $HOME/.ssh/allowed_signers" >&2
+          else
+            ${pkgs.coreutils}/bin/printf '%s\t%s\n' \
+              "7419136+neversad-dev@users.noreply.github.com" \
+              "$(${pkgs.coreutils}/bin/cat "$PUBKEY")" \
+              > "$HOME/.ssh/allowed_signers"
+            ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/allowed_signers"
+          fi
         fi
       '';
 

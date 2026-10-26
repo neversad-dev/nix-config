@@ -44,7 +44,8 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
    ```bash
    sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
    ```
-   Agenix uses this to decrypt system-level secrets. Without it, darwin activation fails.
+   Agenix uses this to decrypt system-level secrets.
+6. **Enroll the new keys before activating.** On a machine that can already decrypt the secrets, add the new user public key (`~/.ssh/id_ed25519.pub`) and, for any system secrets, the host public key (`/etc/ssh/ssh_host_ed25519_key.pub`) as recipients in `nix-secrets/secrets.nix`. Rekey the relevant `.age` files and commit/push the changes. Update this flake's pinned `nix-secrets` input to that revision before rebuilding. Generating keys alone does not grant decryption access; see [Adding a new host or machine](secrets/README.md#adding-a-new-host-or-machine).
 
 ## Builds and switches
 

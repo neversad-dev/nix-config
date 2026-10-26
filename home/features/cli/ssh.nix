@@ -62,16 +62,20 @@
   # If DNS is ever poisoned or GitHub's key changes, SSH aborts instead of
   # silently accepting an attacker-controlled key.
   home.activation.sshKnownHosts = lib.hm.dag.entryAfter ["linkGeneration"] ''
-    mkdir -p "$HOME/.ssh"
-    GH_KEY="github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
-    if [ -f "$HOME/.ssh/known_hosts" ]; then
-      if ! ${pkgs.gnugrep}/bin/grep -qF "$GH_KEY" "$HOME/.ssh/known_hosts" 2>/dev/null; then
-        ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" >> "$HOME/.ssh/known_hosts"
-      fi
+    if [[ -v DRY_RUN ]]; then
+      echo "[dry-run] would seed GitHub host key in $HOME/.ssh/known_hosts" >&2
     else
-      ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" > "$HOME/.ssh/known_hosts"
+      mkdir -p "$HOME/.ssh"
+      GH_KEY="github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+      if [ -f "$HOME/.ssh/known_hosts" ]; then
+        if ! ${pkgs.gnugrep}/bin/grep -qF "$GH_KEY" "$HOME/.ssh/known_hosts" 2>/dev/null; then
+          ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" >> "$HOME/.ssh/known_hosts"
+        fi
+      else
+        ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" > "$HOME/.ssh/known_hosts"
+      fi
+      ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/known_hosts"
     fi
-    ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/known_hosts"
   '';
 
   # Bootstrap safety check: warn if the per-machine SSH key is missing.
