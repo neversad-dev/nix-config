@@ -26,6 +26,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
@@ -35,6 +36,11 @@
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs-25-11";
     };
 
     # agenix.url = "github:ryantm/agenix";
@@ -84,6 +90,7 @@
     nix-darwin,
     nixpkgs,
     nixpkgs-stable,
+    nixpkgs-25-11,
     home-manager,
     wallpapers,
     nvf-config,
@@ -176,6 +183,13 @@
             ./home/${myvars.primaryUser}/enduro.nix
           ];
         };
+    };
+
+    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+      pkgs = import nixpkgs-25-11 {system = "aarch64-linux";};
+      modules = [
+        ./hosts/nix-on-droid.nix
+      ];
     };
 
     # Format the nix code in this flake
