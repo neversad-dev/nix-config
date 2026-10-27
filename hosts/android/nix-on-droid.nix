@@ -82,6 +82,10 @@
       features.cli.git.enable = true;
       features.cli.starship.enable = true;
 
+      # Pin atuin to stable nixpkgs — the unstable version compiles
+      # from source on aarch64-linux which is too slow on mobile.
+      programs.atuin.package = pkgs.stable.atuin;
+
       programs.bat.enable = true;
 
       # Starship's background git checks can time out on Android's slow
