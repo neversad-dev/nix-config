@@ -44,9 +44,7 @@
     };
 
     nix-on-droid = {
-      url = "github:nix-community/nix-on-droid/release-24.05";
-      inputs.nixpkgs.follows = "nixpkgs-24-05";
-      inputs.home-manager.follows = "home-manager-24-05";
+      url = "github:nix-community/nix-on-droid/master";
     };
 
     # agenix.url = "github:ryantm/agenix";
@@ -138,12 +136,6 @@
           overlays.additions
           overlays.modifications
           overlays.stable-packages
-          # plasma5Packages was removed in nixpkgs 26.11 (unstable).
-          # nix-on-droid release-24.05 still references it; alias it
-          # to kdePackages so the module evaluates without crashing.
-          (final: prev: {
-            plasma5Packages = prev.kdePackages or {};
-          })
         ];
         config = {
           allowUnfree = true;
