@@ -57,7 +57,6 @@
         ../../home/features/cli/zoxide.nix
         ../../home/features/cli/fzf.nix
         ../../home/features/cli/fd.nix
-        ../../home/features/cli/btop.nix
         ../../home/features/cli/tree.nix
         ../../home/features/cli/git/default.nix
         ../../home/features/cli/starship.nix
