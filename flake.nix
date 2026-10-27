@@ -192,17 +192,11 @@
     };
 
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-24-05 {
-        system = "aarch64-linux";
-        # Cherry-pick tuxedo and pay-respects from unstable nixpkgs
-        # while keeping the system on 24.05 for stability.
-        overlays = [
-          (final: prev: {
-            tuxedo = nixpkgs.legacyPackages.${final.system}.tuxedo or prev.tuxedo;
-            pay-respects = nixpkgs.legacyPackages.${final.system}.pay-respects or prev.pay-respects;
-          })
-        ];
-      };
+      # NOTE: We use unstable nixpkgs here (not 24.05) so latest
+      # packages (tuxedo, pay-respects, newer git, etc.) are available
+      # with full binary cache coverage. The nix-on-droid module itself
+      # is still release-24.05; this is an unsupported combination.
+      pkgs = pkgsFor "aarch64-linux";
       extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/nix-on-droid.nix
