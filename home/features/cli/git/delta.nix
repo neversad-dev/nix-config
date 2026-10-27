@@ -21,7 +21,7 @@ in {
               owner = "catppuccin";
               repo = "delta";
               rev = "011516f5d14f66b771b3e716f29c77231e008c74";
-              sha256 = "sha256-04po0A7bVMsmYdJcKL6oL39RlMLij1lRKvWl5AUXJ7Q=";
+              sha256 = "sha256-lztkxX9O41YossvRzpR7tqxMhDNT1Efy2JvkCwtsiXQ=";
             };
           in "${catppuccin-delta}/catppuccin.gitconfig";
         }
