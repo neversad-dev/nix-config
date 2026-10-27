@@ -71,6 +71,13 @@
       # cli/default.nix which provides it is not imported here yet.
       programs.bat.enable = true;
 
+      # Explicitly source zsh-syntax-highlighting after all other init.
+      # HM-24.05 sometimes places it in the wrong order when combined
+      # with atuin's zle widget wrappers, causing highlighting to fail.
+      programs.zsh.initExtra = ''
+        source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+      '';
+
       # Handy baseline packages not yet brought in by imported modules.
       home.packages = with pkgs; [
         htop
