@@ -21,7 +21,7 @@
   #     compat.nix so they evaluate on HM 24.05 without modification.
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
-  #                    starship, atuin, eza, dust, fastfetch, tldr,
+  #                    starship, atuin, eza, dust, fastfetch,
   #                    bat, htop, jq, yq, ripgrep, zip
 
   environment.packages = with pkgs; [
@@ -73,12 +73,11 @@
         ../../home/features/cli/eza.nix
         ../../home/features/cli/dust.nix
         ../../home/features/cli/fastfetch.nix
-        ../../home/features/cli/tldr.nix
+
       ];
 
       features.cli.git.enable = true;
       features.cli.starship.enable = true;
-      features.cli.tldr.enable = true;
 
       programs.bat.enable = true;
 
