@@ -35,7 +35,6 @@
     # so existing mbair modules can be reused.
     extraSpecialArgs = {
       inherit inputs mylib myvars agenix;
-      inherit (inputs) catppuccin;
     };
 
     backupFileExtension = "hm-bak";
@@ -61,7 +60,6 @@
         ../../home/features/cli/git/default.nix
         ../../home/features/cli/starship.nix
         ../../home/neversad/fonts.nix
-        ../../home/features/cli/catppuccin.nix
       ];
 
       # Enable the feature-flagged CLI modules we want on this device.
