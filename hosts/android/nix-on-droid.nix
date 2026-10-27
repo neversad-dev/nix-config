@@ -48,18 +48,17 @@
       ...
     }: {
       imports = [
-        ../home/neversad/home.nix
-        ../home/common/default.nix
-        # Cherry-picked CLI modules (avoiding the all-at-once scanPaths
-        # in cli/default.nix so we can add things incrementally).
-        ../home/features/cli/shell.nix
-        ../home/features/cli/zoxide.nix
-        ../home/features/cli/fzf.nix
-        ../home/features/cli/fd.nix
-        ../home/features/cli/btop.nix
-        ../home/features/cli/tree.nix
-        ../home/features/cli/git/default.nix
-        ../home/features/cli/starship.nix
+        ./compat.nix
+        ../../home/neversad/home.nix
+        ../../home/common/default.nix
+        ../../home/features/cli/shell.nix
+        ../../home/features/cli/zoxide.nix
+        ../../home/features/cli/fzf.nix
+        ../../home/features/cli/fd.nix
+        ../../home/features/cli/btop.nix
+        ../../home/features/cli/tree.nix
+        ../../home/features/cli/git/default.nix
+        ../../home/features/cli/starship.nix
       ];
 
       # Enable the feature-flagged CLI modules we want on this device.
