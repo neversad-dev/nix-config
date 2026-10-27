@@ -10,19 +10,14 @@
 }: {
   # Nix-on-Droid configuration for Pixel 6.
   #
-  # Constraints:
-  #   - system.stateVersion and HM stateVersion must stay at 24.05
-  #     to match the pinned nix-on-droid release (nixpkgs-24-05 and
-  #     home-manager-24-05 in flake.nix).
-  #   - We cherry-pick individual modules from home/features/cli instead
-  #     of importing cli/default.nix wholesale, so we can add things
-  #     incrementally and avoid features that don't build in proot.
-  #   - Modules written for HM 24.11 (mbair) are shimmed through
-  #     compat.nix so they evaluate on HM 24.05 without modification.
+  # NOTE: pkgs come from nixpkgs unstable (not 24.05) so latest
+  # packages are available. The nix-on-droid module and bundled
+  # home-manager are still release-24.05 — this is an unsupported
+  # combination. compat.nix is kept as a safety net.
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
   #                    starship, atuin, eza, dust, fastfetch, direnv,
-  #                    bat, htop, jq, yq, ripgrep, zip
+  #                    tuxedo, pay-respects, bat, htop, jq, yq, ripgrep, zip
 
   environment.packages = with pkgs; [
     git
@@ -78,6 +73,8 @@
         ../../home/features/cli/dust.nix
         ../../home/features/cli/fastfetch.nix
         ../../home/features/development/direnv.nix
+        ../../home/features/cli/tuxedo/default.nix
+        ../../home/features/cli/pay-respects.nix
 
       ];
 
