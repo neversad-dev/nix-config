@@ -195,7 +195,7 @@
       pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
       extraSpecialArgs = specialArgs;
       modules = [
-        ./hosts/nix-on-droid.nix
+        ./hosts/android/nix-on-droid.nix
       ];
     };
 
