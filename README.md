@@ -7,8 +7,9 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Catppuccin](https://img.shields.io/badge/Catppuccin-302D41?logo=catppuccin&logoColor=DDB6F2)](https://github.com/catppuccin)
 [![Home Manager](https://img.shields.io/badge/Home_Manager-blue.svg?logo=nixos&logoColor=white)](https://github.com/nix-community/home-manager)
+[![Nix-on-Droid](https://img.shields.io/badge/Nix_on_Droid-5277C3.svg?logo=android&logoColor=white)](https://github.com/nix-community/nix-on-droid)
 
-Notes to myself: nix-darwin + Home Manager flake (macOS + Linux). Day-to-day I work from this tree.
+Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://github.com/nix-community/nix-on-droid) for Android. Day-to-day I work from this tree.
 
 ## What lives here
 
@@ -26,6 +27,7 @@ Then you can use `just` to build and switch:
 ```bash
 just darwin  # build and switch macOS (via nh)
 just home    # build and switch Home Manager (via nh)
+just droid   # build and switch Nix-on-Droid
 just up      # update flake inputs
 just         # list all commands
 ```
@@ -36,6 +38,7 @@ _(Manual fallback if direnv is disabled: run `nix develop` first to get access t
 
 - **`mbair`** — `hosts/mbair/` + HM `flake.nix` output `"<primaryUser>@mbair"` → `home/<primaryUser>/mbair.nix`.
 - **`enduro`** — Linux HM only: `"<primaryUser>@enduro"` → `home/<primaryUser>/enduro.nix`.
+- **`pixel6`** — Nix-on-Droid (Android): `hosts/nix-on-droid.nix` via `nixOnDroidConfigurations.pixel6`. Uses its own nixpkgs / home-manager 24.05 pins.
 
 `<primaryUser>` is always `myvars.primaryUser` from `vars/default.nix`.
 
@@ -78,6 +81,27 @@ How to wire shared `features.nix` into both stacks and how to add new options: [
 
 With `features.development.android.enable`, I get SDK bits, env vars (`ANDROID_*`), emulators I defined (e.g. resizable / Pixel profile names in the modules), and Java alignment — details drift in code; grep `android` under `home/features/development/` when I change machines.
 
+## Nix-on-Droid
+
+The `pixel6` config runs via [nix-on-droid](https://github.com/nix-community/nix-on-droid) on Android. Because nix-on-droid `release-24.05` pins against nixpkgs / home-manager 24.05, the flake keeps dedicated inputs for it:
+
+- `nixpkgs-24-05` + `home-manager-24-05` — used only by nix-on-droid
+- `nix-on-droid` — follows the two above, so everything stays in sync
+
+Switch on-device:
+
+```bash
+nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#pixel6"
+```
+
+Or from the repo with `just`:
+
+```bash
+just droid pixel6
+```
+
+Home-manager is wired through nix-on-droid's built-in module (`home-manager.*` options), not via a standalone `homeConfigurations` output. The current `hosts/nix-on-droid.nix` is intentionally minimal — it will be expanded later with shared home-manager imports.
+
 ## Nixpkgs channels
 
 - **Default (`pkgs`)**: `nixos-unstable` — used everywhere unless overridden.
@@ -97,9 +121,10 @@ programs.some-program.package = pkgs.stable.some-program;
 
 ## Repo layout (where I put things)
 
-- **`flake.nix`** — outputs: darwin + HM configs, devShells, formatter.
+- **`flake.nix`** — outputs: darwin + HM + nix-on-droid configs, devShells, formatter.
 - **`modules/darwin/`** — system modules I stack on darwin hosts.
 - **`hosts/<hostname>/`** — `default.nix` + shared `features.nix` for that machine.
+- **`hosts/nix-on-droid.nix`** — Android nix-on-droid config (pixel6).
 - **`secrets/`** — ragenix/agenix wiring; [secrets/README.md](secrets/README.md).
 - **`home/common/`** — HM baseline (imports `vars/features.nix` for options).
 - **`home/features/`** — `cli/`, `desktop/`, `darwin/`, `linux/`, `development/`.

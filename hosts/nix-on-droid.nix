@@ -1,59 +1,48 @@
-{ config, lib, pkgs, ... }:
-
 {
-  # Simply install just the packages
-  environment.packages = with pkgs; [
-    # User-facing stuff that you really really want to have
-    vim # or some other editor, e.g. nano or neovim
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  # Nix-on-Droid configuration for Pixel 6.
+  # Version must stay at 24.05 to match the nix-on-droid release
+  # (nixpkgs-24-05 and home-manager-24-05 are pinned in flake.nix).
 
+  environment.packages = with pkgs; [
     git
     curl
-    # Some common stuff that people expect to have
-    #procps
-    #killall
-    #diffutils
-    #findutils
-    #utillinux
-    #tzdata
-    #hostname
-    #man
-    #gnugrep
-    #gnupg
-    #gnused
-    #gnutar
-    #bzip2
-    #gzip
-    #xz
-    #zip
-    #unzip
-    #nvf-config.packages.aarch64-linux.default
+    vim
   ];
 
-  # Backup etc files instead of failing to activate generation if a file already exists in /etc
+  # Backup etc files instead of failing if a file already exists in /etc
   environment.etcBackupExtension = ".bak";
 
-  # Read the changelog before changing this value
+  # Must match the nix-on-droid release version
   system.stateVersion = "24.05";
 
-  # Set up nix for flakes
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
 
-  # Configure home-manager
+  # Built-in home-manager (via nix-on-droid module).
+  # This is separate from the flake's standalone homeConfigurations.
   home-manager = {
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
+    useUserPackages = true;
 
-    config = { config, lib, pkgs, ... }: {
-      # Simple home-manager config to verify it works
+    config = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: {
+      # Minimal home-manager config to verify integration works.
+      # Will be expanded later (shell, git, ssh, etc.).
       programs.bash.enable = true;
 
-      # Read the changelog before changing this value
+      # Must match the nix-on-droid release version
       home.stateVersion = "24.05";
     };
   };
-
-  # Set your time zone
-  #time.timeZone = "Europe/Berlin";
 }
