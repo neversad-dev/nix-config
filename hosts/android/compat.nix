@@ -81,6 +81,13 @@
       description = "Polyfill: forwarded to extraConfig on HM-24.05.";
     };
 
+    # Tealdeer: enableAutoUpdates was added after HM-24.05.
+    # Declare a stub so tldr.nix evaluates without crashing.
+    programs.tealdeer.enableAutoUpdates = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+
     # Atuin: daemon option and forceOverwriteSettings were added after HM-24.05.
     # Declare stubs so the shared atuin.nix module evaluates without crashing;
     # the daemon is intentionally a no-op on Android (no systemd user services).
