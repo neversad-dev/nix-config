@@ -82,6 +82,10 @@
 
       programs.bat.enable = true;
 
+      # Starship's background git checks can time out on Android's slow
+      # shared storage. Increase the timeout so the prompt doesn't warn.
+      programs.starship.settings.command_timeout = 2000;
+
       # HM-24.05 sometimes sources zsh-syntax-highlighting in an order
       # that conflicts with atuin's zle bindings. Re-source it last.
       programs.zsh.initExtra = ''
