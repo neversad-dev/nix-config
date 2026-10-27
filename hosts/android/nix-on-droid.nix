@@ -10,10 +10,13 @@
 }: {
   # Nix-on-Droid configuration for Pixel 6.
   #
-  # NOTE: pkgs come from nixpkgs unstable (not 24.05) so latest
-  # packages are available. The nix-on-droid module and bundled
-  # home-manager are still release-24.05 — this is an unsupported
-  # combination. compat.nix is kept as a safety net.
+  # Constraints:
+  #   - system.stateVersion and HM stateVersion must stay at 24.05
+  #     to match the nix-on-droid release.
+  #   - Most packages come from nixpkgs-24-05; tuxedo and pay-respects
+  #     are cherry-picked from unstable via an overlay in flake.nix.
+  #   - Modules written for HM 24.11 (mbair) are shimmed through
+  #     compat.nix so they evaluate on HM 24.05 without modification.
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
   #                    starship, atuin, eza, dust, fastfetch, direnv,
