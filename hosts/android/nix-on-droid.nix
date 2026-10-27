@@ -57,7 +57,6 @@
       ...
     }: {
       imports = [
-        ./compat.nix
         ../../home/neversad/home.nix
         ../../home/common/default.nix
         ../../home/features/cli/shell.nix
