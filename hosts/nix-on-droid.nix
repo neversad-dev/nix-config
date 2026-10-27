@@ -50,6 +50,34 @@
       imports = [
         ../home/neversad/home.nix
         ../home/common/default.nix
+        # Cherry-picked CLI modules (avoiding the all-at-once scanPaths
+        # in cli/default.nix so we can add things incrementally).
+        ../home/features/cli/shell.nix
+        ../home/features/cli/zoxide.nix
+        ../home/features/cli/fzf.nix
+        ../home/features/cli/fd.nix
+        ../home/features/cli/btop.nix
+        ../home/features/cli/tree.nix
+        ../home/features/cli/git/default.nix
+        ../home/features/cli/starship.nix
+      ];
+
+      # Enable the feature-flagged CLI modules we want on this device.
+      features.cli.git.enable = true;
+      features.cli.starship.enable = true;
+
+      # home.nix sets EDITOR=nvim; install bat since the default
+      # cli/default.nix which provides it is not imported here yet.
+      programs.bat.enable = true;
+
+      # Handy baseline packages not yet brought in by imported modules.
+      home.packages = with pkgs; [
+        htop
+        jq
+        yq
+        ripgrep
+        zip
+        python3
       ];
 
       # Force nix-on-droid compatible state version irrespective of
