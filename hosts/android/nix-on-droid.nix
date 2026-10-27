@@ -31,10 +31,12 @@
   # Built-in home-manager (via nix-on-droid module).
   # This is separate from the flake's standalone homeConfigurations.
   home-manager = {
-    # Pass shared libraries and flake inputs into home-manager scope
-    # so existing mbair modules can be reused.
+    # Pass shared libraries into home-manager scope so existing mbair
+    # modules can be reused.  Note: `inputs` is intentionally omitted
+    # because nix-on-droid HM-24.05 does not forward it correctly;
+    # modules that need flake inputs should declare their own stubs.
     extraSpecialArgs = {
-      inherit inputs mylib myvars agenix;
+      inherit mylib myvars agenix;
     };
 
     backupFileExtension = "hm-bak";
