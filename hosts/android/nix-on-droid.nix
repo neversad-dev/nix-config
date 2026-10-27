@@ -18,6 +18,10 @@
     vim
   ];
 
+  # Make zsh the login shell for the nix-on-droid user.
+  # This is what the app spawns on launch (instead of bash).
+  user.shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
+
   # Backup etc files instead of failing if a file already exists in /etc
   environment.etcBackupExtension = ".bak";
 
