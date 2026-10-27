@@ -98,6 +98,7 @@
     nixpkgs,
     nixpkgs-stable,
     nixpkgs-25-11,
+    nixpkgs-24-05,
     home-manager,
     wallpapers,
     nvf-config,
@@ -193,7 +194,7 @@
     };
 
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-25-11 {system = "aarch64-linux";};
+      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
       modules = [
         ./hosts/nix-on-droid.nix
       ];
