@@ -93,6 +93,16 @@
         fi
       '';
 
+      # Clean up stale colors.properties from an earlier generation.
+      # Termux was reading a Catppuccin ANSI palette from this file that
+      # made zsh syntax-highlighting colors invisible against the background.
+      home.activation.removeStaleTermuxColors = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        stale="${config.home.homeDirectory}/.termux/colors.properties"
+        if [ -f "$stale" ]; then
+          rm -f "$stale"
+        fi
+      '';
+
       # Force nix-on-droid compatible state version irrespective of
       # the value coming from shared home.nix (24.11).
       home.stateVersion = lib.mkForce "24.05";
