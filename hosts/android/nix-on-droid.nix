@@ -22,7 +22,7 @@
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
   #                    starship, atuin, eza, dust, fastfetch, tldr,
-  #                    pay-respects, bat, htop, jq, yq, ripgrep, zip
+  #                    bat, htop, jq, yq, ripgrep, zip
 
   environment.packages = with pkgs; [
     git
@@ -74,7 +74,6 @@
         ../../home/features/cli/dust.nix
         ../../home/features/cli/fastfetch.nix
         ../../home/features/cli/tldr.nix
-        ../../home/features/cli/pay-respects.nix
       ];
 
       features.cli.git.enable = true;
