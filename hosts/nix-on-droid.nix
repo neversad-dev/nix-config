@@ -40,6 +40,20 @@
     experimental-features = nix-command flakes
   '';
 
+  # Configure home-manager
+  home-manager = {
+    backupFileExtension = "hm-bak";
+    useGlobalPkgs = true;
+
+    config = { config, lib, pkgs, ... }: {
+      # Simple home-manager config to verify it works
+      programs.bash.enable = true;
+
+      # Read the changelog before changing this value
+      home.stateVersion = "24.05";
+    };
+  };
+
   # Set your time zone
   #time.timeZone = "Europe/Berlin";
 }
