@@ -32,11 +32,9 @@
 
   user.shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
 
-  # Set system timezone. Adjust to your location — find valid values with:
-  #   ls /nix/store/*-tzdata-*/share/zoneinfo
-  # Proot inherits Android wall-clock but needs the tzdata symlink for
-  # date(1), ls --full-time, and other GNU coreutils to show local time.
-  time.timeZone = lib.mkDefault "UTC";
+  # Set system timezone for GNU coreutils, ls --full-time, etc.
+  # Standard tzdata name; list of values: ls /nix/store/*-tzdata-*/share/zoneinfo
+  time.timeZone = lib.mkDefault "Europe/Kyiv";
 
   environment.etcBackupExtension = ".bak";
   system.stateVersion = "24.05";
