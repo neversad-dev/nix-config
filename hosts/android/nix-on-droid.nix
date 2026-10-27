@@ -73,6 +73,7 @@
         ../../home/features/development/direnv.nix
         ../../home/features/cli/tuxedo/default.nix
         ../../home/features/cli/pay-respects.nix
+        ../../home/neversad/fonts.nix
 
       ];
 
@@ -101,10 +102,9 @@
       ];
 
       # Termux reads a real (non-symlink) file from ~/.termux/font.ttf.
-      # Copy a Nerd Font from the nix store on every activation so
-      # Starship icons render correctly.
+      # Copy the same Maple Mono NF font used on mbair so icons render.
       home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        fontStorePath="${pkgs.nerd-fonts.jetbrains-mono}/share/fonts/truetype/NerdFonts/JetBrainsMono/JetBrainsMonoNerdFont-Regular.ttf"
+        fontStorePath="${pkgs.maple-mono.NF-unhinted}/share/fonts/truetype/MapleMono-NF-Regular.ttf"
         targetDir="${config.home.homeDirectory}/.termux"
         mkdir -p "$targetDir"
         if [ -e "$fontStorePath" ]; then
