@@ -192,7 +192,12 @@
     };
 
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
+      pkgs = import nixpkgs-24-05 {
+        system = "aarch64-linux";
+        # Wire in our custom package overlay so tuxedo, herdr, etc.
+        # are available in nix-on-droid's package set.
+        overlays = [overlays.additions];
+      };
       extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/nix-on-droid.nix
