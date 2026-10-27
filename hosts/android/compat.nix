@@ -82,6 +82,22 @@
       };
       default = { };
     };
+
+    # Git: HM 24.11 replaced programs.git.extraConfig with programs.git.settings.
+    # Declare the newer name so existing modules evaluate cleanly on HM-24.05;
+    # forward the value to the old name at activation time.
+    programs.git.settings = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+      default = { };
+      description = "Polyfill: forwarded to extraConfig on HM-24.05.";
+    };
+
+    # catppuccin module is not imported on nix-on-droid; declare the minimum
+    # option that git/lazygit.nix references so eval succeeds.
+    catppuccin.lazygit.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
   };
 
   config = {
@@ -91,5 +107,9 @@
 
     programs.bash.initExtra = lib.mkIf (config.programs.bash.initContent != "")
       config.programs.bash.initContent;
+
+    # Forward git settings → extraConfig
+    programs.git.extraConfig = lib.mkIf (config.programs.git.settings != { })
+      config.programs.git.settings;
   };
 }
