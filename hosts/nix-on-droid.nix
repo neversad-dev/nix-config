@@ -4,6 +4,8 @@
   pkgs,
   mylib,
   myvars,
+  inputs,
+  agenix,
   ...
 }: {
   # Nix-on-Droid configuration for Pixel 6.
@@ -29,6 +31,12 @@
   # Built-in home-manager (via nix-on-droid module).
   # This is separate from the flake's standalone homeConfigurations.
   home-manager = {
+    # Pass shared libraries and flake inputs into home-manager scope
+    # so existing mbair modules can be reused.
+    extraSpecialArgs = {
+      inherit inputs mylib myvars agenix;
+    };
+
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -39,12 +47,17 @@
       pkgs,
       ...
     }: {
-      # Minimal home-manager config to verify integration works.
-      # Will be expanded later (shell, git, ssh, etc.).
-      programs.bash.enable = true;
+      imports = [
+        ../home/neversad/home.nix
+        ../home/common/default.nix
+      ];
 
-      # Must match the nix-on-droid release version
-      home.stateVersion = "24.05";
+      # Force nix-on-droid compatible state version irrespective of
+      # the value coming from shared home.nix (24.11).
+      home.stateVersion = lib.mkForce "24.05";
+
+      # Minimal baseline kept from the initial bootstrap.
+      programs.bash.enable = true;
     };
   };
 }
