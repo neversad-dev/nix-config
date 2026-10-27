@@ -25,7 +25,6 @@
     # fzf: HM 24.11 refactored flat widget options into nested attrsets:
     #   fileWidgetCommand  → fileWidget.command
     #   historyWidgetCommand → historyWidget.command
-    #   tmuxShellIntegration → tmux.enableShellIntegration
     #
     # HM-24.05 doesn't know about the nested forms, so we declare them here
     # and swallow them silently.  The defaultCommand set by fzf.nix still
@@ -45,16 +44,6 @@
         options.command = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
           default = null;
-        };
-      };
-      default = { };
-    };
-
-    programs.fzf.tmux = lib.mkOption {
-      type = lib.types.submodule {
-        options.enableShellIntegration = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
         };
       };
       default = { };
