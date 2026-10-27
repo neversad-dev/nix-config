@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+  mylib,
+  myvars,
   ...
 }: {
   # Nix-on-Droid configuration for Pixel 6.
