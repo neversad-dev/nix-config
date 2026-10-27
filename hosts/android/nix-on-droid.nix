@@ -9,8 +9,19 @@
   ...
 }: {
   # Nix-on-Droid configuration for Pixel 6.
-  # Version must stay at 24.05 to match the nix-on-droid release
-  # (nixpkgs-24-05 and home-manager-24-05 are pinned in flake.nix).
+  #
+  # Constraints:
+  #   - system.stateVersion and HM stateVersion must stay at 24.05
+  #     to match the pinned nix-on-droid release (nixpkgs-24-05 and
+  #     home-manager-24-05 in flake.nix).
+  #   - We cherry-pick individual modules from home/features/cli instead
+  #     of importing cli/default.nix wholesale, so we can add things
+  #     incrementally and avoid features that don't build in proot.
+  #   - Modules written for HM 24.11 (mbair) are shimmed through
+  #     compat.nix so they evaluate on HM 24.05 without modification.
+  #
+  # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
+  #                    starship, atuin, bat, htop, jq, yq, ripgrep, zip
 
   environment.packages = with pkgs; [
     git
@@ -18,29 +29,22 @@
     vim
   ];
 
-  # Make zsh the login shell for the nix-on-droid user.
-  # This is what the app spawns on launch (instead of bash).
   user.shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
 
-  # Backup etc files instead of failing if a file already exists in /etc
   environment.etcBackupExtension = ".bak";
-
-  # Must match the nix-on-droid release version
   system.stateVersion = "24.05";
 
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
 
-  # Built-in home-manager (via nix-on-droid module).
-  # This is separate from the flake's standalone homeConfigurations.
   home-manager = {
-    # Pass shared libraries into home-manager scope so existing mbair
-    # modules can be reused.  Note: `inputs` is intentionally omitted
-    # because nix-on-droid HM-24.05 does not forward it correctly;
-    # modules that need flake inputs should declare their own stubs.
     extraSpecialArgs = {
       inherit mylib myvars agenix;
+      # NOTE: `inputs` is intentionally NOT passed here because HM-24.05
+      # built into nix-on-droid does not forward flake inputs correctly.
+      # Any module that needs inputs must bring them in through other
+      # means or get a stub in compat.nix.
     };
 
     backupFileExtension = "hm-bak";
@@ -67,22 +71,17 @@
         ../../home/features/cli/atuin.nix
       ];
 
-      # Enable the feature-flagged CLI modules we want on this device.
       features.cli.git.enable = true;
       features.cli.starship.enable = true;
 
-      # home.nix sets EDITOR=nvim; install bat since the default
-      # cli/default.nix which provides it is not imported here yet.
       programs.bat.enable = true;
 
-      # Explicitly source zsh-syntax-highlighting after all other init.
-      # HM-24.05 sometimes places it in the wrong order when combined
-      # with atuin's zle widget wrappers, causing highlighting to fail.
+      # HM-24.05 sometimes sources zsh-syntax-highlighting in an order
+      # that conflicts with atuin's zle bindings. Re-source it last.
       programs.zsh.initExtra = ''
         source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
       '';
 
-      # Handy baseline packages not yet brought in by imported modules.
       home.packages = with pkgs; [
         htop
         jq
@@ -92,9 +91,9 @@
         python3
       ];
 
-      # Termux reads a real file from ~/.termux/font.ttf.
-      # Symlinks to /nix/store don't resolve in the Android UI layer,
-      # so we copy the font via activation instead.
+      # Termux reads a real (non-symlink) file from ~/.termux/font.ttf.
+      # Copy a Nerd Font from the nix store on every activation so
+      # Starship icons render correctly.
       home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
         fontStorePath="${pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
         targetDir="${config.home.homeDirectory}/.termux"
@@ -104,9 +103,9 @@
         fi
       '';
 
-      # Clean up stale colors.properties from an earlier generation.
-      # Termux was reading a Catppuccin ANSI palette from this file that
-      # made zsh syntax-highlighting colors invisible against the background.
+      # Remove a stale Catppuccin ANSI palette that was written by an
+      # earlier generation. That palette made zsh syntax-highlighting
+      # invisible on some backgrounds.
       home.activation.removeStaleTermuxColors = lib.hm.dag.entryAfter ["writeBoundary"] ''
         stale="${config.home.homeDirectory}/.termux/colors.properties"
         if [ -f "$stale" ]; then
@@ -114,11 +113,7 @@
         fi
       '';
 
-      # Force nix-on-droid compatible state version irrespective of
-      # the value coming from shared home.nix (24.11).
       home.stateVersion = lib.mkForce "24.05";
-
-      # Minimal baseline kept from the initial bootstrap.
       programs.bash.enable = true;
     };
   };
