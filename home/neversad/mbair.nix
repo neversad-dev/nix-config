@@ -20,7 +20,6 @@
       mitmproxy.enable = false;
       starship.enable = true;
       tldr.enable = true;
-      tmux.enable = false;
     };
     desktop = {
       zed.enable = true;
