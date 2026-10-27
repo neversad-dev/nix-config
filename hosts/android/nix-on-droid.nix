@@ -38,9 +38,6 @@
     experimental-features = nix-command flakes
   '';
 
-  # Suppress the HM version mismatch warning (24.05 HM + 26.11 nixpkgs).
-  home-manager.config.home.enableNixpkgsReleaseCheck = false;
-
   # The nix-on-droid module defaults to enabling kdeconnect, which
   # references pkgs.plasma5Packages — an attrset removed in unstable.
   # Disable it explicitly.
@@ -85,6 +82,9 @@
         ../../home/features/cli/pay-respects.nix
 
       ];
+
+      # Suppress the HM version mismatch warning (24.05 HM + 26.11 nixpkgs).
+      home.enableNixpkgsReleaseCheck = false;
 
       features.cli.git.enable = true;
       features.cli.starship.enable = true;
