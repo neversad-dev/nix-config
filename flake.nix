@@ -138,6 +138,12 @@
           overlays.additions
           overlays.modifications
           overlays.stable-packages
+          # plasma5Packages was removed in nixpkgs 26.11 (unstable).
+          # nix-on-droid release-24.05 still references it; alias it
+          # to kdePackages so the module evaluates without crashing.
+          (final: prev: {
+            plasma5Packages = prev.kdePackages or {};
+          })
         ];
         config = {
           allowUnfree = true;
