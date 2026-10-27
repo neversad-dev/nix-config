@@ -94,6 +94,20 @@ home-legacy:
 
 ############################################################################
 #
+# Nix-on-Droid related commands
+#
+############################################################################
+
+[group('nix-on-droid')]
+droid host="default":
+  nix-on-droid switch --flake .#{{ host }}
+
+[group('nix-on-droid')]
+droid-build host="default":
+  nix-on-droid build --flake .#{{ host }}
+
+############################################################################
+#
 #  nix related commands
 #
 ############################################################################

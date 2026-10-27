@@ -5,4 +5,5 @@
 x 2026-09-30 Switch to pkgs-unstable as default and use overlay-based stable overrides for specific packages +nixpkgs @refactor
 (A) 2026-09-30 Unify hotkeys across apps and levels and document the philosophy in a dedicated .md file +hotkeys @docs
 (B) 2026-09-30 Add GitHub CLI (gh) and configure access token +gh @dev
+(B) 2026-09-30 Expand nix-on-droid config with shared home-manager imports (shell, git, ssh, etc.) +nix-on-droid @refactor
 (C) 2026-09-30 Consider moving nvf-config and nix-lib into this repository +deps @consider
