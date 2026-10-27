@@ -10,9 +10,9 @@
 }: {
   # Nix-on-Droid configuration for Pixel 6.
   #
-  # NOTE: Uses nix-on-droid master (not a pinned release) and nixpkgs
-  # unstable so latest packages are available. compat.nix is kept
-  # as a safety net.
+  # Uses release-24.05 nix-on-droid module with unstable nixpkgs for
+  # packages (tuxedo, pay-respects, latest git, etc.). The module is
+  # shimmed via compat.nix + substituteAll overlay in flake.nix.
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
   #                    starship, atuin, eza, dust, fastfetch, direnv,
@@ -35,9 +35,6 @@
 
   nix.extraOptions = ''
     experimental-features = nix-command flakes
-    sandbox = false
-    substituters = https://cache.nixos.org https://nix-community.cachix.org https://numtide.cachix.org https://devenv.cachix.org
-    trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
   '';
 
   home-manager = {
@@ -60,6 +57,7 @@
       ...
     }: {
       imports = [
+        ./compat.nix
         ../../home/neversad/home.nix
         ../../home/common/default.nix
         ../../home/features/cli/shell.nix
@@ -93,9 +91,9 @@
       # shared storage. Increase the timeout so the prompt doesn't warn.
       programs.starship.settings.command_timeout = 2000;
 
-      # Re-source zsh-syntax-highlighting after all other init so it
-      # wraps atuin's widgets correctly and highlighting works.
-      programs.zsh.initContent = ''
+      # HM-24.05 sometimes sources zsh-syntax-highlighting in an order
+      # that conflicts with atuin's zle bindings. Re-source it last.
+      programs.zsh.initExtra = ''
         source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
       '';
 

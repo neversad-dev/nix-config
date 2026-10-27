@@ -44,7 +44,9 @@
     };
 
     nix-on-droid = {
-      url = "github:nix-community/nix-on-droid/prerelease-25.11";
+      url = "github:nix-community/nix-on-droid/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs-24-05";
+      inputs.home-manager.follows = "home-manager-24-05";
     };
 
     # agenix.url = "github:ryantm/agenix";
@@ -190,11 +192,28 @@
     };
 
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      # NOTE: We use unstable nixpkgs here (not 24.05) so latest
-      # packages (tuxedo, pay-respects, newer git, etc.) are available
-      # with full binary cache coverage. The nix-on-droid module itself
-      # is still release-24.05; this is an unsupported combination.
-      pkgs = pkgsFor "aarch64-linux";
+      # Use unstable nixpkgs for latest packages, but provide backward-
+      # compat aliases for helpers the release-24.05 module still expects.
+      pkgs = import nixpkgs {
+        system = "aarch64-linux";
+        overlays = [
+          overlays.additions
+          overlays.modifications
+          overlays.stable-packages
+          # nixpkgs 26.11 removed substituteAll; the 24.05 nix-on-droid
+          # module still uses it. Provide a thin wrapper around replaceVars.
+          (final: prev: {
+            substituteAll = args:
+              final.replaceVars args.src (builtins.removeAttrs args ["src"]);
+            # plasma5Packages was renamed to kdePackages in 26.11.
+            plasma5Packages = prev.kdePackages or {};
+          })
+        ];
+        config = {
+          allowUnfree = true;
+          fetcherVersion = 7;
+        };
+      };
       extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/nix-on-droid.nix
