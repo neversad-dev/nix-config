@@ -81,12 +81,6 @@
       description = "Polyfill: forwarded to extraConfig on HM-24.05.";
     };
 
-    # catppuccin module is not imported on nix-on-droid; declare the minimum
-    # option that git/lazygit.nix references so eval succeeds.
-    catppuccin.lazygit.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
   };
 
   config = {
