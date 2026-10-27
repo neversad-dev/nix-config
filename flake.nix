@@ -26,7 +26,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-24-05.url = "github:NixOS/nixpkgs/nixos-24.05";
 
     nix-darwin = {
@@ -97,7 +96,6 @@
     nix-darwin,
     nixpkgs,
     nixpkgs-stable,
-    nixpkgs-25-11,
     nixpkgs-24-05,
     home-manager,
     wallpapers,
