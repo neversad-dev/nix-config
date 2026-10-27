@@ -35,6 +35,7 @@
     # so existing mbair modules can be reused.
     extraSpecialArgs = {
       inherit inputs mylib myvars agenix;
+      inherit (inputs) catppuccin;
     };
 
     backupFileExtension = "hm-bak";
@@ -59,6 +60,8 @@
         ../../home/features/cli/tree.nix
         ../../home/features/cli/git/default.nix
         ../../home/features/cli/starship.nix
+        ../../home/neversad/fonts.nix
+        ../../home/features/cli/catppuccin.nix
       ];
 
       # Enable the feature-flagged CLI modules we want on this device.
@@ -78,6 +81,14 @@
         zip
         python3
       ];
+
+      # Install fonts via fontconfig so they land in ~/.local/share/fonts.
+      fonts.fontconfig.enable = true;
+
+      # Termux-based terminals read a single font from ~/.termux/font.ttf.
+      # Link Maple Mono NF Regular so icons/glyphs render for starship etc.
+      home.file.".termux/font.ttf".source =
+        "${pkgs.maple-mono.NF-unhinted}/share/fonts/truetype/MapleMono-NF-Regular.ttf";
 
       # Force nix-on-droid compatible state version irrespective of
       # the value coming from shared home.nix (24.11).
