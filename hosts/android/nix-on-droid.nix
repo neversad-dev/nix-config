@@ -104,7 +104,7 @@
       # Copy a Nerd Font from the nix store on every activation so
       # Starship icons render correctly.
       home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        fontStorePath="${pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
+        fontStorePath="${pkgs.nerd-fonts.jetbrains-mono}/share/fonts/truetype/NerdFonts/JetBrainsMono/JetBrainsMonoNerdFont-Regular.ttf"
         targetDir="${config.home.homeDirectory}/.termux"
         mkdir -p "$targetDir"
         if [ -e "$fontStorePath" ]; then
