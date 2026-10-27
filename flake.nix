@@ -44,7 +44,7 @@
     };
 
     nix-on-droid = {
-      url = "github:nix-community/nix-on-droid/master";
+      url = "github:nix-community/nix-on-droid/prerelease-25.11";
     };
 
     # agenix.url = "github:ryantm/agenix";
