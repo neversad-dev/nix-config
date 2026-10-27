@@ -85,9 +85,9 @@
       # shared storage. Increase the timeout so the prompt doesn't warn.
       programs.starship.settings.command_timeout = 2000;
 
-      # HM-24.05 sometimes sources zsh-syntax-highlighting in an order
-      # that conflicts with atuin's zle bindings. Re-source it last.
-      programs.zsh.initExtra = ''
+      # Re-source zsh-syntax-highlighting after all other init so it
+      # wraps atuin's widgets correctly and highlighting works.
+      programs.zsh.initContent = ''
         source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
       '';
 
