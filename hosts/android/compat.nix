@@ -81,6 +81,24 @@
       description = "Polyfill: forwarded to extraConfig on HM-24.05.";
     };
 
+    # Atuin: daemon option and forceOverwriteSettings were added after HM-24.05.
+    # Declare stubs so the shared atuin.nix module evaluates without crashing;
+    # the daemon is intentionally a no-op on Android (no systemd user services).
+    programs.atuin.daemon = lib.mkOption {
+      type = lib.types.submodule {
+        options.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+        };
+      };
+      default = { };
+    };
+
+    programs.atuin.forceOverwriteSettings = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+
   };
 
   config = {

@@ -61,6 +61,7 @@
         ../../home/features/cli/tree.nix
         ../../home/features/cli/git/default.nix
         ../../home/features/cli/starship.nix
+        ../../home/features/cli/atuin.nix
       ];
 
       # Enable the feature-flagged CLI modules we want on this device.
