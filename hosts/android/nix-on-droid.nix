@@ -81,10 +81,40 @@
         python3
       ];
 
-      # Termux-based terminals read a single font from ~/.termux/font.ttf.
-      # Link a Nerd Font that exists in nixpkgs-24.05 so icons/glyphs render.
-      home.file.".termux/font.ttf".source =
-        "${pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf";
+      # Termux reads a real file from ~/.termux/font.ttf.
+      # Symlinks to /nix/store don't resolve in the Android UI layer,
+      # so we copy the font via activation instead.
+      home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        fontStorePath="${pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
+        targetDir="${config.home.homeDirectory}/.termux"
+        mkdir -p "$targetDir"
+        if [ -e "$fontStorePath" ]; then
+          cp -f "$fontStorePath" "$targetDir/font.ttf"
+        fi
+      '';
+
+      # Catppuccin Mocha color palette for Termux.
+      home.file.".termux/colors.properties".text = ''
+        background=#1e1e2e
+        foreground=#cdd6f4
+        cursor=#f5e0dc
+        color0=#45475a
+        color1=#f38ba8
+        color2=#a6e3a1
+        color3=#f9e2af
+        color4=#89b4fa
+        color5=#f5c2e7
+        color6=#94e2d5
+        color7=#bac2de
+        color8=#585b70
+        color9=#f38ba8
+        color10=#a6e3a1
+        color11=#f9e2af
+        color12=#89b4fa
+        color13=#f5c2e7
+        color14=#94e2d5
+        color15=#cdd6f4
+      '';
 
       # Force nix-on-droid compatible state version irrespective of
       # the value coming from shared home.nix (24.11).
