@@ -27,6 +27,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-24-05.url = "github:NixOS/nixpkgs/nixos-24.05";
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
@@ -40,7 +41,7 @@
 
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid/release-24.05";
-      inputs.nixpkgs.follows = "nixpkgs-25-11";
+      inputs.nixpkgs.follows = "nixpkgs-24-05";
     };
 
     # agenix.url = "github:ryantm/agenix";
