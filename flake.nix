@@ -192,28 +192,7 @@
     };
 
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      # Use unstable nixpkgs for latest packages, but provide backward-
-      # compat aliases for helpers the release-24.05 module still expects.
-      pkgs = import nixpkgs {
-        system = "aarch64-linux";
-        overlays = [
-          overlays.additions
-          overlays.modifications
-          overlays.stable-packages
-          # nixpkgs 26.11 removed substituteAll; the 24.05 nix-on-droid
-          # module still uses it. Provide a thin wrapper around replaceVars.
-          (final: prev: {
-            substituteAll = args:
-              final.replaceVars args.src (builtins.removeAttrs args ["src"]);
-            # plasma5Packages was renamed to kdePackages in 26.11.
-            plasma5Packages = prev.kdePackages or {};
-          })
-        ];
-        config = {
-          allowUnfree = true;
-          fetcherVersion = 7;
-        };
-      };
+      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
       extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/nix-on-droid.nix

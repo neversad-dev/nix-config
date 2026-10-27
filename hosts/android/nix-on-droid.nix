@@ -10,13 +10,13 @@
 }: {
   # Nix-on-Droid configuration for Pixel 6.
   #
-  # Uses release-24.05 nix-on-droid module with unstable nixpkgs for
-  # packages (tuxedo, pay-respects, latest git, etc.). The module is
-  # shimmed via compat.nix + substituteAll overlay in flake.nix.
+  # Uses release-24.05 nix-on-droid and home-manager. The nixpkgs
+  # package set is also 24.05 for stability in the proot env.
+  # Modules written for HM 24.11 (mbair) are shimmed via compat.nix.
   #
   # Currently enabled: zsh, zoxide, fzf, fd, tree, git+delta+lazygit,
   #                    starship, atuin, eza, dust, fastfetch, direnv,
-  #                    tuxedo, pay-respects, bat, htop, jq, yq, ripgrep, zip
+  #                    bat, htop, jq, yq, ripgrep, zip
 
   environment.packages = with pkgs; [
     git
@@ -72,18 +72,11 @@
         ../../home/features/cli/dust.nix
         ../../home/features/cli/fastfetch.nix
         ../../home/features/development/direnv.nix
-        ../../home/features/cli/tuxedo/default.nix
-        ../../home/features/cli/pay-respects.nix
-        ../../home/neversad/fonts.nix
 
       ];
 
       features.cli.git.enable = true;
       features.cli.starship.enable = true;
-
-      # Pin atuin to stable nixpkgs — the unstable version compiles
-      # from source on aarch64-linux which is too slow on mobile.
-      programs.atuin.package = pkgs.stable.atuin;
 
       programs.bat.enable = true;
 
@@ -107,9 +100,10 @@
       ];
 
       # Termux reads a real (non-symlink) file from ~/.termux/font.ttf.
-      # Copy the same Maple Mono NF font used on mbair so icons render.
+      # Copy a Nerd Font from the nix store on every activation so
+      # Starship icons render correctly.
       home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        fontStorePath="${pkgs.maple-mono.NF-unhinted}/share/fonts/truetype/MapleMono-NF-Regular.ttf"
+        fontStorePath="${pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
         targetDir="${config.home.homeDirectory}/.termux"
         mkdir -p "$targetDir"
         if [ -e "$fontStorePath" ]; then
