@@ -194,7 +194,24 @@
       # packages (tuxedo, pay-respects, newer git, etc.) are available
       # with full binary cache coverage. The nix-on-droid module itself
       # is still release-24.05; this is an unsupported combination.
-      pkgs = pkgsFor "aarch64-linux";
+      pkgs = import nixpkgs {
+        system = "aarch64-linux";
+        overlays = [
+          overlays.additions
+          overlays.modifications
+          overlays.stable-packages
+          # Pin atuin to 24.05 where it's pre-built for aarch64-linux;
+          # the unstable version compiles from source which is too heavy
+          # for mobile devices in proot.
+          (final: prev: {
+            atuin = nixpkgs-24-05.legacyPackages.aarch64-linux.atuin;
+          })
+        ];
+        config = {
+          allowUnfree = true;
+          fetcherVersion = 7;
+        };
+      };
       extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/nix-on-droid.nix
