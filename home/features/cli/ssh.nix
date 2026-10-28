@@ -5,6 +5,7 @@
 # On Linux (enduro), run `ssh-add ~/.ssh/id_ed25519` once per session or use a
 # desktop keyring integration (e.g. GNOME Keyring / KDE Wallet) if available.
 {
+  config,
   lib,
   pkgs,
   ...
@@ -83,8 +84,8 @@
   home.activation.checkSshKey = lib.hm.dag.entryAfter ["linkGeneration"] ''
     if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
       ${pkgs.coreutils}/bin/printf '\n\033[1;33mWARNING:\033[0m No ~/.ssh/id_ed25519 found.\n' >&2
-      ${pkgs.coreutils}/bin/printf '  Run:  ssh-keygen -t ed25519 -a 256 -C "neversad@mbair" -f ~/.ssh/id_ed25519\n' >&2
-      ${pkgs.coreutils}/bin/printf '  Then: ssh-add --apple-use-keychain ~/.ssh/id_ed25519\n' >&2
+      ${pkgs.coreutils}/bin/printf '  Run:  ssh-keygen -t ed25519 -a 256 -C "${config.home.username}@$(hostname)" -f ~/.ssh/id_ed25519\n' >&2
+      ${pkgs.coreutils}/bin/printf '  Then: ssh-add${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin " --apple-use-keychain"} ~/.ssh/id_ed25519\n' >&2
       ${pkgs.coreutils}/bin/printf '  And:  cat ~/.ssh/id_ed25519.pub → GitHub SSH settings\n\n' >&2
     fi
   '';

@@ -28,24 +28,31 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
    cat ~/.ssh/id_ed25519.pub
    ```
    Paste it into GitHub Settings → SSH and GPG keys → New SSH key as an **Authentication key**, then add the *same* public key again as a **Signing key** so GitHub can verify signed commits.
-3. **Clone this repository via SSH** so flake inputs resolve:
+3. **Pin GitHub's host key** before the first clone to avoid TOFU (trust-on-first-use):
+   ```bash
+   mkdir -p ~/.ssh
+   printf '%s\n' 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >> ~/.ssh/known_hosts
+   chmod 600 ~/.ssh/known_hosts
+   ```
+   _(Verification: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)_
+4. **Clone this repository via SSH** so flake inputs resolve:
    ```bash
    git clone git@github.com:neversad-dev/nix-config.git
    cd nix-config
    ```
    _(This repo depends on a private `nix-secrets` input fetched over SSH; CI stubs it out, local builds require working Git+SSH auth.)_
-4. **Load the key into the agent and macOS Keychain** (first unlock only; after that, `UseKeychain yes` in the declarative SSH config handles it):
+5. **Load the key into the agent and macOS Keychain** (first unlock only; after that, `UseKeychain yes` in the declarative SSH config handles it):
    ```bash
    ssh-add --apple-use-keychain ~/.ssh/id_ed25519
    ssh -T git@github.com   # verify
    ```
    On Linux, `ssh-add ~/.ssh/id_ed25519` once per session or rely on your desktop keyring.
-5. **Generate the host SSH key for agenix** (Darwin only; NixOS handles this automatically):
+6. **Generate the host SSH key for agenix** (Darwin only; NixOS handles this automatically):
    ```bash
    sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
    ```
    Agenix uses this to decrypt system-level secrets.
-6. **Enroll the new keys before activating.** On a machine that can already decrypt the secrets, add the new user public key (`~/.ssh/id_ed25519.pub`) and, for any system secrets, the host public key (`/etc/ssh/ssh_host_ed25519_key.pub`) as recipients in `nix-secrets/secrets.nix`. Rekey the relevant `.age` files and commit/push the changes. Update this flake's pinned `nix-secrets` input to that revision before rebuilding. Generating keys alone does not grant decryption access; see [Adding a new host or machine](secrets/README.md#adding-a-new-host-or-machine).
+7. **Enroll the new keys before activating.** On a machine that can already decrypt the secrets, add the new user public key (`~/.ssh/id_ed25519.pub`) and, for any system secrets, the host public key (`/etc/ssh/ssh_host_ed25519_key.pub`) as recipients in `nix-secrets/secrets.nix`. Rekey the relevant `.age` files and commit/push the changes. Update this flake's pinned `nix-secrets` input to that revision before rebuilding. Generating keys alone does not grant decryption access; see [Adding a new host or machine](secrets/README.md#adding-a-new-host-or-machine).
 
 ## Builds and switches
 
