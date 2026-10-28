@@ -8,3 +8,4 @@ x 2026-09-30 Switch to pkgs-unstable as default and use overlay-based stable ove
 (B) 2026-09-30 Expand nix-on-droid config with shared home-manager imports (shell, git, ssh, etc.) +nix-on-droid @refactor
 (C) 2026-09-30 Consider moving nvf-config and nix-lib into this repository +deps @consider
 (B) 2026-10-26 Fix nix-lib mkEditableConfig/mkEditableConfigDir dry-run bug — overwrites config files during home-manager dry activation +nix-lib @bug
+(B) 2026-10-28 Reorganize home/ into home/core/ (always-on essentials) + home/features/ (togglable extras). Core: shell, basic git, ssh, direnv. Features: neovim, desktop apps, window managers, etc. +home @refactor
