@@ -130,7 +130,7 @@ NixOS generates host keys when OpenSSH starts, but **agenix needs the key before
 
 **Option B: Two-phase bootstrap**
 
-1. Create a minimal NixOS config with **no secret references** (or rely on CI stubs).
+1. Create a minimal NixOS config with **no `age.secrets` declarations at all** (not even stubbed ones). CI stubs only make `nix flake check` work; they do not survive agenix activation.
 2. `nixos-install --flake .#newhost` and reboot.
 3. NixOS generates the host key naturally. Copy it:
    ```bash

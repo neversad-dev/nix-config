@@ -35,10 +35,10 @@ Options are declared **decentrally** — each leaf module under `home/features/`
 
 ### Two kinds of toggles
 
-| Kind | Where declared | What it controls |
-|---|---|---|
-| **Cross-cutting** | `vars/features.nix` | Both darwin and HM (e.g. `features.gaming`, `features.stayAwake`, `features.development.vscode`) |
-| **HM-only** | In the leaf module itself (e.g. `home/features/cli/neovim.nix`) | Only Home Manager (e.g. `features.cli.neovim`, `features.desktop.zed`) |
+| Kind              | Where declared                                                  | What it controls                                                                                 |
+| ----------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Cross-cutting** | `vars/features.nix`                                             | Both darwin and HM (e.g. `features.gaming`, `features.stayAwake`, `features.development.vscode`) |
+| **HM-only**       | In the leaf module itself (e.g. `home/features/cli/neovim.nix`) | Only Home Manager (e.g. `features.cli.neovim`, `features.desktop.zed`)                           |
 
 Leaf modules gate themselves with `lib.mkIf config.features.<path>.enable`:
 
@@ -58,6 +58,7 @@ Leaf modules gate themselves with `lib.mkIf config.features.<path>.enable`:
 Not everything has a toggle. Small utilities that are harmless when idle (`eza`, `zoxide`, `bat`, `fzf`, ...) are imported unconditionally by their parent `default.nix` and are always present. This is fine — they only activate when you invoke them.
 
 Toggles are reserved for:
+
 - Heavy or opinionated tools (neovim, desktop editors, window managers)
 - Things that change system behavior (SSH commit signing, mitmproxy)
 - Platform-specific apps (aerospace, sketchybar)
@@ -65,7 +66,7 @@ Toggles are reserved for:
 
 ### Future: `home/core/`
 
-The current `home/common/` is light (just agenix wiring). A future `home/core/` directory is planned for true essentials you want on *every* machine — even a fresh VPS — without thinking about feature flags: shell baseline, git auth config, SSH client settings, direnv, coreutils. See `todo.txt` for the tracking task.
+The current `home/common/` is light (just agenix wiring). A future `home/core/` directory is planned for true essentials you want on _every_ machine — even a fresh VPS — without thinking about feature flags: shell baseline, git auth config, SSH client settings, direnv, coreutils. See `todo.txt` for the tracking task.
 
 ### Setting toggles per host
 
