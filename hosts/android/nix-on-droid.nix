@@ -111,16 +111,6 @@
         fi
       '';
 
-      # Remove a stale Catppuccin ANSI palette that was written by an
-      # earlier generation. That palette made zsh syntax-highlighting
-      # invisible on some backgrounds.
-      home.activation.removeStaleTermuxColors = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        stale="${config.home.homeDirectory}/.termux/colors.properties"
-        if [ -f "$stale" ]; then
-          rm -f "$stale"
-        fi
-      '';
-
       home.stateVersion = lib.mkForce "24.05";
       programs.bash.enable = true;
     };

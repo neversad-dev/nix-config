@@ -19,7 +19,7 @@ in {
         format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
         add_newline = true;
 
-        palette = "catppuccin";
+        palette = lib.mkDefault "catppuccin";
         palettes.catppuccin = {
           rosewater = "#f5e0dc";
           flamingo = "#f2cdcd";

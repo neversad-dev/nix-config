@@ -15,5 +15,11 @@ in {
     home.packages = [
       nvf-config.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
+
+    # Override default vim editor when neovim is explicitly enabled
+    home.sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
   };
 }

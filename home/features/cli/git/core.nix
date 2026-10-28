@@ -37,7 +37,9 @@ in {
         ".direnv"
       ];
 
-      settings = {
+      settings = let
+        isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+      in {
         user = {
           name = "neversad-dev";
           email = "7419136+neversad-dev@users.noreply.github.com";
@@ -50,7 +52,6 @@ in {
           preloadindex = true;
         };
 
-        credential.helper = "osxkeychain";
         init.defaultBranch = "main";
         branch = {
           sort = "-committerdate";
@@ -103,6 +104,8 @@ in {
           diffFilter = "delta --color-only";
           singlekey = true;
         };
+      } // lib.optionalAttrs isDarwin {
+        credential.helper = "osxkeychain";
       };
     };
   };

@@ -89,6 +89,13 @@
     programs.bash.initExtra = lib.mkIf (config.programs.bash.initContent != "")
       config.programs.bash.initContent;
 
+    # Forward nested fzf widget options → flat HM-24.05 names
+    programs.fzf.fileWidgetCommand = lib.mkIf (config.programs.fzf.fileWidget.command != null)
+      config.programs.fzf.fileWidget.command;
+
+    programs.fzf.historyWidgetCommand = lib.mkIf (config.programs.fzf.historyWidget.command != null)
+      config.programs.fzf.historyWidget.command;
+
     # Forward git settings → extraConfig
     programs.git.extraConfig = lib.mkIf (config.programs.git.settings != { })
       config.programs.git.settings;

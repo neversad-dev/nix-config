@@ -33,6 +33,7 @@
 
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
+    vim
     # pkgs.hello
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
@@ -80,8 +81,8 @@
   #  /etc/profiles/per-user/m3tam3re/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    EDITOR = "vim";
+    VISUAL = "vim";
   };
 
   # Let Home Manager install and manage itself.
