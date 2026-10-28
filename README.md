@@ -20,13 +20,17 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 ## Quick start
 
 ```bash
-just darwin  # macOS system + home-manager switch (via nh)
-just home    # home-manager switch only
+just darwin  # macOS system switch only (nix-darwin)
+just home    # Home Manager switch (SSH config, git, shell, etc.)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
 ```
 
-Full command list: `just --list`
+> On macOS you usually need **both** `just darwin` and `just home` — they are separate.
+> `just darwin` applies system-level changes (dock, defaults, packages); `just home`
+> applies user-level config (dotfiles, SSH, git signing, shell setup).
+>
+> Full command list: `just --list`
 
 > Dev tooling (`nh`, `just`, `alejandra`, etc.) comes from the nix `devShell`. `direnv` auto-activates it when you `cd` into the repo.
 
