@@ -21,13 +21,13 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
 
 1. **Generate a per-machine SSH keypair** (one per host, never copied between devices):
    ```bash
-   ssh-keygen -t ed25519 -a 256 -C "neversad@$(hostname)" -f ~/.ssh/id_ed25519
+   ssh-keygen -t ed25519 -a 256 -C "$USER@$(hostname)" -f ~/.ssh/id_ed25519
    ```
 2. **Add the public key to GitHub:**
    ```bash
    cat ~/.ssh/id_ed25519.pub
    ```
-   Paste it into GitHub Settings → SSH and GPG keys → New SSH key as an **Authentication key**, then add the *same* public key again as a **Signing key** so GitHub can verify signed commits.
+   Paste it into GitHub Settings → SSH and GPG keys → New SSH key as an **Authentication key**, then add the _same_ public key again as a **Signing key** so GitHub can verify signed commits.
 3. **Pin GitHub's host key** before the first clone to avoid TOFU (trust-on-first-use):
    ```bash
    mkdir -p ~/.ssh
@@ -41,12 +41,11 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
    cd nix-config
    ```
    _(This repo depends on a private `nix-secrets` input fetched over SSH; CI stubs it out, local builds require working Git+SSH auth.)_
-5. **Load the key into the agent and macOS Keychain** (first unlock only; after that, `UseKeychain yes` in the declarative SSH config handles it):
+5. **Verify GitHub SSH access** (also adds the key to the agent on first use):
    ```bash
-   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-   ssh -T git@github.com   # verify
+   ssh -T git@github.com
    ```
-   On Linux, `ssh-add ~/.ssh/id_ed25519` once per session or rely on your desktop keyring.
+   On first run you'll type the passphrase once; `AddKeysToAgent` + `UseKeychain` in the declarative SSH config handle it automatically from then on.
 6. **Generate the host SSH key for agenix** (Darwin only; NixOS handles this automatically):
    ```bash
    sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
