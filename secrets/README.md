@@ -96,9 +96,56 @@ just darwin   # or just home, depending on where the secret is declared
 
 ## Adding a new host or machine
 
-1. Grab the host pubkey: `cat /etc/ssh/ssh_host_ed25519_key.pub` (or `sudo ssh-keygen -A` first if missing).
-2. On a machine that can decrypt: add the new pubkey to `nix-secrets/secrets.nix` for each relevant `.age`, rekey (`agenix -r -i <key>`), commit/push.
-3. On the new machine: same flake + new `darwinConfiguration`, then rebuild.
+### Darwin (new Mac)
+
+1. Finish the [bootstrap steps in hosts/README.md](../hosts/README.md#bootstrap-a-new-machine) (generate user key, add to GitHub, clone repo, verify SSH).
+2. Generate the host key:
+   ```bash
+   sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
+   ```
+3. Copy the public key off the machine:
+   ```bash
+   cat /etc/ssh/ssh_host_ed25519_key.pub
+   ```
+4. On a machine that can already decrypt `nix-secrets`: add the new host pubkey and user pubkey as recipients in `nix-secrets/secrets.nix`, rekey (`agenix -r -i <key>`), commit/push.
+5. Update this flake's `nix-secrets` input to the new revision.
+6. On the new Mac: `just darwin` to rebuild with working secrets.
+
+### NixOS (new server)
+
+NixOS generates host keys when OpenSSH starts, but **agenix needs the key before it can decrypt secrets**. You have two options:
+
+**Option A: Pre-generate during install (recommended)**
+
+1. During `nixos-install`, after partitioning/mounting but before running the install command:
+   ```bash
+   sudo mkdir -p /mnt/etc/ssh
+   sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/ssh/ssh_host_ed25519_key -C "root@newhost"
+   ```
+2. Copy `/mnt/etc/ssh/ssh_host_ed25519_key.pub` to your existing machine.
+3. On the existing machine: add the pubkey to `nix-secrets/secrets.nix`, rekey, commit/push.
+4. Point the flake's `nix-secrets` input at the updated revision.
+5. Run `nixos-install --flake .#newhost`.
+6. Reboot — secrets work on first boot because the key already exists.
+
+**Option B: Two-phase bootstrap**
+
+1. Create a minimal NixOS config with **no `age.secrets` declarations at all** (not even stubbed ones). CI stubs only make `nix flake check` work; they do not survive agenix activation.
+2. `nixos-install --flake .#newhost` and reboot.
+3. NixOS generates the host key naturally. Copy it:
+   ```bash
+   cat /etc/ssh/ssh_host_ed25519_key.pub
+   ```
+4. On an existing machine: add the pubkey to `nix-secrets/secrets.nix`, rekey, commit/push.
+5. Update flake lock, then `nixos-rebuild switch` on the new host.
+
+### Rekeying agenix secrets
+
+```bash
+# After editing nix-secrets/secrets.nix (adding/removing recipients)
+nix shell github:yaxitech/ragenix#ragenix
+agenix -r -i ~/.ssh/id_ed25519   # re-encrypts all files with updated recipients
+```
 
 ## CI / stub handling
 
