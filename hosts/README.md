@@ -53,6 +53,7 @@ This directory contains per-host configurations and the bootstrap guide.
 8. **Build and switch**:
    ```bash
    just darwin
+   just home
    ```
 
 ### Linux (Home Manager only)
