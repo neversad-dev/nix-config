@@ -27,7 +27,7 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
    ```bash
    cat ~/.ssh/id_ed25519.pub
    ```
-   Paste it into GitHub Settings → SSH and GPG keys → New SSH key.
+   Paste it into GitHub Settings → SSH and GPG keys → New SSH key as an **Authentication key**, then add the *same* public key again as a **Signing key** so GitHub can verify signed commits.
 3. **Clone this repository via SSH** so flake inputs resolve:
    ```bash
    git clone git@github.com:neversad-dev/nix-config.git

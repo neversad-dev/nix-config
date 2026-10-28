@@ -13,20 +13,6 @@ in {
       activation.removeExistingGitconfig = lib.hm.dag.entryBefore ["checkLinkTargets"] ''
         rm -f ~/.gitconfig
       '';
-      activation.sshAllowedSigners = lib.hm.dag.entryAfter ["linkGeneration"] ''
-        PUBKEY="$HOME/.ssh/id_ed25519.pub"
-        if [ -f "$PUBKEY" ]; then
-          if [[ -v DRY_RUN ]]; then
-            echo "[dry-run] would update $HOME/.ssh/allowed_signers" >&2
-          else
-            ${pkgs.coreutils}/bin/printf '%s\t%s\n' \
-              "7419136+neversad-dev@users.noreply.github.com" \
-              "$(${pkgs.coreutils}/bin/cat "$PUBKEY")" \
-              > "$HOME/.ssh/allowed_signers"
-            ${pkgs.coreutils}/bin/chmod 600 "$HOME/.ssh/allowed_signers"
-          fi
-        fi
-      '';
 
       packages = with pkgs; [
         git
@@ -55,7 +41,6 @@ in {
         user = {
           name = "neversad-dev";
           email = "7419136+neversad-dev@users.noreply.github.com";
-          signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
         };
 
         core = {
@@ -63,18 +48,6 @@ in {
           whitespace = "trailing-space,space-before-tab";
           compression = 9;
           preloadindex = true;
-        };
-
-        commit = {
-          gpgsign = true;
-        };
-
-        gpg = {
-          format = "ssh";
-          ssh = {
-            allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
-            program = "${pkgs.openssh}/bin/ssh-keygen";
-          };
         };
 
         credential.helper = "osxkeychain";

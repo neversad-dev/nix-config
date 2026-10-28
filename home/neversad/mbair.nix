@@ -17,6 +17,7 @@
     cli = {
       neovim.enable = true;
       git.enable = true;
+      git.signing.enable = true;
       mitmproxy.enable = false;
       starship.enable = true;
       tldr.enable = true;
