@@ -9,6 +9,11 @@ with lib; {
       };
       gaming.enable = mkEnableOption "Gaming-related packages";
       stayAwake.enable = mkEnableOption "Stay-awake (caffeinate) configuration";
+      theme = {
+        # Global: gates the catppuccin HM module (home/base/tui/catppuccin.nix),
+        # so every host themes or not from this single switch.
+        catppuccin.enable = mkEnableOption "Catppuccin theming (global)";
+      };
     };
   };
 }

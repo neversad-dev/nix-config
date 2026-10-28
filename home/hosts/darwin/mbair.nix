@@ -1,0 +1,33 @@
+{mylib, ...}: {
+  imports = [
+    (mylib.relativeToRoot "hosts/mbair/features.nix") # global feature flags
+    ../../darwin
+  ];
+
+  # home manager specific feature flags
+  features = {
+    ai.enable = true;
+    theme.catppuccin.enable = true;
+    cli = {
+      neovim.enable = true;
+      git.enable = true;
+      git.signing.enable = true;
+      mitmproxy.enable = false;
+      starship.enable = true;
+      tldr.enable = true;
+      atuin.enable = true;
+      direnv.enable = true;
+      eza.enable = true;
+      fastfetch.enable = true;
+      zoxide.enable = true;
+      pay-respects.enable = true;
+      herdr.enable = true;
+    };
+    desktop = {
+      zed.enable = true;
+      wallpapers.enable = true;
+      ghostty.enable = true;
+      kitty.enable = true;
+    };
+  };
+}

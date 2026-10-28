@@ -171,7 +171,7 @@
               inherit outputs wallpapers inputs;
             };
           modules = [
-            ./home/${myvars.primaryUser}/mbair.nix
+            ./home/hosts/darwin/mbair.nix
           ];
         };
 
@@ -186,7 +186,7 @@
               inherit outputs wallpapers inputs;
             };
           modules = [
-            ./home/${myvars.primaryUser}/enduro.nix
+            ./home/hosts/linux/enduro.nix
           ];
         };
     };

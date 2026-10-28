@@ -99,7 +99,7 @@ nix-on-droid pins against nixpkgs/home-manager 24.05 (dedicated flake inputs). H
 
 ## Adding a new host
 
-1. Create `hosts/<hostname>/` (darwin) or a new `home/<user>/<hostname>.nix` (HM-only Linux)
+1. Create `hosts/<hostname>/` (system config) and `home/hosts/<platform>/<hostname>.nix` (home entry point; see [home/README.md](../home/README.md))
 2. Add flake output in `flake.nix`
 3. Follow the bootstrap steps above
 4. Update this table

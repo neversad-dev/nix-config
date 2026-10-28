@@ -21,7 +21,7 @@ Flake does `myvars = import ./vars` → this file.
 
 ## `features.nix`
 
-Module with **`options.features` only** (no `config`). I import it from `modules/common/default.nix` and `home/common/default.nix` so both stacks expose the same toggles (desktop fonts, dev editors, Android `javaHome`, gaming, stay-awake, etc.).
+Module with **`options.features` only** (no `config`). I import it from `home/base/home.nix` so all home stacks expose the same cross-cutting toggles (desktop editors, gaming, stay-awake, etc.).
 
 ## Wiring `myvars` / `features`
 
@@ -54,21 +54,17 @@ I define flags once, import the same file from darwin + HM.
 ```
 
 ```nix
-# home/<user>/myhost.nix
+# home/hosts/<platform>/myhost.nix
 { mylib, ... }: {
   imports = [
-    (mylib.relativeToRoot "hosts/myhost/features.nix")
-    ./home.nix
-    ../common
-    ../features/cli
-    ../features/desktop
-    ../features/darwin # or ../features/linux
-    ../features/development
+    (mylib.relativeToRoot "hosts/myhost/features.nix") # shared flags, optional
+    ../../darwin # or ../../linux/gui.nix
   ];
 }
 ```
 
-Then I add `homeConfigurations."<user>@myhost"` in `flake.nix` pointing at `home/<user>/myhost.nix` (and any extra modules).
+Then point `homeConfigurations."<user>@myhost"` in `flake.nix` at that one file
+(or wire it into a system module's HM integration).
 
 ## Adding a new `features` flag
 

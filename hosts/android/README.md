@@ -6,7 +6,7 @@ Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based*
 
 - **Must stay on NixOS 24.05**: `system.stateVersion` and `home.stateVersion` are pinned to `24.05` because the nix-on-droid release, `nixpkgs-24-05`, and `home-manager-24-05` are all pinned in `flake.nix`.
 - **Heavy reuse with caveats**: Most CLI modules are shared with `mbair` (which targets HM 24.11). Any option introduced after HM 24.05 must be **polyfilled** in `compat.nix` so the shared modules evaluate without modification.
-- **Cherry-pick imports**: We import individual `home/features/cli/*.nix` modules one by one instead of pulling in `cli/default.nix` wholesale. This keeps the surface area small and makes it easy to roll back anything that breaks in proot.
+- **Shared core with compat shims**: The phone imports the shared `home/base/core` stack (plus the lightweight TUI Git extras) through `home/android/`; newer HM options are translated by `home/android/compat.nix` so shared modules evaluate unmodified.
 
 ## File layout
 

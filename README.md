@@ -13,7 +13,7 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 - **Declarative macOS** via [nix-darwin](https://github.com/nix-darwin/nix-darwin) + Home Manager.
 - **Declarative Linux desktops** via Home Manager (no NixOS servers yet).
 - **Declarative Android** via nix-on-droid.
-- **Cross-platform bundles** under `home/features/` toggled with shared `features.*` flags.
+- **Layered home modules** under `home/` (`base/core` → `base/tui` → `base/gui`); optional pieces toggled with `features.*` flags.
 - **Encrypted secrets** via agenix/ragenix in a private `nix-secrets` repo.
 - **Catppuccin** everywhere.
 
@@ -67,9 +67,9 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 │       └── nix-on-droid.nix
 ├── modules/darwin/              # nix-darwin system modules
 ├── home/                        # home-manager configs
-│   ├── common/                  # shared baseline
-│   ├── features/                # togglable bundles (cli, desktop, dev, ...)
-│   └── neversad/                # per-user entrypoints
+│   ├── base/                    # cross-platform core/tui/gui modules
+│   ├── linux|darwin|android/    # per-platform stacks
+│   └── hosts/                   # per-host home entrypoints
 ├── secrets/                     # agenix wiring + how-to
 ├── vars/                        # myvars + features option schema
 ├── overlays/                    # stable-packages + custom patches
