@@ -46,12 +46,13 @@ Notes to myself: nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-d
    ssh -T git@github.com
    ```
    On first run you'll type the passphrase once; `AddKeysToAgent` + `UseKeychain` in the declarative SSH config handle it automatically from then on.
-6. **Generate the host SSH key for agenix** (Darwin only; NixOS handles this automatically):
-   ```bash
-   sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
-   ```
-   Agenix uses this to decrypt system-level secrets.
-7. **Enroll the new keys before activating.** On a machine that can already decrypt the secrets, add the new user public key (`~/.ssh/id_ed25519.pub`) and, for any system secrets, the host public key (`/etc/ssh/ssh_host_ed25519_key.pub`) as recipients in `nix-secrets/secrets.nix`. Rekey the relevant `.age` files and commit/push the changes. Update this flake's pinned `nix-secrets` input to that revision before rebuilding. Generating keys alone does not grant decryption access; see [Adding a new host or machine](secrets/README.md#adding-a-new-host-or-machine).
+6. **Generate the host SSH key for agenix.** Agenix uses this to decrypt system-level secrets.
+   - **Darwin** (already running): generate directly:
+     ```bash
+     sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
+     ```
+   - **NixOS**: pre-generate during installation _before_ `nixos-install`, or follow the two-phase bootstrap (basic config first, then add secrets after the initial rebuild). See [secrets/README.md](secrets/README.md#adding-a-new-host-or-machine) for details.
+7. **Enroll the new keys before activating.** On a machine that can already decrypt the secrets, add the new user public key (`~/.ssh/id_ed25519.pub`) and, for any system secrets, the host public key (`/etc/ssh/ssh_host_ed25519_key.pub`) as recipients in `nix-secrets/secrets.nix`. Rekey the relevant `.age` files and commit/push the changes. Update this flake's pinned `nix-secrets` input to that revision before rebuilding. Generating keys alone does not grant decryption access.
 
 ## Builds and switches
 
