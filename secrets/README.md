@@ -98,7 +98,7 @@ just darwin   # or just home, depending on where the secret is declared
 
 ### Darwin (new Mac)
 
-1. Finish the [first-time setup](../README.md#first-time-setup-on-a-new-machine) steps 1–5 (generate user key, add to GitHub, clone repo, verify SSH).
+1. Finish the [bootstrap steps in hosts/README.md](../hosts/README.md#bootstrap-a-new-machine) (generate user key, add to GitHub, clone repo, verify SSH).
 2. Generate the host key:
    ```bash
    sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
