@@ -86,13 +86,13 @@ See [secrets/README.md](../secrets/README.md#adding-a-new-host-or-machine) for f
 Switch on-device:
 
 ```bash
-nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#pixel6"
+nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#default"
 ```
 
 Or from the repo:
 
 ```bash
-just droid pixel6
+just droid
 ```
 
 nix-on-droid pins against nixpkgs/home-manager 24.05 (dedicated flake inputs). Home Manager is wired through nix-on-droid's built-in module rather than a standalone `homeConfigurations` output.

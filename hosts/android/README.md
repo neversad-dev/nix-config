@@ -10,16 +10,17 @@ Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based*
 
 ## File layout
 
-| File | Purpose |
-|---|---|
-| `nix-on-droid.nix` | Top-level host config. Defines system packages, login shell, and the `home-manager` block that imports shared modules. |
-| `compat.nix` | HM 24.05 polyfill. Declares forward-compatible options (`initContent`, `git.settings`, `atuin.daemon`, `atuin.forceOverwriteSettings`, etc.) so mbair modules evaluate cleanly. |
+| File               | Purpose                                                                                                                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nix-on-droid.nix` | Top-level host config. Defines system packages, login shell, and the `home-manager` block that imports shared modules.                                                                      |
+| `compat.nix`       | HM 24.05 polyfill. Declares newer option names (`initContent`, `git.settings`, `atuin.daemon`, etc.) and forwards their values to the 24.05 equivalents so shared modules evaluate cleanly. |
 
 ## Architecture notes
 
 ### Why no `inputs` in `home-manager.extraSpecialArgs`?
 
 Nix-on-droid's bundled HM 24.05 does **not** forward flake `inputs` into the home-manager module scope. Any module that depends on flake inputs (e.g. the Catppuccin module from `inputs.catppuccin.homeModules`) must either:
+
 1. Be imported at the **flake level** (outside the nix-on-droid home-manager block), or
 2. Be **skipped** and replaced by a local stub.
 
@@ -35,17 +36,16 @@ Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font fr
 
 - `btop` was removed: `/proc/stat` parsing fails inside proot.
 - `tmux` was removed entirely from the repo (not just skipped).
-- `colors.properties` experiments were rolled back — Termux ANSI palette overrides broke zsh syntax-highlighting visibility.
 
 ## Usage
 
 ```bash
 # Switch from local checkout (useful while iterating)
 cd /storage/emulated/0/code/projects/nix-config && git pull
-nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#pixel6"
+nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#default"
 
 # Switch from GitHub (useful once everything is stable)
-nix-on-droid switch --flake github:neversad-dev/nix-config#pixel6
+nix-on-droid switch --flake github:neversad-dev/nix-config#default
 ```
 
 After switching, **force-stop and reopen** the nix-on-droid app so Termux picks up the copied font and login-shell changes.

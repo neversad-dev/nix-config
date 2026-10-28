@@ -40,7 +40,7 @@ just up      # update flake inputs
 | ---------- | ---------------------- | ------------------------------------ |
 | **mbair**  | macOS / aarch64        | `hosts/mbair/` + HM `neversad@mbair` |
 | **enduro** | Linux / x86_64         | HM only: `neversad@enduro`           |
-| **pixel6** | Android (nix-on-droid) | `hosts/nix-on-droid.nix`             |
+| **pixel6** | Android (nix-on-droid) | `hosts/android/nix-on-droid.nix`     |
 
 Adding a new machine? See [hosts/README.md](hosts/README.md).
 
@@ -63,7 +63,8 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── flake.nix                    # darwin + HM + nix-on-droid outputs
 ├── hosts/                       # per-host system configs + bootstrap docs
 │   ├── mbair/
-│   └── nix-on-droid.nix
+│   └── android/
+│       └── nix-on-droid.nix
 ├── modules/darwin/              # nix-darwin system modules
 ├── home/                        # home-manager configs
 │   ├── common/                  # shared baseline
