@@ -81,8 +81,8 @@
   #  /etc/profiles/per-user/m3tam3re/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    EDITOR = "vim";
-    VISUAL = "vim";
+    EDITOR = lib.mkDefault "vim";
+    VISUAL = lib.mkDefault "vim";
   };
 
   # Let Home Manager install and manage itself.
