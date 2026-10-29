@@ -136,6 +136,8 @@
           overlays.additions
           overlays.modifications
           overlays.stable-packages
+          overlays.unstable-packages
+          overlays.nixos-25-11-packages
         ];
         config = {
           allowUnfree = true;
@@ -175,6 +177,7 @@
       pkgs = import nixpkgs-24-05 {
         system = "aarch64-linux";
         overlays = [
+          overlays.additions
           overlays.unstable-packages
           overlays.nixos-25-11-packages
           # nvf's language presets reference these; missing in 24.05.
@@ -189,6 +192,8 @@
               basedpyright
               just-lsp
               typescript-language-server
+              # superfile from 25.11: newer than 24.05's 1.1.2, still glibc 2.40
+              superfile
               ;
           })
         ];
@@ -260,7 +265,6 @@
           nix-melt # TUI flake.lock viewer
           nix-tree # TUI dependency graph for a derivation
           just # command runner (repo Justfile)
-          tuxedo # project TODO manager (todo.txt)
         ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path

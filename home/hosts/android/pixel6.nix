@@ -23,8 +23,8 @@
       pay-respects.enable = false;
       herdr.enable = false;
       btop.enable = false;
-      superfile.enable = false;
-      tuxedo.enable = false;
+      superfile.enable = true;
+      tuxedo.enable = true;
     };
     secrets.enable = false;
   };
