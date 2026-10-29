@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  mylib,
-  ...
-}: {
+{...}: {
   imports = [
     ../../android
   ];
@@ -13,7 +7,7 @@
   # Enable selectively after testing on device.
   features = {
     ai.enable = false;
-    theme.catppuccin.enable = false;
+    theme.catppuccin.enable = true;
     cli = {
       neovim.enable = false;
       git.enable = true;
@@ -21,11 +15,11 @@
       mitmproxy.enable = false;
       starship.enable = true;
       tldr.enable = false;
-      atuin.enable = false;
+      atuin.enable = true;
       direnv.enable = false;
-      eza.enable = false;
-      fastfetch.enable = false;
-      zoxide.enable = false;
+      eza.enable = true;
+      fastfetch.enable = true;
+      zoxide.enable = true;
       pay-respects.enable = false;
       herdr.enable = false;
       btop.enable = false;
