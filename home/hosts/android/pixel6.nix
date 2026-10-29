@@ -17,16 +17,16 @@
       git.signing.enable = false;
       mitmproxy.enable = false;
       starship.enable = true;
-      tldr.enable = false;
+      tldr.enable = true;
       atuin.enable = true;
       direnv.enable = true;
       eza.enable = true;
       fastfetch.enable = true;
       fastfetch.logo = "android";
       zoxide.enable = true;
-      pay-respects.enable = false;
+      pay-respects.enable = true; # from nixos-25.11 (not in 24.05)
       herdr.enable = true; # from unstable, like tuxedo
-      btop.enable = false;
+      btop.enable = true;
       superfile.enable = true;
       tuxedo.enable = true;
     };

@@ -192,6 +192,8 @@
               typescript-language-server
               # superfile from 25.11: newer than 24.05's 1.1.2, still glibc 2.40
               superfile
+              # not in 24.05 at all; leaf package, so no rebuild cascade
+              pay-respects
               ;
             # Unstable TUIs that work on-device despite glibc >= 2.42.
             # Same derivations as the desktops/devShell: fetched from cache.

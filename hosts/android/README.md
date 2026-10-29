@@ -37,7 +37,8 @@ There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (
 
 ### Known issues
 
-- `btop` is disabled: `/proc/stat` parsing fails inside proot.
+- `btop` may fail: `/proc/stat` parsing inside proot (it was disabled for
+  that reason, re-enabled to retest).
 - `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage
