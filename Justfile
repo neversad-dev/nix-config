@@ -99,12 +99,12 @@ home-legacy:
 ############################################################################
 
 [group('nix-on-droid')]
-droid host="pixel6":
-  nix-on-droid switch --flake .#{{ host }}
+droid:
+  nix-on-droid switch --flake .#{{ hostname }}
 
 [group('nix-on-droid')]
-droid-build host="pixel6":
-  nix-on-droid build --flake .#{{ host }}
+droid-build:
+  nix-on-droid build --flake .#{{ hostname }}
 
 # Clean up garbage on nix-on-droid:
 # - delete old generations of the system + HM (and the current one if -d twice)
