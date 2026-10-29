@@ -12,7 +12,7 @@
       neovim = {
         enable = true;
         # nvf language/debugger presets need packages missing in nixpkgs-24.05.
-        languages.enable = false;
+        languages.enable = true; # with the 24.05-missing packages aliased above
         debugger.enable = false;
       };
       git.enable = true;

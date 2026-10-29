@@ -174,7 +174,22 @@
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
       pkgs = import nixpkgs-24-05 {
         system = "aarch64-linux";
-        overlays = [overlays.unstable-packages overlays.nixos-25-11-packages];
+        overlays = [
+          overlays.unstable-packages
+          overlays.nixos-25-11-packages
+          # nvf's language presets reference these; missing in 24.05.
+          # Leaf packages, so aliasing them doesn't force rebuilds.
+          (final: prev: {
+            inherit
+              (prev.nixos2511)
+              bash-language-server
+              prettier
+              superhtml
+              tombi
+              basedpyright
+              ;
+          })
+        ];
       };
       extraSpecialArgs = specialArgs;
       modules = [
