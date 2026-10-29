@@ -35,10 +35,12 @@ in {
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "home-manager.backup";
-    extraSpecialArgs = inputs // {
-      inherit outputs mylib myvars;
-      isHm24 = false;
-    };
+    extraSpecialArgs =
+      inputs
+      // {
+        inherit outputs mylib myvars;
+        isHm24 = false;
+      };
     users.${primaryUser} = mylib.relativeToRoot "home/hosts/darwin/mbair.nix";
   };
 }

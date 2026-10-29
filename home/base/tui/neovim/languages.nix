@@ -1,12 +1,30 @@
 {pkgs, ...}: let
   hasPkg = name: builtins.hasAttr name pkgs;
-  optionalPkg = name: if hasPkg name then [pkgs.${name}] else [];
+  optionalPkg = name:
+    if hasPkg name
+    then [pkgs.${name}]
+    else [];
   formatters = {
-    nix = if hasPkg "alejandra" then ["alejandra"] else [];
-    markdown = if hasPkg "prettier" then ["prettier"] else [];
-    sh = if hasPkg "shfmt" then ["shfmt"] else [];
-    bash = if hasPkg "shfmt" then ["shfmt"] else [];
-    python = if hasPkg "ruff" then ["ruff_format"] else [];
+    nix =
+      if hasPkg "alejandra"
+      then ["alejandra"]
+      else [];
+    markdown =
+      if hasPkg "prettier"
+      then ["prettier"]
+      else [];
+    sh =
+      if hasPkg "shfmt"
+      then ["shfmt"]
+      else [];
+    bash =
+      if hasPkg "shfmt"
+      then ["shfmt"]
+      else [];
+    python =
+      if hasPkg "ruff"
+      then ["ruff_format"]
+      else [];
   };
   # Only include ft keys that have at least one formatter
   formatters_by_ft = builtins.listToAttrs (

@@ -9,7 +9,6 @@
   writableTmpDirAsHomeHook,
   versionCheckHook,
 }:
-
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "tuxedo";
   version = "2026.8.1";
@@ -24,10 +23,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-UpSIqUA+mJe31m2Oo6P1ZXvV9+fi90fUYg7OWWts2Js=";
 
-  nativeCheckInputs = [ writableTmpDirAsHomeHook ];
+  nativeCheckInputs = [writableTmpDirAsHomeHook];
 
   doInstallCheck = true;
-  nativeInstallCheckInputs = [ versionCheckHook ];
+  nativeInstallCheckInputs = [versionCheckHook];
 
   checkFlags = [
     # Failure
