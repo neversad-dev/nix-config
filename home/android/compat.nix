@@ -126,13 +126,15 @@
   };
 
   config = {
-    # Specific hosts before Host *; OpenSSH uses the first obtained value.
-    # HM-24.05's own defaults follow extraConfig and cannot override these.
-    programs.ssh.extraConfig = lib.mkIf config.programs.ssh.enable (let
+    # Forward the new free-form programs.ssh.settings onto HM-24.05's API.
+    # HM-24.05 renders: matchBlocks, then a hardcoded `Host *` block built
+    # from its top-level options (addKeysToAgent, ...), with extraConfig
+    # appended *inside* that block. OpenSSH uses the first obtained value,
+    # so "*" settings must go to those top-level options — rendering our own
+    # `Host *` in extraConfig loses to HM's defaults (e.g. AddKeysToAgent no).
+    programs.ssh = let
       settings = config.programs.ssh.settings;
-      hosts =
-        lib.filter (name: name != "*") (builtins.attrNames settings)
-        ++ lib.optional (settings ? "*") "*";
+      star = settings."*" or {};
       renderValue = value:
         if builtins.isBool value
         then
@@ -142,12 +144,42 @@
             else "no"
           )
         else toString value;
-      renderHost = name:
-        "Host ${name}\n"
-        + lib.concatStringsSep "\n"
-        (lib.mapAttrsToList (key: value: "  ${key} ${renderValue value}") settings.${name});
-    in
-      lib.concatMapStringsSep "\n\n" renderHost hosts);
+      # ssh_config key -> HM-24.05 top-level option (raw values, typed)
+      known = {
+        ForwardAgent = "forwardAgent";
+        AddKeysToAgent = "addKeysToAgent";
+        Compression = "compression";
+        ServerAliveInterval = "serverAliveInterval";
+        ServerAliveCountMax = "serverAliveCountMax";
+        HashKnownHosts = "hashKnownHosts";
+        UserKnownHostsFile = "userKnownHostsFile";
+        ControlMaster = "controlMaster";
+        ControlPath = "controlPath";
+        ControlPersist = "controlPersist";
+      };
+      starRest = lib.filterAttrs (k: _: !(known ? ${k})) star;
+    in {
+      # Attribute names must be static (computing them from config recurses).
+      forwardAgent = lib.mkIf (star ? ForwardAgent) star.ForwardAgent;
+      addKeysToAgent = lib.mkIf (star ? AddKeysToAgent) star.AddKeysToAgent;
+      compression = lib.mkIf (star ? Compression) star.Compression;
+      serverAliveInterval = lib.mkIf (star ? ServerAliveInterval) star.ServerAliveInterval;
+      serverAliveCountMax = lib.mkIf (star ? ServerAliveCountMax) star.ServerAliveCountMax;
+      hashKnownHosts = lib.mkIf (star ? HashKnownHosts) star.HashKnownHosts;
+      userKnownHostsFile = lib.mkIf (star ? UserKnownHostsFile) star.UserKnownHostsFile;
+      controlMaster = lib.mkIf (star ? ControlMaster) star.ControlMaster;
+      controlPath = lib.mkIf (star ? ControlPath) star.ControlPath;
+      controlPersist = lib.mkIf (star ? ControlPersist) star.ControlPersist;
+      # Leftover "*" keys: no HM default exists, so extraConfig is safe.
+      extraConfig = lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (k: v: "${k} ${renderValue v}") starRest
+      );
+      matchBlocks =
+        lib.mapAttrs (_: opts: {
+          extraOptions = lib.mapAttrs (_: renderValue) opts;
+        })
+        (lib.filterAttrs (name: _: name != "*") settings);
+    };
 
     # Forward initContent → initExtra
     programs.zsh.initExtra =
