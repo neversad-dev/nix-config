@@ -18,7 +18,10 @@
   # nix-on-droid-path, so let the unstable ones win. mkBefore matters:
   # buildEnv keeps only the *first* occurrence of a store path, so the
   # hiPrio copies must precede the plain ones from other modules.
-  home.packages = lib.mkBefore (map lib.hiPrio [pkgs.bashInteractive pkgs.coreutils]);
+  home.packages = lib.mkMerge [
+    (lib.mkBefore (map lib.hiPrio [pkgs.bashInteractive pkgs.coreutils]))
+    [pkgs.procps]
+  ];
 
   # Background git checks can time out on Android's shared storage.
   programs.starship.settings.command_timeout = 2000;
