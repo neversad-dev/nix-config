@@ -187,6 +187,8 @@
               superhtml
               tombi
               basedpyright
+              just-lsp
+              typescript-language-server
               ;
           })
         ];
