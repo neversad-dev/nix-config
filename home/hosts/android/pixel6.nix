@@ -32,12 +32,6 @@
       superfile.enable = false;
       tuxedo.enable = false;
     };
-    desktop = {
-      zed.enable = false;
-      wallpapers.enable = false;
-      ghostty.enable = false;
-      kitty.enable = false;
-    };
     secrets.enable = false;
   };
 }
