@@ -9,12 +9,7 @@
     ai.enable = false;
     theme.catppuccin.enable = true;
     cli = {
-      neovim = {
-        enable = true;
-        # nvf language/debugger presets need packages missing in nixpkgs-24.05.
-        languages.enable = true; # with the 24.05-missing packages aliased above
-        debugger.enable = false;
-      };
+      neovim.enable = true; # language packages aliased in flake.nix
       git.enable = true;
       git.signing.enable = false;
       mitmproxy.enable = false;

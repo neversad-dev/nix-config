@@ -6,12 +6,10 @@ Custom Neovim configuration built with [nvf](https://nvf.notashelf.dev), vendore
 
 Enable with `features.cli.neovim.enable = true` (off by default). Run standalone with `nix run github:neversad-dev/nix-config` (always the full config).
 
-Optional parts, both on by default when neovim is enabled:
-
-- `features.cli.neovim.languages.enable`: `languages.nix` (LSP, formatters, language support)
-- `features.cli.neovim.debugger.enable`: `debugger.nix` (nvim-dap)
-
-Android turns both off because their nvf presets reference packages missing in nixpkgs-24.05.
+`languages.nix` (LSP, formatters) works everywhere; on Android the
+packages its presets need but nixpkgs-24.05 lacks are aliased from
+nixos-25.11 in flake.nix (the nvim binary itself comes from 25.11 too,
+see home/android/default.nix).
 
 ## Layout
 
@@ -24,7 +22,6 @@ home/base/tui/neovim/
 ├── keymaps.nix         # which-key, cheatsheet
 ├── languages.nix       # LSP, formatting, language options
 ├── autocomplete.nix    # blink-cmp
-├── debugger.nix        # nvim-dap
 ├── plugins/            # Per-plugin nvf modules
 │   ├── default.nix     # Imports every plugin module
 │   └── ...

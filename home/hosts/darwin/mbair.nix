@@ -9,10 +9,7 @@
     ai.enable = true;
     theme.catppuccin.enable = true;
     cli = {
-      neovim = {
-        enable = true;
-        debugger.enable = false; # rarely used
-      };
+      neovim.enable = true;
       git.enable = true;
       git.signing.enable = true;
       mitmproxy.enable = false;
