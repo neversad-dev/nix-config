@@ -37,8 +37,8 @@ There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (
 
 ### Known issues
 
-- `btop` may fail: `/proc/stat` parsing inside proot (it was disabled for
-  that reason, re-enabled to retest).
+- `btop`: 24.05's build can't parse `/proc/stat` inside proot; it's taken
+  from nixos-25.11 instead.
 - `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage
