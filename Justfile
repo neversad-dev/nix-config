@@ -99,12 +99,12 @@ home-legacy:
 ############################################################################
 
 [group('nix-on-droid')]
-droid:
-  nix-on-droid switch --flake .#{{ hostname }}
+droid host="":
+  nix-on-droid switch --flake .#{{ if host != "" { host } else { hostname } }}
 
 [group('nix-on-droid')]
-droid-build:
-  nix-on-droid build --flake .#{{ hostname }}
+droid-build host="":
+  nix-on-droid build --flake .#{{ if host != "" { host } else { hostname } }}
 
 # Clean up garbage on nix-on-droid:
 # - delete old generations of the system + HM (and the current one if -d twice)
