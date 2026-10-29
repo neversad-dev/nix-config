@@ -37,8 +37,9 @@ There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (
 
 ### Known issues
 
-- `btop`: 24.05's build can't parse `/proc/stat` inside proot; it's taken
-  from nixos-25.11 instead.
+- No system monitor: Android blocks `/proc/stat` for apps (since Android 8),
+  so btop can't read CPU stats in any version. `htop` and `procs` are
+  installed but show no/partial CPU data.
 - `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage

@@ -26,7 +26,7 @@
       zoxide.enable = true;
       pay-respects.enable = true; # from nixos-25.11 (not in 24.05)
       herdr.enable = true; # from unstable, like tuxedo
-      btop.enable = true;
+      btop.enable = false; # Android blocks /proc/stat for apps (see README)
       superfile.enable = true;
       tuxedo.enable = true;
     };
