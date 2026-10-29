@@ -109,7 +109,7 @@
     specialArgs =
       inputs
       // {
-        inherit outputs mylib myvars;
+        inherit inputs outputs mylib myvars;
       };
 
     darwinSystems = {

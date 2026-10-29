@@ -1,6 +1,8 @@
 {
   mylib,
   myvars,
+  inputs,
+  outputs,
   ...
 }: let
   hostname = "mbair";
@@ -25,5 +27,17 @@ in {
     ./secrets.nix
     (mylib.relativeToRoot "modules/darwin")
     (mylib.relativeToRoot "secrets/darwin.nix")
+    inputs.home-manager.darwinModules.home-manager
   ];
+
+  # Home Manager embedded into nix-darwin
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "home-manager.backup";
+    extraSpecialArgs = inputs // {
+      inherit outputs mylib myvars;
+    };
+    users.${primaryUser} = mylib.relativeToRoot "home/hosts/darwin/mbair.nix";
+  };
 }
