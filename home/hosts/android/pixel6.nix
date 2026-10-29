@@ -25,8 +25,8 @@
       fastfetch.logo = "android";
       zoxide.enable = true;
       pay-respects.enable = false;
-      herdr.enable = false; # vendored pkg exists (pkgs/herdr.nix) but zig
-      # 0.16 build segfaults on-device (zig on Android/proot)
+      herdr.enable = false; # unstable's needs glibc >= 2.42; a 25.11 build
+      # (zig 0.16) segfaulted on-device
       btop.enable = false;
       superfile.enable = true;
       tuxedo.enable = true;

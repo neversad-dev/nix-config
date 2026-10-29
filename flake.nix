@@ -178,7 +178,6 @@
           overlays.additions
           overlays.unstable-packages
           overlays.nixos-25-11-packages
-          overlays.android-packages
           # nvf's language presets reference these; missing in 24.05.
           # Leaf packages, so aliasing them doesn't force rebuilds.
           (final: prev: {
@@ -194,6 +193,9 @@
               # superfile from 25.11: newer than 24.05's 1.1.2, still glibc 2.40
               superfile
               ;
+            # Unstable, but verified working on-device; same derivation as
+            # the devShell's, so it's fetched from cache once, not compiled.
+            inherit (prev.unstable) tuxedo;
           })
         ];
       };

@@ -38,16 +38,4 @@
       config.allowUnfree = true;
     };
   };
-
-  # nix-on-droid only: packages that exist only in nixpkgs unstable, vendored
-  # and built on 25.11's toolchain so the binaries run on Android (glibc 2.40).
-  # Kept out of `additions` so desktops keep the cached unstable builds.
-  # Requires the unstable-packages and nixos-25-11-packages overlays.
-  android-packages = final: _prev: {
-    tuxedo = final.nixos2511.callPackage ../pkgs/tuxedo.nix {};
-    # zig_0_16/installAgentSkills borrowed from unstable (25.11 has neither).
-    herdr = final.nixos2511.callPackage ../pkgs/herdr.nix {
-      inherit (final.unstable) zig_0_16 installAgentSkills;
-    };
-  };
 }

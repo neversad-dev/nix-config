@@ -38,7 +38,7 @@ There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (
 ### Known issues
 
 - `btop` is disabled: `/proc/stat` parsing fails inside proot.
-- `herdr` is disabled: the vendored build (`pkgs/herdr.nix`) segfaults on-device (zig under Android/proot).
+- `herdr` is disabled: unstable's binary needs glibc >= 2.42, and a 25.11 build (zig 0.16) segfaulted on-device.
 - `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage

@@ -77,8 +77,8 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to
 ├── vars/                        # myvars + features option schema
-├── overlays/                    # pkgs.stable/unstable/nixos2511, android packages
-└── pkgs/                        # custom + vendored packages
+├── overlays/                    # pkgs.stable / unstable / nixos2511
+└── pkgs/                        # custom packages
 ```
 
 ---

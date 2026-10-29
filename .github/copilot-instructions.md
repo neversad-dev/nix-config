@@ -81,8 +81,8 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 ├── hosts/
 │   ├── mbair/                   # nix-darwin host (embeds HM), features.nix
 │   └── android/pixel6/          # nix-on-droid system layer
-├── overlays/                    # pkgs.stable / unstable / nixos2511, android-packages
-├── pkgs/                        # Custom + vendored packages
+├── overlays/                    # pkgs.stable / unstable / nixos2511
+├── pkgs/                        # Custom packages
 ├── vars/
 │   └── features.nix             # Shared option definitions (features.*)
 └── lib/                         # Local helpers (mylib: scanPaths, mkEditableConfig, relativeToRoot)
