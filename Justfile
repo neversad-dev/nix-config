@@ -99,11 +99,11 @@ home-legacy:
 ############################################################################
 
 [group('nix-on-droid')]
-droid host="default":
+droid host="pixel6":
   nix-on-droid switch --flake .#{{ host }}
 
 [group('nix-on-droid')]
-droid-build host="default":
+droid-build host="pixel6":
   nix-on-droid build --flake .#{{ host }}
 
 ############################################################################

@@ -194,7 +194,7 @@
         };
     };
 
-    nixOnDroidConfigurations.default = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
       pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
       extraSpecialArgs = specialArgs;
       modules = [
