@@ -18,6 +18,10 @@
   # tools only (see flake.nix nixOnDroidConfigurations for why).
   home.packages = with pkgs; [procps gnugrep gnused findutils];
 
+  # nvf plugins need Neovim >= 0.10 (24.05 has 0.9.5); unstable's build is
+  # unusable on Android (glibc TCGETS2), so take 0.11 from nixos-25.11.
+  programs.nvf.settings.vim.package = pkgs.nixos2511.neovim-unwrapped;
+
   # Background git checks can time out on Android's shared storage.
   programs.starship.settings.command_timeout = 2000;
 

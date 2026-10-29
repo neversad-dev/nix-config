@@ -27,6 +27,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-24-05.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # Last release on glibc < 2.42 (no TCGETS2, which Android SELinux blocks
+    # on ttys). Source of newer TUI packages for nix-on-droid.
+    nixpkgs-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
@@ -171,7 +174,7 @@
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
       pkgs = import nixpkgs-24-05 {
         system = "aarch64-linux";
-        overlays = [overlays.unstable-packages];
+        overlays = [overlays.unstable-packages overlays.nixos-25-11-packages];
       };
       extraSpecialArgs = specialArgs;
       modules = [

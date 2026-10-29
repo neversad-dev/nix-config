@@ -28,4 +28,14 @@
       config.allowUnfree = true;
     };
   };
+
+  # Expose nixos-25.11 as `pkgs.nixos2511`: newer than 24.05 but still on
+  # glibc 2.40, so its interactive/TUI binaries work on Android (unlike
+  # unstable's glibc >= 2.42, whose TCGETS2 ioctl SELinux blocks).
+  nixos-25-11-packages = final: _prev: {
+    nixos2511 = import inputs.nixpkgs-25-11 {
+      system = final.system;
+      config.allowUnfree = true;
+    };
+  };
 }
