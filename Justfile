@@ -115,7 +115,6 @@ droid-clean:
   nix-collect-garbage -d
   nix profile wipe-history --profile ~/.nix-profile 2>/dev/null || true
   nix-collect-garbage -d
-  nix store optimise
 
 ############################################################################
 #
