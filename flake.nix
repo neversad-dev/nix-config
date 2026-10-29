@@ -136,8 +136,6 @@
           overlays.additions
           overlays.modifications
           overlays.stable-packages
-          overlays.unstable-packages
-          overlays.nixos-25-11-packages
         ];
         config = {
           allowUnfree = true;
@@ -180,6 +178,7 @@
           overlays.additions
           overlays.unstable-packages
           overlays.nixos-25-11-packages
+          overlays.android-packages
           # nvf's language presets reference these; missing in 24.05.
           # Leaf packages, so aliasing them doesn't force rebuilds.
           (final: prev: {
@@ -265,6 +264,7 @@
           nix-melt # TUI flake.lock viewer
           nix-tree # TUI dependency graph for a derivation
           just # command runner (repo Justfile)
+          tuxedo # project TODO manager (todo.txt, see Justfile)
         ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path
