@@ -1,27 +1,22 @@
 {
-  config,
-  lib,
   pkgs,
   ...
-}:
-with lib; let
+}: let
   hasTuxedo = builtins.hasAttr "tuxedo" pkgs;
 in {
   vim = {
-    extraPackages = optionals hasTuxedo [
-      pkgs.tuxedo
-    ];
+    extraPackages = with pkgs; [] ++ (if hasTuxedo then [tuxedo] else []);
 
-    keymaps = optionals hasTuxedo [
+    keymaps = with pkgs; [] ++ (if hasTuxedo then [
       {
         key = "<leader>tt";
         mode = "n";
         silent = true;
         action = "<cmd>Tuxedo<CR>";
       }
-    ];
+    ] else []);
 
-    extraPlugins = mkIf hasTuxedo {
+    extraPlugins = with pkgs; if hasTuxedo then {
       tuxedo-nvim = {
         package = pkgs.vimUtils.buildVimPlugin {
           pname = "tuxedo-nvim";
@@ -55,6 +50,6 @@ in {
           end
         '';
       };
-    };
+    } else {};
   };
 }

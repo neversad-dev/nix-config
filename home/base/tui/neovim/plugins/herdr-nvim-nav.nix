@@ -42,28 +42,42 @@
         mode = "n";
         action = "<Nop>";
       }
+      {
+        key = "<C-h>";
+        mode = "n";
+        action = ''
+          function()
+            require('herdr-nvim-nav').left()
+          end
+        '';
+      }
+      {
+        key = "<C-j>";
+        mode = "n";
+        action = ''
+          function()
+            require('herdr-nvim-nav').down()
+          end
+        '';
+      }
+      {
+        key = "<C-k>";
+        mode = "n";
+        action = ''
+          function()
+            require('herdr-nvim-nav').up()
+          end
+        '';
+      }
+      {
+        key = "<C-l>";
+        mode = "n";
+        action = ''
+          function()
+            require('herdr-nvim-nav').right()
+          end
+        '';
+      }
     ];
-
-    # Talk directly to which-key v3 to hide them from the UI
-    luaConfigRC.hide_window_movements = ''
-      -- We wrap this in a pcall (protected call) or standard require
-      -- to ensure it only runs if which-key is loaded
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "DeferredUIEnter",
-        callback = function()
-          vim.schedule(function()
-            local wk_ok, wk = pcall(require, "which-key")
-            if wk_ok then
-              wk.add({
-                { "<C-w>h", hidden = true },
-                { "<C-w>j", hidden = true },
-                { "<C-w>k", hidden = true },
-                { "<C-w>l", hidden = true },
-              })
-            end
-          end)
-        end,
-      })
-    '';
   };
 }
