@@ -177,7 +177,13 @@
             overlays = [
               # HM 24.05 modules reference attrs removed in unstable
               # (forced at derivation time even when the module is unused).
-              (final: prev: {plasma5Packages = prev.kdePackages;})
+              (final: prev: {
+                plasma5Packages = prev.kdePackages;
+                # Used by HM 24.05 core (modules/files.nix).
+                substituteAll =
+                  final.callPackage
+                  "${nixpkgs-24-05}/pkgs/build-support/substitute/substitute-all.nix" {};
+              })
             ];
           };
         };
