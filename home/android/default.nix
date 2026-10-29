@@ -26,6 +26,10 @@
   # Background git checks can time out on Android's shared storage.
   programs.starship.settings.command_timeout = 2000;
 
+  # Atuin daemon relies on systemd user services (not available on
+  # nix-on-droid) — run without it; sqlite direct access is fine.
+  programs.atuin.daemon.enable = false;
+
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
   programs.zsh.initExtra = ''
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
