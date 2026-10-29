@@ -22,6 +22,7 @@
       direnv.enable = true;
       eza.enable = true;
       fastfetch.enable = true;
+      fastfetch.logo = "android";
       zoxide.enable = true;
       pay-respects.enable = false;
       herdr.enable = true; # vendored from unstable, built on 25.11 (pkgs/herdr.nix)
