@@ -240,11 +240,11 @@
     },
     "mnw": {
       "locked": {
-        "lastModified": 1780772958,
-        "narHash": "sha256-VKKe8r4pwCGWZ3Yr9CPN129R4S3CKLSrlYqdYz3vKpM=",
+        "lastModified": 1784154424,
+        "narHash": "sha256-HRn4O1X2ShYtbq5Egji72/aemyc2cIQicjRZD9hBqM8=",
         "owner": "Gerg-L",
         "repo": "mnw",
-        "rev": "0871dbf63a53610c95db04439ed8ea4d6ec9c160",
+        "rev": "0151d9fa87992cbeb67c86616fb9170dcec830b6",
         "type": "github"
       },
       "original": {
@@ -294,44 +294,6 @@
       "original": {
         "owner": "Gerschtli",
         "repo": "nix-formatter-pack",
-        "type": "github"
-      }
-    },
-    "nix-lib": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1762036913,
-        "narHash": "sha256-VlXYbsKWNrmi92tSRQOCGrHoPJXYagwAc8ccbMAtYu8=",
-        "owner": "neversad-dev",
-        "repo": "nix-lib",
-        "rev": "d6c6c2a56977b0038b8f33d13d9d42ce31abcd6d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "neversad-dev",
-        "repo": "nix-lib",
-        "type": "github"
-      }
-    },
-    "nix-lib_2": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_4"
-      },
-      "locked": {
-        "lastModified": 1762036913,
-        "narHash": "sha256-VlXYbsKWNrmi92tSRQOCGrHoPJXYagwAc8ccbMAtYu8=",
-        "owner": "neversad-dev",
-        "repo": "nix-lib",
-        "rev": "d6c6c2a56977b0038b8f33d13d9d42ce31abcd6d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "neversad-dev",
-        "repo": "nix-lib",
         "type": "github"
       }
     },
@@ -489,35 +451,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_4": {
-      "locked": {
-        "lastModified": 1761880412,
-        "narHash": "sha256-QoJjGd4NstnyOG4mm4KXF+weBzA2AH/7gn1Pmpfcb0A=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "a7fc11be66bdfb5cdde611ee5ce381c183da8386",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_5": {
-      "locked": {
-        "lastModified": 1787498568,
-        "narHash": "sha256-FoOSoBG7tEvOlGRTpWnVdY506Ner4y7r7UYO3OGgmE8=",
-        "rev": "56c02bc00adcf003215cc4bd996d6efaf4cff188",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1060451.56c02bc00adc/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
-      }
-    },
     "nmd": {
       "flake": false,
       "locked": {
@@ -576,41 +509,21 @@
       "inputs": {
         "flake-compat": "flake-compat",
         "mnw": "mnw",
-        "nixpkgs": "nixpkgs_5"
-      },
-      "locked": {
-        "lastModified": 1789172534,
-        "narHash": "sha256-LV26WEThZ7U+L274lSY1xNOmxTb8Y9yrE3mOR6CAOZg=",
-        "owner": "notashelf",
-        "repo": "nvf",
-        "rev": "9c1d99771b443055f5cd428f11b5a4b04c7b7e2e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "notashelf",
-        "repo": "nvf",
-        "type": "github"
-      }
-    },
-    "nvf-config": {
-      "inputs": {
-        "nix-lib": "nix-lib_2",
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "nvf": "nvf"
+        ]
       },
       "locked": {
-        "lastModified": 1790791571,
-        "narHash": "sha256-S1u5oliTn9dm87k7f81gVEXQbmokqYGS4Sy71EYaJWQ=",
-        "owner": "neversad-dev",
-        "repo": "nvf-config",
-        "rev": "f2a54c8b5611456804df27b3909b1788b3e2291d",
+        "lastModified": 1793152231,
+        "narHash": "sha256-hH7rK3yF7lMdrJYqF9cZbGheq8qNPgCYJDsfJovh7UY=",
+        "owner": "notashelf",
+        "repo": "nvf",
+        "rev": "0ae8788d14334c9dd4bcd68d951bee661b00ad87",
         "type": "github"
       },
       "original": {
-        "owner": "neversad-dev",
-        "repo": "nvf-config",
+        "owner": "notashelf",
+        "repo": "nvf",
         "type": "github"
       }
     },
@@ -623,13 +536,12 @@
         "home-manager": "home-manager_2",
         "home-manager-24-05": "home-manager-24-05",
         "nix-darwin": "nix-darwin",
-        "nix-lib": "nix-lib",
         "nix-on-droid": "nix-on-droid",
         "nix-secrets": "nix-secrets",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-24-05": "nixpkgs-24-05",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nvf-config": "nvf-config",
+        "nvf": "nvf",
         "wallpapers": "wallpapers"
       }
     },

@@ -44,8 +44,10 @@ features.cli.starship.enable = true;
 features.cli.neovim.enable = true;
 ```
 
-Neovim requires `nvf-config` in `extraSpecialArgs` only when enabled. It stays
-disabled on Android. Existing workstation hosts explicitly enable both.
+Neovim is a Home Manager module in [`base/tui/neovim/`](base/tui/neovim/README.md)
+that enables nvf with the in-repo nvf modules (no separate flake input). It
+stays disabled on Android; existing workstation hosts explicitly enable it.
+It can also be run directly with `nix run github:neversad-dev/nix-config`.
 
 `features.cli.git.enable` now controls the optional Git extras (Delta, lazygit,
 worktrunk); basic Git does not depend on it. Signing retains its separate flag.

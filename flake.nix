@@ -52,6 +52,12 @@
     # agenix.url = "github:ryantm/agenix";
     agenix.url = "github:yaxitech/ragenix"; # a rust implementation of agenix
 
+    # Neovim framework; config lives in home/base/tui/neovim
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # theme
     catppuccin.url = "github:catppuccin/nix";
     catppuccin-vsc = {
@@ -65,23 +71,11 @@
 
     ########################  My own repositories  #########################################
 
-    # Shared library functions
-    nix-lib = {
-      url = "github:neversad-dev/nix-lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # my private secrets, it's a private repository.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     nix-secrets = {
       url = "git+ssh://git@github.com/neversad-dev/nix-secrets.git?shallow=1";
       flake = false;
-    };
-
-    # Custom nvf configuration
-    nvf-config = {
-      url = "github:neversad-dev/nvf-config";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # my wallpapers
@@ -99,14 +93,14 @@
     nixpkgs-24-05,
     home-manager,
     wallpapers,
-    nvf-config,
-    nix-lib,
+    nvf,
     ...
   } @ inputs: let
     inherit (self) outputs;
     inherit (inputs.nixpkgs) lib;
+    # Library functions, vendored locally from github:neversad-dev/nix-lib
     mylib =
-      nix-lib.lib
+      import ./lib {inherit lib;}
       // {
         relativeToRoot = lib.path.append ./.;
       };
@@ -144,6 +138,15 @@
           fetcherVersion = 7;
         };
       };
+
+    # Neovim built from the in-repo nvf modules (home/base/tui/neovim).
+    # scanPaths picks up the nvf modules and skips default.nix (the HM module).
+    neovimFor = system:
+      (nvf.lib.neovimConfiguration {
+        pkgs = pkgsFor system;
+        modules = mylib.scanPaths ./home/base/tui/neovim;
+        extraSpecialArgs = {inherit mylib;};
+      }).neovim;
   in {
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
@@ -198,6 +201,13 @@
         ./hosts/android/nix-on-droid.nix
       ];
     };
+
+    # Standalone Neovim package: `nix run github:neversad-dev/nix-config`
+    # (or `.#nvim` / `.#default` explicitly)
+    packages = forAllSystems (system: {
+      default = neovimFor system;
+      nvim = neovimFor system;
+    });
 
     # Format the nix code in this flake
     formatter = forAllSystems (
