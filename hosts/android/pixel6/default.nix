@@ -30,6 +30,6 @@
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
-    config = import (mylib.relativeToRoot "home/hosts/android/pixel6.nix");
+    config = import ../../../home/hosts/android/pixel6.nix;
   };
 }
