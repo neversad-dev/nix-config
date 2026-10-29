@@ -16,7 +16,7 @@
       starship.enable = true;
       tldr.enable = false;
       atuin.enable = true;
-      direnv.enable = false;
+      direnv.enable = true;
       eza.enable = true;
       fastfetch.enable = true;
       zoxide.enable = true;
