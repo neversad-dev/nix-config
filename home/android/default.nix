@@ -28,6 +28,8 @@
   # Atuin daemon relies on systemd user services (not available on
   # nix-on-droid) — run without it; sqlite direct access is fine.
   programs.atuin.daemon.enable = false;
+  # Newer atuin (24.05 has 18.2), still glibc 2.40 so its TUI works.
+  programs.atuin.package = pkgs.nixos2511.atuin;
 
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
   programs.zsh.initExtra = ''
