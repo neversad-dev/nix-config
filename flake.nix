@@ -162,6 +162,14 @@
         };
     };
 
+    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
+      extraSpecialArgs = specialArgs;
+      modules = [
+        ./hosts/android/pixel6
+      ];
+    };
+
     homeConfigurations = {
       "${myvars.primaryUser}@mbair" = let
         system = darwinSystems.aarch64;
@@ -192,14 +200,6 @@
             ./home/hosts/linux/enduro.nix
           ];
         };
-    };
-
-    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
-      extraSpecialArgs = specialArgs;
-      modules = [
-        ./hosts/android/pixel6
-      ];
     };
 
     # Standalone Neovim package: `nix run github:neversad-dev/nix-config`
