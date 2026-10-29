@@ -3,6 +3,8 @@
   pkgs,
   mylib,
   myvars,
+  inputs,
+  outputs,
   ...
 }: {
   # Host-specific configuration
@@ -26,7 +28,7 @@
   ];
 
   home-manager = {
-    extraSpecialArgs = {inherit mylib myvars;};
+    extraSpecialArgs = inputs // {inherit outputs mylib myvars;};
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
