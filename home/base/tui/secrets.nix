@@ -9,11 +9,11 @@ with lib; let
 in {
   options.features.secrets.enable = mkEnableOption "agenix secret management";
 
-  config = mkIf cfg.enable {
-    imports = [
-      agenix.homeManagerModules.default
-    ];
+  imports = [
+    agenix.homeManagerModules.default
+  ];
 
+  config = mkIf cfg.enable {
     # The default key used to decrypt any user-level secrets
     age.identityPaths = [
       "${config.home.homeDirectory}/.ssh/id_ed25519"
