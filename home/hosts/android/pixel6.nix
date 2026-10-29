@@ -25,8 +25,7 @@
       fastfetch.logo = "android";
       zoxide.enable = true;
       pay-respects.enable = false;
-      herdr.enable = false; # unstable's needs glibc >= 2.42; a 25.11 build
-      # (zig 0.16) segfaulted on-device
+      herdr.enable = true; # from unstable, like tuxedo
       btop.enable = false;
       superfile.enable = true;
       tuxedo.enable = true;

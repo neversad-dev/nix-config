@@ -193,9 +193,9 @@
               # superfile from 25.11: newer than 24.05's 1.1.2, still glibc 2.40
               superfile
               ;
-            # Unstable, but verified working on-device; same derivation as
-            # the devShell's, so it's fetched from cache once, not compiled.
-            inherit (prev.unstable) tuxedo;
+            # Unstable TUIs that work on-device despite glibc >= 2.42.
+            # Same derivations as the desktops/devShell: fetched from cache.
+            inherit (prev.unstable) tuxedo herdr;
           })
         ];
       };

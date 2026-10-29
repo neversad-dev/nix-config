@@ -107,7 +107,7 @@
     };
 
     # herdr: HM 24.05 has no upstream programs/herdr module at all.
-
+    # Minimal backport (immutable settings only) in `config` below.
     programs.herdr = {
       enable = lib.mkOption {
         type = lib.types.bool;
@@ -119,7 +119,9 @@
         defaultText = "pkgs.herdr";
       };
       settings = lib.mkOption {
-        type = lib.types.attrs;
+        # Deep-merging type (like upstream), so keybindings from several
+        # modules combine instead of replacing each other.
+        type = (pkgs.formats.toml {}).type;
         default = {};
       };
     };
@@ -179,6 +181,14 @@
           extraOptions = lib.mapAttrs (_: renderValue) opts;
         })
         (lib.filterAttrs (name: _: name != "*") settings);
+    };
+
+    # herdr: package + immutable config.toml, as upstream with the default
+    # mutableSettings = false.
+    home.packages = lib.mkIf config.programs.herdr.enable [config.programs.herdr.package];
+    xdg.configFile."herdr/config.toml" = lib.mkIf (config.programs.herdr.enable && config.programs.herdr.settings != {}) {
+      source = (pkgs.formats.toml {}).generate "herdr-config.toml" config.programs.herdr.settings;
+      onChange = "${lib.getExe config.programs.herdr.package} server reload-config || true";
     };
 
     # Forward initContent → initExtra
