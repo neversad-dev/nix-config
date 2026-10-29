@@ -4,27 +4,26 @@ Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based*
 
 ## Key constraints
 
-- **Must stay on NixOS 24.05**: `system.stateVersion` and `home.stateVersion` are pinned to `24.05` because the nix-on-droid release, `nixpkgs-24-05`, and `home-manager-24-05` are all pinned in `flake.nix`.
-- **Heavy reuse with caveats**: Most CLI modules are shared with `mbair` (which targets HM 24.11). Any option introduced after HM 24.05 must be **polyfilled** in `compat.nix` so the shared modules evaluate without modification.
-- **Shared core with compat shims**: The phone imports the shared `home/base/core` stack (plus the lightweight TUI Git extras) through `home/android/`; newer HM options are translated by `home/android/compat.nix` so shared modules evaluate unmodified.
+- **Pinned to 24.05**: nix-on-droid, its pkgs (`nixpkgs-24-05`) and its bundled Home Manager (`home-manager-24-05`) are on release-24.05, so `system.stateVersion` and `home.stateVersion` are `24.05`.
+- **No unstable binaries for interactive tools**: unstable's glibc (>= 2.42) uses the `TCGETS2` ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, `stty: Permission denied`). Newer packages come from **nixos-25.11** (`pkgs.nixos2511`, still glibc 2.40). `pkgs.unstable` is only for non-interactive CLI tools.
+- **Shared modules, HM 24.05 shims**: the phone uses the same `home/base` modules as the desktops. Options introduced after HM 24.05 are polyfilled in [`home/android/compat.nix`](../../home/android/compat.nix).
 
 ## File layout
 
-| File               | Purpose                                                                                                                                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `nix-on-droid.nix` | Top-level host config. Defines system packages, login shell, and the `home-manager` block that imports shared modules.                                                                      |
-| `compat.nix`       | HM 24.05 polyfill. Declares newer option names (`initContent`, `git.settings`, `atuin.daemon`, etc.) and forwards their values to the 24.05 equivalents so shared modules evaluate cleanly. |
+| File                                                                   | Purpose                                                                                                                                   |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `pixel6/default.nix`                                                   | System layer: login shell, timezone, Nix settings, and the `home-manager` block (HM-scoped 25.11 package overrides, `isHm24 = true`).     |
+| `pixel6/secrets.nix`                                                   | Placeholder: nix-on-droid has no system-level secrets; user secrets would go through `home/base/tui/secrets.nix` (disabled on the phone). |
+| [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix) | Home entry point: `features.*` flags for the phone.                                                                                       |
+| [`home/android/`](../../home/android/README.md)                        | Android home stack: `compat.nix` polyfills, ssh-agent, Termux font, 25.11 package choices.                                                |
+
+The pkgs set itself (24.05 + overlays, plus 25.11 aliases for packages nvf's language presets need) is built in `flake.nix` under `nixOnDroidConfigurations.pixel6`.
 
 ## Architecture notes
 
-### Why no `inputs` in `home-manager.extraSpecialArgs`?
+### Flake inputs and HM-version-dependent modules
 
-Nix-on-droid's bundled HM 24.05 does **not** forward flake `inputs` into the home-manager module scope. Any module that depends on flake inputs (e.g. the Catppuccin module from `inputs.catppuccin.homeModules`) must either:
-
-1. Be imported at the **flake level** (outside the nix-on-droid home-manager block), or
-2. Be **skipped** and replaced by a local stub.
-
-This is why `compat.nix` is used heavily for forward declarations.
+Flake `inputs` are passed to Home Manager via `home-manager.extraSpecialArgs`, like on the desktops. Modules whose upstream HM module needs a newer HM (Catppuccin, pi) check `isHm24` and skip themselves on the phone.
 
 ### Font setup
 
@@ -32,9 +31,14 @@ Termux reads a **real file** (not a symlink) from `~/.termux/font.ttf`. The stor
 
 Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font from `/nix/store` into `~/.termux/font.ttf` on every switch.
 
+### SSH agent
+
+There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (`~/.ssh/agent.sock`) when none is reachable. The key is added on first use via `AddKeysToAgent`: the passphrase is asked once and cached until Android kills the agent (e.g. when the app is fully closed).
+
 ### Known issues
 
-- `btop` was removed: `/proc/stat` parsing fails inside proot.
+- `btop` is disabled: `/proc/stat` parsing fails inside proot.
+- `herdr` is disabled: the vendored build (`pkgs/herdr.nix`) segfaults on-device (zig under Android/proot).
 - `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage
@@ -42,15 +46,20 @@ Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font fr
 ```bash
 # Switch from local checkout (useful while iterating)
 cd /storage/emulated/0/code/projects/nix-config && git pull
-nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#default"
+just droid          # uses $HOSTNAME, set by HM once the first switch is done
+just droid pixel6   # first switch (HOSTNAME not set yet)
+
+# Or without just
+nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#pixel6"
 
 # Switch from GitHub (useful once everything is stable)
-nix-on-droid switch --flake github:neversad-dev/nix-config#default
+nix-on-droid switch --flake github:neversad-dev/nix-config#pixel6
 ```
 
 After switching, **force-stop and reopen** the nix-on-droid app so Termux picks up the copied font and login-shell changes.
 
-## Currently enabled
+`just droid-clean` deletes old generations and garbage-collects the store.
 
-System-level: `git`, `curl`, `vim`
-Home-manager: `zsh`, `zoxide`, `fzf`, `fd`, `tree`, `git+delta+lazygit+worktrunk`, `starship`, `atuin`, `bat`, `htop`, `jq`, `yq`, `ripgrep`, `zip`, `python3`
+## What's enabled
+
+See the `features` flags in [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix).

@@ -1,17 +1,36 @@
 # Android home stack
 
-`default.nix` imports `base/home.nix`, `base/core` and `compat.nix`, and selects
-`home.stateVersion = "24.05"`. Neovim and Starship default to disabled; Pixel 6
-explicitly enables Starship and imports the lightweight TUI Git extras.
+`default.nix` imports `compat.nix`, `base/home.nix`, `base/core` and `base/tui`,
+and selects `home.stateVersion = "24.05"`. GUI modules are not imported. Which
+optional features are on is decided by the host flags in
+`home/hosts/android/pixel6.nix`.
 
-`compat.nix` translates newer shared HM options for HM 24.05 (shell init,
-Git settings, SSH settings, fzf file widget). Unsupported Atuin/tealdeer options
-and worktrunk are declarations only, not backported implementations. The removed
-`fzf.historyWidgetCommand` is not forwarded.
+Phone-specific settings live in `default.nix`:
 
-SSH host settings are rendered as raw SSH configuration, with specific hosts
-before `Host *`. No full workstation TUI/GUI stack or agenix is needed here.
+- packages from nixos-25.11 where 24.05 is too old (Neovim, Git, fzf via
+  `programs.<x>.package`; leaf TUI packages are swapped in
+  `hosts/android/pixel6/default.nix`)
+- Starship prompt timeout and Android OS glyph, Atuin without its daemon
+- zsh: ssh-agent startup and syntax highlighting
+- Termux font activation
 
-Phone-specific prompt timeout, zsh highlighting fix and Termux font activation
-live in `home/hosts/android/pixel6.nix`. The system layer remains in
-[hosts/android](../../hosts/android/README.md).
+## compat.nix
+
+Translates newer shared HM options for HM 24.05: shell init (`initContent`),
+Git settings, fzf file widget, SSH settings. Unsupported Atuin/tealdeer options,
+worktrunk and herdr are declarations only, not backported implementations. The
+removed `fzf.historyWidgetCommand` is not forwarded.
+
+SSH: HM 24.05 always renders its own `Host *` block from top-level options
+(`addKeysToAgent`, `controlMaster`, ...) and appends `extraConfig` inside it.
+OpenSSH uses the first value it finds, so `settings."*"` is mapped onto those
+options, named hosts onto `matchBlocks`, and only `"*"` keys without an HM
+option go to `extraConfig`.
+
+## ssh-agent
+
+No systemd, so zsh starts one agent on `~/.ssh/agent.sock` when none is
+reachable; all shells share it. Keys are added lazily by `AddKeysToAgent`, so
+the passphrase is asked on first use and cached until Android kills the agent.
+
+The system layer remains in [hosts/android](../../hosts/android/README.md).

@@ -6,7 +6,7 @@ This directory contains per-host configurations and the bootstrap guide.
 
 | Host       | Platform               |      System       |    Home Manager     | Purpose           |
 | ---------- | ---------------------- | :---------------: | :-----------------: | ----------------- |
-| **mbair**  | macOS / aarch64        |        ✅         |  `neversad@mbair`   | Daily driver      |
+| **mbair**  | macOS / aarch64        |        ✅         | embedded in darwin  | Daily driver      |
 | **enduro** | Linux / x86_64         |         —         |  `neversad@enduro`  | Secondary desktop |
 | **pixel6** | Android (nix-on-droid) | ✅ (nix-on-droid) | via built-in module | Phone             |
 
@@ -50,10 +50,9 @@ This directory contains per-host configurations and the bootstrap guide.
    - Rekey the `.age` files and push
    - Update this flake's `nix-secrets` input to the new revision
    - See [secrets/README.md](../secrets/README.md) for the enrollment flow
-8. **Build and switch**:
+8. **Build and switch** (system + embedded Home Manager):
    ```bash
    just darwin
-   just home
    ```
 
 ### Linux (Home Manager only)
@@ -83,19 +82,13 @@ See [secrets/README.md](../secrets/README.md#adding-a-new-host-or-machine) for f
 
 ### nix-on-droid (Android)
 
-Switch on-device:
+Same as macOS for steps 1–5 (in Termux). Then switch on-device:
 
 ```bash
-nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#default"
+just droid pixel6   # first time; afterwards plain `just droid` ($HOSTNAME is set by HM)
 ```
 
-Or from the repo:
-
-```bash
-just droid
-```
-
-nix-on-droid pins against nixpkgs/home-manager 24.05 (dedicated flake inputs). Home Manager is wired through nix-on-droid's built-in module rather than a standalone `homeConfigurations` output.
+nix-on-droid pins against nixpkgs/home-manager 24.05 (dedicated flake inputs). Home Manager is wired through nix-on-droid's built-in module rather than a standalone `homeConfigurations` output. See [android/README.md](android/README.md).
 
 ## Adding a new host
 

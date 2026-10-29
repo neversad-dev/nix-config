@@ -6,8 +6,8 @@
   # Just(1) reads this to resolve the hostname.
   home.sessionVariables.HOSTNAME = "pixel6";
 
-  # Home manager specific feature flags — all disabled for now.
-  # Enable selectively after testing on device.
+  # Home manager specific feature flags. Enable new ones only after testing
+  # on device: unstable (glibc >= 2.42) TUIs don't run on Android.
   features = {
     ai.enable = false;
     theme.catppuccin.enable = true;

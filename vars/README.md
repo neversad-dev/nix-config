@@ -21,7 +21,7 @@ Flake does `myvars = import ./vars` → this file.
 
 ## `features.nix`
 
-Module with **`options.features` only** (no `config`). I import it from `home/base/home.nix` so all home stacks expose the same cross-cutting toggles (desktop editors, gaming, stay-awake, etc.).
+Module with **`options.features` only** (no `config`). I import it from `modules/common/default.nix` (darwin system) and `home/base/home.nix` (all home stacks) so both expose the same cross-cutting toggles (desktop editors, gaming, stay-awake, etc.).
 
 ## Wiring `myvars` / `features`
 

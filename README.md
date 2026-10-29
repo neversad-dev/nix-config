@@ -20,16 +20,17 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 ## Quick start
 
 ```bash
-just darwin  # macOS system switch only (nix-darwin)
-just home    # Home Manager switch (SSH config, git, shell, etc.)
+just darwin  # macOS switch: nix-darwin system + embedded Home Manager
+just home    # Home Manager only (fast iteration on HM changes)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
 nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 ```
 
-> On macOS you usually need **both** `just darwin` and `just home` — they are separate.
-> `just darwin` applies system-level changes (dock, defaults, packages); `just home`
-> applies user-level config (dotfiles, SSH, git signing, shell setup).
+> On macOS, Home Manager is embedded in nix-darwin: `just darwin` applies both the
+> system (dock, defaults, packages) and user config (dotfiles, SSH, git, shell).
+> The standalone `neversad@mbair` output stays for HM-only iteration via `just home`.
+> On Linux (enduro), `just home` is the only switch.
 >
 > Full command list: `just --list`
 
@@ -37,11 +38,11 @@ nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 
 ## Hosts
 
-| Host       | Platform               | Entrypoint                           |
-| ---------- | ---------------------- | ------------------------------------ |
-| **mbair**  | macOS / aarch64        | `hosts/mbair/` + HM `neversad@mbair` |
-| **enduro** | Linux / x86_64         | HM only: `neversad@enduro`           |
-| **pixel6** | Android (nix-on-droid) | `hosts/android/nix-on-droid.nix`     |
+| Host       | Platform               | Entrypoint                   |
+| ---------- | ---------------------- | ---------------------------- |
+| **mbair**  | macOS / aarch64        | `hosts/mbair/` (HM embedded) |
+| **enduro** | Linux / x86_64         | HM only: `neversad@enduro`   |
+| **pixel6** | Android (nix-on-droid) | `hosts/android/pixel6/`      |
 
 Adding a new machine? See [hosts/README.md](hosts/README.md).
 
@@ -66,8 +67,7 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── flake.nix                    # darwin + HM + nix-on-droid outputs
 ├── hosts/                       # per-host system configs + bootstrap docs
 │   ├── mbair/
-│   └── android/
-│       └── nix-on-droid.nix
+│   └── android/pixel6/
 ├── modules/darwin/              # nix-darwin system modules
 ├── home/                        # home-manager configs
 │   ├── base/                    # cross-platform core/tui/gui modules
@@ -77,8 +77,8 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to
 ├── vars/                        # myvars + features option schema
-├── overlays/                    # stable-packages + custom patches
-└── pkgs/                        # custom packages
+├── overlays/                    # pkgs.stable/unstable/nixos2511, android packages
+└── pkgs/                        # custom + vendored packages
 ```
 
 ---
