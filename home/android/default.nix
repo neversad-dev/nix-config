@@ -25,6 +25,11 @@
   # Background git checks can time out on Android's shared storage.
   programs.starship.settings.command_timeout = 2000;
 
+  # Starship detects OS from /etc/os-release at runtime; inside nix-on-droid's
+  # proot that resolves to generic "Linux" (penguin). Show the Android glyph.
+  programs.starship.settings.os.symbols.Linux =
+    lib.mkForce " "; # nf-fa-android (U+F17B), same as os.symbols.Android
+
   # Atuin daemon relies on systemd user services (not available on
   # nix-on-droid) — run without it; sqlite direct access is fine.
   programs.atuin.daemon.enable = false;
