@@ -43,36 +43,17 @@
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
   # Also: no systemd on nix-on-droid, so start ssh-agent from the shell.
   programs.zsh.initExtra = ''
-    # ssh-agent on nix-on-droid (no systemd).
-    # Android kills background processes, so the agent may die between
-    # commands.  Check and restart at shell startup, and wrap git/ssh so
-    # they verify the agent before each invocation without touching zsh
-    # hooks (which would break starship/atuin).
-    _ssh_agent_env="$HOME/.ssh/agent.env"
-
-    _ensure_ssh_agent() {
-      ssh-add -l > /dev/null 2>&1
-      local status=$?
-      if [ "$status" -ne 2 ]; then
-        return 0
-      fi
-      mkdir -p "$HOME/.ssh"
-      pkill -u "$(id -u)" ssh-agent 2>/dev/null || true
-      rm -f "$_ssh_agent_env"
-      ssh-agent -s > "$_ssh_agent_env"
-      . "$_ssh_agent_env" > /dev/null
-    }
-
-    if [ -f "$_ssh_agent_env" ]; then
-      . "$_ssh_agent_env" > /dev/null
+    # ssh-agent (HM's agent service needs systemd, absent here).
+    # One agent on a fixed socket, shared by all shells. Started only if
+    # unreachable; the key is added lazily by AddKeysToAgent on first use.
+    # NB: don't name variables `status` here — it's read-only in zsh, and
+    # the error aborts the rest of .zshrc (starship, aliases, ...).
+    export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+    ssh-add -l > /dev/null 2>&1
+    if [ $? -eq 2 ]; then
+      rm -f "$SSH_AUTH_SOCK"
+      ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
     fi
-    _ensure_ssh_agent
-
-    # Re-invoke the real binary after ensuring agent health
-    git() { _ensure_ssh_agent; command git "$@"; }
-    ssh() { _ensure_ssh_agent; command ssh "$@"; }
-    scp() { _ensure_ssh_agent; command scp "$@"; }
-    sftp() { _ensure_ssh_agent; command sftp "$@"; }
 
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   '';
