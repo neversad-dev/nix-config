@@ -107,7 +107,7 @@
     };
 
     # herdr: HM 24.05 has no upstream programs/herdr module at all.
-    # (Newer HM does — home/base/tui/herdr relies on it there.)
+
     programs.herdr = {
       enable = lib.mkOption {
         type = lib.types.bool;

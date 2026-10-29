@@ -28,7 +28,7 @@
   ];
 
   home-manager = {
-    extraSpecialArgs = inputs // {inherit outputs mylib myvars;};
+    extraSpecialArgs = inputs // {inherit outputs mylib myvars; isHm24 = true;};
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;

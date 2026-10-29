@@ -5,12 +5,17 @@
   config,
   lib,
   catppuccin,
+  isHm24 ? false, # set by hosts using HM 24.05 (nix-on-droid)
   ...
 }:
 with lib; let
-  hasModule = lib.modules ? importApply;
+  # `lib.modules ? importApply` used to be a reliable HM-version marker,
+  # but with nixpkgs-unstable packages `lib` is the unstable lib even on
+  # HM 24.05 — so the android host sets isHm24 explicitly instead.
+  hasModule = !isHm24 && lib.modules ? importApply;
 in
-  if hasModule then {
+  if hasModule
+  then {
     imports = [
       catppuccin.homeModules.catppuccin
     ];
@@ -26,6 +31,7 @@ in
         vscode.profiles.default.enable = false; # disable automatic vscode extension management to avoid conflicts
       };
     };
-  } else {
+  }
+  else {
     # nixpkgs-24.05 doesn't have lib.modules.importApply; skip catppuccin entirely.
   }

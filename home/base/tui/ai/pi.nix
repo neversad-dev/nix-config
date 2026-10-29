@@ -4,14 +4,18 @@
   pkgs,
   nix-secrets,
   catppuccin-pi,
+  isHm24 ? false, # set by hosts using HM 24.05 (nix-on-droid)
   ...
 }:
 with lib; let
   cfg = config.features.ai;
   jsonFormat = pkgs.formats.json {};
-  hasModule = lib.modules ? importApply;
+  # `lib.modules ? importApply` became true on HM 24.05 once pkgs.lib
+  # comes from unstable, so hosts flag HM 24.05 explicitly.
+  hasModule = !isHm24 && lib.modules ? importApply;
 in
-  if hasModule then {
+  if hasModule
+  then {
     imports = [
       catppuccin-pi.homeManagerModules.default
     ];
@@ -75,7 +79,8 @@ in
         ''
       );
     };
-  } else {
+  }
+  else {
     # nixpkgs-24.05 doesn't have lib.modules.importApply;
     # catppuccin-pi module requires newer HM. Skip entirely.
   }
