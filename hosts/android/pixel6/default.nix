@@ -4,7 +4,12 @@
   mylib,
   myvars,
   ...
-}: {
+}: let
+  hostname = "pixel6";
+in {
+  # Host-specific configuration
+  networking.hostName = hostname;
+
   # System layer only; the user configuration lives under home/hosts/android.
   environment.packages = with pkgs; [
     git
@@ -18,6 +23,10 @@
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
+
+  imports = [
+    ./secrets.nix
+  ];
 
   home-manager = {
     extraSpecialArgs = {inherit mylib myvars;};

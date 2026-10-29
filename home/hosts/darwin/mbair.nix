@@ -22,6 +22,9 @@
       zoxide.enable = true;
       pay-respects.enable = true;
       herdr.enable = true;
+      btop.enable = true;
+      superfile.enable = true;
+      tuxedo.enable = true;
     };
     desktop = {
       zed.enable = true;
@@ -29,5 +32,6 @@
       ghostty.enable = true;
       kitty.enable = true;
     };
+    secrets.enable = true;
   };
 }

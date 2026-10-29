@@ -2,30 +2,42 @@
   config,
   lib,
   pkgs,
+  mylib,
   ...
 }: {
   imports = [
     ../../android
   ];
 
-  features.cli.git.enable = true;
-  features.cli.starship.enable = true;
-
-  # Background git checks can time out on Android's shared storage.
-  programs.starship.settings.command_timeout = 2000;
-
-  # HM-24.05's highlighting can conflict with Atuin's zle bindings.
-  programs.zsh.initExtra = ''
-    source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-  '';
-
-  # Termux needs a real file, not a symlink into the Nix store.
-  home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    fontStorePath="${pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];}}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
-    targetDir="${config.home.homeDirectory}/.termux"
-    mkdir -p "$targetDir"
-    if [ -e "$fontStorePath" ]; then
-      cp -f "$fontStorePath" "$targetDir/font.ttf"
-    fi
-  '';
+  # Home manager specific feature flags — all disabled for now.
+  # Enable selectively after testing on device.
+  features = {
+    ai.enable = false;
+    theme.catppuccin.enable = false;
+    cli = {
+      neovim.enable = false;
+      git.enable = true;
+      git.signing.enable = false;
+      mitmproxy.enable = false;
+      starship.enable = true;
+      tldr.enable = false;
+      atuin.enable = false;
+      direnv.enable = false;
+      eza.enable = false;
+      fastfetch.enable = false;
+      zoxide.enable = false;
+      pay-respects.enable = false;
+      herdr.enable = false;
+      btop.enable = false;
+      superfile.enable = false;
+      tuxedo.enable = false;
+    };
+    desktop = {
+      zed.enable = false;
+      wallpapers.enable = false;
+      ghostty.enable = false;
+      kitty.enable = false;
+    };
+    secrets.enable = false;
+  };
 }

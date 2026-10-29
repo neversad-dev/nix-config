@@ -3,8 +3,12 @@
   lib,
   pkgs,
   ...
-}: {
-  programs.herdr.settings.keys = {
+}:
+with lib; let
+  cfg = config.features.cli;
+in {
+  config = mkIf (cfg.herdr.enable && cfg.neovim.enable) {
+    programs.herdr.settings.keys = {
     # Unbind default navigation so the plugin can intercept the keys
     focus_pane_left = "";
     focus_pane_down = "";
@@ -38,7 +42,7 @@
   xdg.dataFile."herdr/plugins/aimdevlee/herdr-nvim-nav".source = pkgs.herdr-nvim-nav;
 
   # Declaratively link the nav plugin during Home Manager activation
-  home.activation.linkHerdrNavPlugin = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    home.activation.linkHerdrNavPlugin = lib.hm.dag.entryAfter ["linkGeneration"] ''
     # Reference the exact Herdr binary and XDG data path dynamically
     HERDR_BIN="${config.programs.herdr.package}/bin/herdr"
     PLUGIN_PATH="${config.xdg.dataHome}/herdr/plugins/aimdevlee/herdr-nvim-nav"
@@ -46,5 +50,6 @@
     if [ -x "$HERDR_BIN" ] && [ -d "$PLUGIN_PATH" ]; then
       $DRY_RUN_CMD "$HERDR_BIN" plugin link "$PLUGIN_PATH"
     fi
-  '';
+    '';
+  };
 }
