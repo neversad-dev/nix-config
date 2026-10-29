@@ -1,4 +1,22 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  hasPkg = name: builtins.hasAttr name pkgs;
+  optionalPkg = name: if hasPkg name then [pkgs.${name}] else [];
+  formatters = {
+    nix = if hasPkg "alejandra" then ["alejandra"] else [];
+    markdown = if hasPkg "prettier" then ["prettier"] else [];
+    sh = if hasPkg "shfmt" then ["shfmt"] else [];
+    bash = if hasPkg "shfmt" then ["shfmt"] else [];
+    python = if hasPkg "ruff" then ["ruff_format"] else [];
+  };
+  # Only include ft keys that have at least one formatter
+  formatters_by_ft = builtins.listToAttrs (
+    builtins.filter (x: x.value != [])
+    (builtins.map (k: {
+      name = k;
+      value = formatters.${k};
+    }) ["nix" "markdown" "sh" "bash" "python"])
+  );
+in {
   vim = {
     visuals.fidget-nvim.enable = true; # Shows LSP progress notifications in the corner
 
@@ -81,24 +99,16 @@
       nvim-docs-view.enable = true;
     };
 
-    extraPackages = with pkgs; [
-      alejandra
-      prettier
-      shfmt
-      ruff
-    ];
+    extraPackages =
+      optionalPkg "alejandra"
+      ++ optionalPkg "prettier"
+      ++ optionalPkg "shfmt"
+      ++ optionalPkg "ruff";
 
     formatter.conform-nvim = {
       enable = true;
-
       setupOpts = {
-        formatters_by_ft = {
-          nix = ["alejandra"];
-          markdown = ["prettier"];
-          sh = ["shfmt"];
-          bash = ["shfmt"];
-          python = ["ruff_format"];
-        };
+        inherit formatters_by_ft;
       };
     };
 
