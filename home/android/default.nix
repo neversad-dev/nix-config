@@ -38,22 +38,33 @@
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
   # Also: no systemd on nix-on-droid, so start ssh-agent from the shell.
   programs.zsh.initExtra = ''
-    # ssh-agent (HM's agent service needs systemd, absent here)
-    # Verify the agent is reachable; if not, kill stale agents and start a
-    # fresh one.  Do NOT ssh-add here — let ssh's AddKeysToAgent=yes load
-    # the key on first use, so you only type the passphrase when you actually
-    # pull/push, yet it's cached for the rest of the session.
-    if [ -f "$HOME/.ssh/agent.env" ]; then
-      . "$HOME/.ssh/agent.env" > /dev/null
-    fi
-    ssh-add -l > /dev/null 2>&1
-    agent_status=$?
-    if [ "$agent_status" -eq 2 ]; then
+    # ssh-agent on nix-on-droid (no systemd).
+    # Android aggressively kills background processes, so the agent often dies
+    # between commands.  Verify agent health in preexec (via add-zsh-hook so
+    # we don't clobber Atuin's hook) so git/ssh always find a live agent.
+    _ssh_agent_env="$HOME/.ssh/agent.env"
+
+    _ensure_ssh_agent() {
+      ssh-add -l > /dev/null 2>&1
+      local status=$?
+      if [ "$status" -ne 2 ]; then
+        return 0
+      fi
+      mkdir -p "$HOME/.ssh"
       pkill -u "$(id -u)" ssh-agent 2>/dev/null || true
-      rm -f "$HOME/.ssh/agent.env"
-      ssh-agent -s > "$HOME/.ssh/agent.env"
-      . "$HOME/.ssh/agent.env" > /dev/null
+      rm -f "$_ssh_agent_env"
+      ssh-agent -s > "$_ssh_agent_env"
+      . "$_ssh_agent_env" > /dev/null
+    }
+
+    if [ -f "$_ssh_agent_env" ]; then
+      . "$_ssh_agent_env" > /dev/null
     fi
+    _ensure_ssh_agent
+
+    autoload -Uz add-zsh-hook
+    add-zsh-hook preexec _ensure_ssh_agent
+
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   '';
 
