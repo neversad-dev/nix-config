@@ -163,30 +163,17 @@
         };
     };
 
-    # nix-on-droid itself (and HM 24.05 modules) run on nixpkgs-24.05, since
-    # nix-on-droid release-24.05 relies on APIs removed in unstable
-    # (e.g. substituteAll). Home Manager *packages* come from unstable via
-    # pkgsUnstable (see hosts/android/pixel6).
+    # nix-on-droid (release-24.05) and its HM run fully on nixpkgs-24.05.
+    # Unstable binaries break on Android: glibc >= 2.42 uses the TCGETS2
+    # ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, stty
+    # "Permission denied"). Opt in per package via pkgs.unstable.<name>,
+    # only for non-interactive CLI tools.
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
-      extraSpecialArgs =
-        specialArgs
-        // {
-          pkgsUnstable = import nixpkgs {
-            system = "aarch64-linux";
-            overlays = [
-              # HM 24.05 modules reference attrs removed in unstable
-              # (forced at derivation time even when the module is unused).
-              (final: prev: {
-                plasma5Packages = prev.kdePackages;
-                # Used by HM 24.05 core (modules/files.nix).
-                substituteAll =
-                  final.callPackage
-                  "${nixpkgs-24-05}/pkgs/build-support/substitute/substitute-all.nix" {};
-              })
-            ];
-          };
-        };
+      pkgs = import nixpkgs-24-05 {
+        system = "aarch64-linux";
+        overlays = [overlays.unstable-packages];
+      };
+      extraSpecialArgs = specialArgs;
       modules = [
         ./hosts/android/pixel6
       ];

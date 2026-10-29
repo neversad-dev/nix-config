@@ -5,14 +5,12 @@
   myvars,
   inputs,
   outputs,
-  pkgsUnstable,
   ...
 }: {
   # Host-specific configuration
   # NOTE: networking.hostName is not available in nix-on-droid.
   # The hostname is set via Termux/Android system settings.
-  # No system-level packages: everything comes from Home Manager (unstable).
-  # Listing 24.05 packages here would collide with HM's in nix-on-droid-path.
+  # No system-level packages: everything comes from Home Manager.
   user.shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
   time.timeZone = lib.mkDefault "Europe/Kyiv";
   environment.etcBackupExtension = ".bak";
@@ -35,9 +33,6 @@
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
-    # HM 24.05 sets `_module.args.pkgs = mkDefault <droid pkgs>`; override it
-    # so all HM packages come from unstable.
-    sharedModules = [{_module.args.pkgs = pkgsUnstable;}];
     config = import ../../../home/hosts/android/pixel6.nix;
   };
 }

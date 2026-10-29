@@ -19,4 +19,13 @@
       config.allowUnfree = true;
     };
   };
+
+  # Expose nixpkgs-unstable as `pkgs.unstable` for hosts whose default
+  # channel is older (nix-on-droid on 24.05) to opt individual packages in.
+  unstable-packages = final: _prev: {
+    unstable = import inputs.nixpkgs {
+      system = final.system;
+      config.allowUnfree = true;
+    };
+  };
 }
