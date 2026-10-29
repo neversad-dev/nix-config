@@ -4,8 +4,7 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   cfg = config.features.cli.fastfetch;
 in {
   options.features.cli.fastfetch = {
@@ -22,43 +21,43 @@ in {
       fastfetch
     ];
 
-    home.file.".config/fastfetch/config.jsonc".text =
-      builtins.toJSON (
-        {
-          modules = [
-            "title"
-            "separator"
-            "os"
-            {
-              type = "host";
-              format = "{/2}{-}{/}{2}{?3} {3}{?}";
-            }
-            "kernel"
-            "uptime"
-            {
-              type = "battery";
-              format = "{/4}{-}{/}{4}{?5} [{5}]{?}";
-            }
-            "break"
-            "packages"
-            "shell"
-            "display"
-            "terminal"
-            "break"
-            "cpu"
-            {
-              type = "gpu";
-              key = "GPU";
-            }
-            "memory"
-            "break"
-            "colors"
-          ];
-        }
-        // lib.optionalAttrs (cfg.logo != null) {
-          logo = cfg.logo;
-        }
-      );
+    home.file.".config/fastfetch/config.jsonc".text = builtins.toJSON (
+      {
+        "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
+        modules = [
+          "title"
+          "separator"
+          "os"
+          {
+            type = "host";
+            format = "{/2}{-}{/}{2}{?3} {3}{?}";
+          }
+          "kernel"
+          "uptime"
+          {
+            type = "battery";
+            format = "{/4}{-}{/}{4}{?5} [{5}]{?}";
+          }
+          "break"
+          "packages"
+          "shell"
+          "display"
+          "terminal"
+          "break"
+          "cpu"
+          {
+            type = "gpu";
+            key = "GPU";
+          }
+          "memory"
+          "break"
+          "colors"
+        ];
+      }
+      // lib.optionalAttrs (cfg.logo != null) {
+        logo = cfg.logo;
+      }
+    );
 
     programs.zsh = {
       initContent = ''

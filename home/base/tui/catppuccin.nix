@@ -22,6 +22,7 @@ in
 
     config = mkIf config.features.theme.catppuccin.enable {
       catppuccin = {
+        enable = true; # global toggle; ports default to this
         cache.enable = true;
         autoEnable = true;
         flavor = "mocha";
