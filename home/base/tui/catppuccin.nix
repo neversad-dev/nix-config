@@ -3,10 +3,13 @@
 # catppuccin theme string so all hosts switch themes together.
 {
   config,
+  lib,
   catppuccin,
   ...
 }: {
-  imports = [catppuccin.homeModules.catppuccin];
+  imports = lib.optionals (lib.modules ? importApply) [
+    catppuccin.homeModules.catppuccin
+  ];
 
   catppuccin = {
     # Upstream switch; with enable=false the imported module stays inert.
