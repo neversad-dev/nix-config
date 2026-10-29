@@ -10,6 +10,8 @@
   pkgs,
   ...
 }: {
+  home.packages = [pkgs.openssh]; # ssh-keygen, ssh-add (not installed by programs.ssh)
+
   programs.ssh = {
     enable = true;
 
