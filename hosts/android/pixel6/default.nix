@@ -4,13 +4,10 @@
   mylib,
   myvars,
   ...
-}: let
-  hostname = "pixel6";
-in {
+}: {
   # Host-specific configuration
-  networking.hostName = hostname;
-
-  # System layer only; the user configuration lives under home/hosts/android.
+  # NOTE: networking.hostName is not available in nix-on-droid.
+  # The hostname is set via Termux/Android system settings.
   environment.packages = with pkgs; [
     git
     curl
