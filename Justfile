@@ -1,6 +1,6 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
 
-hostname := `hostname`
+hostname := if env_var_or_default("HOSTNAME", "") != "" { env_var_or_default("HOSTNAME", "") } else { `sh -c 'hostname 2>/dev/null || cat /proc/sys/kernel/hostname 2>/dev/null || echo unknown'` }
 user := env_var_or_default("USER", `whoami`)
 
 # List all the just commands
