@@ -5,6 +5,7 @@
   myvars,
   inputs,
   outputs,
+  pkgsUnstable,
   ...
 }: {
   # Host-specific configuration
@@ -28,10 +29,18 @@
   ];
 
   home-manager = {
-    extraSpecialArgs = inputs // {inherit outputs mylib myvars; isHm24 = true;};
+    extraSpecialArgs =
+      inputs
+      // {
+        inherit outputs mylib myvars;
+        isHm24 = true;
+      };
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
+    # HM 24.05 sets `_module.args.pkgs = mkDefault <droid pkgs>`; override it
+    # so all HM packages come from unstable.
+    sharedModules = [{_module.args.pkgs = pkgsUnstable;}];
     config = import ../../../home/hosts/android/pixel6.nix;
   };
 }

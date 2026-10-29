@@ -163,19 +163,24 @@
         };
     };
 
-    # Nix-on-Droid module + HM stay on the 24.05 release (matching
-    # nix-on-droid release-24.05), but all packages come from unstable via
-    # useGlobalPkgs — avoids 24.05-only package gaps (prettier, tombi, ...).
+    # nix-on-droid itself (and HM 24.05 modules) run on nixpkgs-24.05, since
+    # nix-on-droid release-24.05 relies on APIs removed in unstable
+    # (e.g. substituteAll). Home Manager *packages* come from unstable via
+    # pkgsUnstable (see hosts/android/pixel6).
     nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs {
-        system = "aarch64-linux";
-        overlays = [
-          # HM 24.05 modules reference attrs that no longer exist in
-          # unstable nixpkgs (forced at derivation time even when unused).
-          (final: prev: {plasma5Packages = prev.kdePackages;})
-        ];
-      };
-      extraSpecialArgs = specialArgs;
+      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
+      extraSpecialArgs =
+        specialArgs
+        // {
+          pkgsUnstable = import nixpkgs {
+            system = "aarch64-linux";
+            overlays = [
+              # HM 24.05 modules reference attrs removed in unstable
+              # (forced at derivation time even when the module is unused).
+              (final: prev: {plasma5Packages = prev.kdePackages;})
+            ];
+          };
+        };
       modules = [
         ./hosts/android/pixel6
       ];
