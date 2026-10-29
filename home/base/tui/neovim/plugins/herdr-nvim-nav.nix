@@ -45,6 +45,7 @@
       {
         key = "<C-h>";
         mode = "n";
+        lua = true; # interpret the action as Lua code
         action = ''
           function()
             require('herdr-nvim-nav').left()
@@ -54,6 +55,7 @@
       {
         key = "<C-j>";
         mode = "n";
+        lua = true; # interpret the action as Lua code
         action = ''
           function()
             require('herdr-nvim-nav').down()
@@ -63,6 +65,7 @@
       {
         key = "<C-k>";
         mode = "n";
+        lua = true; # interpret the action as Lua code
         action = ''
           function()
             require('herdr-nvim-nav').up()
@@ -72,6 +75,7 @@
       {
         key = "<C-l>";
         mode = "n";
+        lua = true; # interpret the action as Lua code
         action = ''
           function()
             require('herdr-nvim-nav').right()
