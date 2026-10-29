@@ -180,9 +180,11 @@ fmt-check:
   # Check TOML files with taplo
   git ls-files "*.toml" | xargs -r taplo fmt --check
 
+# Run the configured Neovim directly; extra args are forwarded
+# Usage: just nvim -- --version
 [group('tools')]
-nvim:
-  # run neovim
+nvim *args:
   nix run .#nvim \
     --extra-experimental-features 'nix-command flakes' \
-    --accept-flake-config
+    --accept-flake-config \
+    -- {{ args }}

@@ -24,6 +24,7 @@ just darwin  # macOS system switch only (nix-darwin)
 just home    # Home Manager switch (SSH config, git, shell, etc.)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
+nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 ```
 
 > On macOS you usually need **both** `just darwin` and `just home` — they are separate.
@@ -54,6 +55,8 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 | Home Manager structure                     | [`home/README.md`](home/README.md)                                                   |
 | CI & automated checks                      | [`.github/workflows/README.md`](.github/workflows/README.md)                         |
 | Nixpkgs channels (`pkgs` vs `pkgs.stable`) | `flake.nix` inputs + overlay docs inline                                             |
+| Editing the Neovim config                  | [`home/base/tui/neovim/README.md`](home/base/tui/neovim/README.md)                   |
+| Local helper functions (`scanPaths`, etc.) | [`lib/README.md`](lib/README.md)                                                     |
 | Project tasks                              | [`todo.txt`](todo.txt) (managed with [tuxedo](https://github.com/webstonehq/tuxedo)) |
 
 ## Repo layout
@@ -68,8 +71,10 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── modules/darwin/              # nix-darwin system modules
 ├── home/                        # home-manager configs
 │   ├── base/                    # cross-platform core/tui/gui modules
+│   │   └── tui/neovim/          # vendored nvf modules (Neovim package)
 │   ├── linux|darwin|android/    # per-platform stacks
 │   └── hosts/                   # per-host home entrypoints
+├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to
 ├── vars/                        # myvars + features option schema
 ├── overlays/                    # stable-packages + custom patches
