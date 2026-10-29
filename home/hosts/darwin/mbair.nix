@@ -4,6 +4,9 @@
     ../../darwin
   ];
 
+  # Just(1) reads this to resolve the hostname.
+  home.sessionVariables.HOSTNAME = "mbair";
+
   # home manager specific feature flags
   features = {
     ai.enable = true;

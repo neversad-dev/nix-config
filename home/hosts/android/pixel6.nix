@@ -3,6 +3,9 @@
     ../../android
   ];
 
+  # Just(1) reads this to resolve the hostname.
+  home.sessionVariables.HOSTNAME = "pixel6";
+
   # Home manager specific feature flags — all disabled for now.
   # Enable selectively after testing on device.
   features = {

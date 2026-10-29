@@ -8,9 +8,6 @@
       enableCompletion = true;
       initContent = ''
         export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
-        # just(1) uses this to resolve the hostname (hostname(1) isn't
-        # always installed, e.g. on nix-on-droid).
-        export HOSTNAME="$(hostname 2>/dev/null || cat /proc/sys/kernel/hostname 2>/dev/null || echo unknown)"
       '';
     };
     bash = {
