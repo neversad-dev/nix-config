@@ -36,7 +36,15 @@
   programs.fzf.package = pkgs.nixos2511.fzf;
 
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
+  # Also: no systemd on nix-on-droid, so start ssh-agent from the shell.
   programs.zsh.initExtra = ''
+    # ssh-agent (HM's agent service needs systemd, absent here)
+    if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+      ssh-agent -s > "$HOME/.ssh/agent.env"
+    fi
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+      [ -f "$HOME/.ssh/agent.env" ] && . "$HOME/.ssh/agent.env" > /dev/null
+    fi
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   '';
 
