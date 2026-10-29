@@ -106,6 +106,17 @@ droid host="pixel6":
 droid-build host="pixel6":
   nix-on-droid build --flake .#{{ host }}
 
+# Clean up garbage on nix-on-droid:
+# - delete old generations of the system + HM (and the current one if -d twice)
+# - wipe old nix profile generations
+# - collect garbage from the store
+[group('nix-on-droid')]
+droid-clean:
+  nix-collect-garbage -d
+  nix profile wipe-history --profile ~/.nix-profile 2>/dev/null || true
+  nix-collect-garbage -d
+  nix store optimise
+
 ############################################################################
 #
 #  nix related commands
