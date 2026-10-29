@@ -17,10 +17,11 @@ Phone-specific settings live in `default.nix`:
 ## compat.nix
 
 Translates newer shared HM options for HM 24.05: shell init (`initContent`),
-Git settings, fzf file widget, SSH settings. Unsupported Atuin/tealdeer options,
-and worktrunk are declarations only, not backported implementations. herdr has
-a minimal backport: package + immutable `config.toml` (no `mutableSettings`). The
-removed `fzf.historyWidgetCommand` is not forwarded.
+Git settings, fzf file widget, SSH settings. Unsupported Atuin/tealdeer options
+are declarations only. herdr and worktrunk (no HM 24.05 modules) have minimal
+backports: package, `config.toml`, and zsh integration for worktrunk (no herdr
+`mutableSettings`, no worktrunk Claude Code integration). The removed
+`fzf.historyWidgetCommand` is not forwarded.
 
 SSH: HM 24.05 always renders its own `Host *` block from top-level options
 (`addKeysToAgent`, `controlMaster`, ...) and appends `extraConfig` inside it.

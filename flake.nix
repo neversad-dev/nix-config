@@ -195,7 +195,7 @@
               ;
             # Unstable TUIs that work on-device despite glibc >= 2.42.
             # Same derivations as the desktops/devShell: fetched from cache.
-            inherit (prev.unstable) tuxedo herdr;
+            inherit (prev.unstable) tuxedo herdr worktrunk;
           })
         ];
       };

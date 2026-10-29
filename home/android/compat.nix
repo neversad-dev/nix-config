@@ -56,7 +56,7 @@
       default = {};
     };
 
-    # worktrunk is a custom HM module (not in nixpkgs-24.05).
+    # worktrunk: no HM-24.05 module. Minimal backport in `config` below.
     programs.worktrunk = lib.mkOption {
       type = lib.types.submodule {
         options = {
@@ -64,12 +64,17 @@
             type = lib.types.bool;
             default = false;
           };
+          package = lib.mkOption {
+            type = lib.types.package;
+            default = pkgs.worktrunk;
+            defaultText = "pkgs.worktrunk";
+          };
           enableZshIntegration = lib.mkOption {
             type = lib.types.bool;
             default = false;
           };
           settings = lib.mkOption {
-            type = lib.types.anything;
+            type = (pkgs.formats.toml {}).type;
             default = {};
           };
         };
@@ -183,9 +188,20 @@
         (lib.filterAttrs (name: _: name != "*") settings);
     };
 
+    home.packages =
+      lib.optional config.programs.herdr.enable config.programs.herdr.package
+      ++ lib.optional config.programs.worktrunk.enable config.programs.worktrunk.package;
+
+    # worktrunk: package, config.toml and zsh integration, as upstream.
+    xdg.configFile."worktrunk/config.toml" = lib.mkIf (config.programs.worktrunk.enable && config.programs.worktrunk.settings != {}) {
+      source = (pkgs.formats.toml {}).generate "config.toml" config.programs.worktrunk.settings;
+    };
+    programs.zsh.initContent = lib.mkIf (config.programs.worktrunk.enable && config.programs.worktrunk.enableZshIntegration) ''
+      eval "$(${lib.getExe config.programs.worktrunk.package} config shell init zsh)"
+    '';
+
     # herdr: package + immutable config.toml, as upstream with the default
     # mutableSettings = false.
-    home.packages = lib.mkIf config.programs.herdr.enable [config.programs.herdr.package];
     xdg.configFile."herdr/config.toml" = lib.mkIf (config.programs.herdr.enable && config.programs.herdr.settings != {}) {
       source = (pkgs.formats.toml {}).generate "herdr-config.toml" config.programs.herdr.settings;
       onChange = "${lib.getExe config.programs.herdr.package} server reload-config || true";

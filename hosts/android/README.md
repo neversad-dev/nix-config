@@ -5,7 +5,7 @@ Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based*
 ## Key constraints
 
 - **Pinned to 24.05**: nix-on-droid, its pkgs (`nixpkgs-24-05`) and its bundled Home Manager (`home-manager-24-05`) are on release-24.05, so `system.stateVersion` and `home.stateVersion` are `24.05`.
-- **No unstable binaries for interactive tools**: unstable's glibc (>= 2.42) uses the `TCGETS2` ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, `stty: Permission denied`). Newer packages come from **nixos-25.11** (`pkgs.nixos2511`, still glibc 2.40). `pkgs.unstable` is only for non-interactive CLI tools, plus TUIs verified to work on-device (tuxedo, herdr).
+- **No unstable binaries for interactive tools**: unstable's glibc (>= 2.42) uses the `TCGETS2` ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, `stty: Permission denied`). Newer packages come from **nixos-25.11** (`pkgs.nixos2511`, still glibc 2.40). `pkgs.unstable` is only for non-interactive CLI tools, plus TUIs verified to work on-device (tuxedo, herdr, worktrunk).
 - **Shared modules, HM 24.05 shims**: the phone uses the same `home/base` modules as the desktops. Options introduced after HM 24.05 are polyfilled in [`home/android/compat.nix`](../../home/android/compat.nix).
 
 ## File layout
