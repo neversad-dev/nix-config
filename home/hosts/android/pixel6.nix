@@ -24,7 +24,7 @@
       fastfetch.enable = true;
       zoxide.enable = true;
       pay-respects.enable = false;
-      herdr.enable = false;
+      herdr.enable = true; # vendored from unstable, built on 25.11 (pkgs/herdr.nix)
       btop.enable = false;
       superfile.enable = true;
       tuxedo.enable = true;
