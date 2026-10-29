@@ -9,7 +9,12 @@
     ai.enable = false;
     theme.catppuccin.enable = true;
     cli = {
-      neovim.enable = false; # nvf presets need pkgs missing in 24.05; guards in stash@{0}
+      neovim = {
+        enable = true;
+        # nvf language/debugger presets need packages missing in nixpkgs-24.05.
+        languages.enable = false;
+        debugger.enable = false;
+      };
       git.enable = true;
       git.signing.enable = false;
       mitmproxy.enable = false;
