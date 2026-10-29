@@ -9,7 +9,7 @@
     ai.enable = false;
     theme.catppuccin.enable = true;
     cli = {
-      neovim.enable = true;
+      neovim.enable = false; # TODO: re-enable after nvf 24.05 formatter guards (stash@{0})
       git.enable = true;
       git.signing.enable = false;
       mitmproxy.enable = false;
