@@ -20,7 +20,8 @@
   # hiPrio copies must precede the plain ones from other modules.
   home.packages = lib.mkMerge [
     (lib.mkBefore (map lib.hiPrio [pkgs.bashInteractive pkgs.coreutils]))
-    [pkgs.procps]
+    # Basic userland that nix-on-droid doesn't ship.
+    (with pkgs; [procps gnugrep gnused findutils])
   ];
 
   # Background git checks can time out on Android's shared storage.
