@@ -33,6 +33,28 @@
     backupFileExtension = "hm-bak";
     useGlobalPkgs = true;
     useUserPackages = true;
+    # Take these HM packages from nixos-25.11 (newer, still glibc 2.40 so
+    # TUIs work on Android). HM-scoped: nix-on-droid's own pkgs untouched.
+    # Leaf packages only: overriding widely-depended-on ones (git, fzf)
+    # here rebuilds their dependents from source; those are set via
+    # programs.<x>.package in home/android/default.nix instead.
+    sharedModules = [
+      {
+        _module.args.pkgs = pkgs.extend (_final: prev: {
+          inherit
+            (prev.nixos2511)
+            atuin
+            bat
+            delta
+            direnv
+            eza
+            fastfetch
+            lazygit
+            starship
+            ;
+        });
+      }
+    ];
     config = import ../../../home/hosts/android/pixel6.nix;
   };
 }

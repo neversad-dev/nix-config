@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -11,13 +12,11 @@ with lib; {
         rm -f ~/.gitconfig
       '';
 
-      packages = with pkgs; [
-        git
-        git-lfs
-      ];
+      # git itself is installed by programs.git (respects programs.git.package).
+      packages = [pkgs.git-lfs];
 
       sessionPath = [
-        "${pkgs.git}/bin"
+        "${config.programs.git.package}/bin"
       ];
     };
 
