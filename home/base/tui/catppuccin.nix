@@ -6,20 +6,23 @@
   lib,
   catppuccin,
   ...
-}: {
-  imports = lib.optionals (lib.modules ? importApply) [
+}:
+with lib; let
+  hasModule = lib.modules ? importApply;
+in {
+  imports = optionals hasModule [
     catppuccin.homeModules.catppuccin
   ];
 
-  catppuccin = {
-    # Upstream switch; with enable=false the imported module stays inert.
-    enable = config.features.theme.catppuccin.enable;
-    cache.enable = true;
-    autoEnable = true;
-    flavor = "mocha";
-    accent = "lavender"; # "blue", "flamingo", "green", "lavender", "maroon", "mauve", "peach", "pink", "red", "rosewater", "sapphire", "sky", "teal", "yellow"
-    cursors.enable = false; # not supported for darwin
-    cursors.accent = "mauve"; # "blue", "flamingo", "green", "lavender", "maroon", "mauve", "peach", "pink", "red", "rosewater", "sapphire", "sky", "teal", "yellow"
-    vscode.profiles.default.enable = false; # disable automatic vscode extension management to avoid conflicts
+  config = mkIf (hasModule && config.features.theme.catppuccin.enable) {
+    catppuccin = {
+      cache.enable = true;
+      autoEnable = true;
+      flavor = "mocha";
+      accent = "lavender"; # "blue", "flamingo", "green", "lavender", "maroon", "mauve", "peach", "pink", "red", "rosewater", "sapphire", "sky", "teal", "yellow"
+      cursors.enable = false; # not supported for darwin
+      cursors.accent = "mauve"; # "blue", "flamingo", "green", "lavender", "maroon", "mauve", "peach", "pink", "red", "rosewater", "sapphire", "sky", "teal", "yellow"
+      vscode.profiles.default.enable = false; # disable automatic vscode extension management to avoid conflicts
+    };
   };
 }
