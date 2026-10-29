@@ -43,6 +43,7 @@ in
         enable = true;
         settings = {
           defaultProvider = "openrouter";
+          defaultModel = "openrouter/auto";
           theme =
             if config.features.theme.catppuccin.enable
             then "catppuccin-mocha"

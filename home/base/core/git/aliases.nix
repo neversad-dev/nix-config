@@ -30,7 +30,7 @@ with lib; {
         gca = "git commit --amend";
 
         gp = "git push";
-        gP = "git pull";
+        gu = "git pull";
 
         gl = "git log --graph --all --pretty=format:'%C(auto)%h %C(white) %an %ar %C(auto)%D%n%s%n' --abbrev-commit";
         gb = "git branch";
