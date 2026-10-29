@@ -53,6 +53,11 @@ jobs:
       - name: Check flake
         run: nix flake check --all-systems --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE"
 
+      # Not covered by flake check (unknown output type). The full activation
+      # package needs on-device proot paths, so evaluate its HM generation.
+      - name: Evaluate nix-on-droid configuration
+        run: nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home.activationPackage.drvPath --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE"
+
       - name: Check formatting
         run: nix develop --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE" --command just fmt-check
 
