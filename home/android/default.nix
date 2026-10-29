@@ -13,6 +13,11 @@
 
   home.stateVersion = "24.05";
 
+  # nix-on-droid hardcodes these (from its 24.05 pkgs) in its base env;
+  # HM brings unstable copies. Same-priority duplicates collide in
+  # nix-on-droid-path, so let the unstable ones win.
+  home.packages = map lib.hiPrio [pkgs.bashInteractive pkgs.coreutils];
+
   # Background git checks can time out on Android's shared storage.
   programs.starship.settings.command_timeout = 2000;
 

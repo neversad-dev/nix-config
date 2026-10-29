@@ -11,11 +11,8 @@
   # Host-specific configuration
   # NOTE: networking.hostName is not available in nix-on-droid.
   # The hostname is set via Termux/Android system settings.
-  environment.packages = with pkgs; [
-    git
-    curl
-    vim
-  ];
+  # No system-level packages: everything comes from Home Manager (unstable).
+  # Listing 24.05 packages here would collide with HM's in nix-on-droid-path.
   user.shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
   time.timeZone = lib.mkDefault "Europe/Kyiv";
   environment.etcBackupExtension = ".bak";
