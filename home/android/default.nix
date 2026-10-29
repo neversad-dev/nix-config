@@ -44,9 +44,10 @@
   # Also: no systemd on nix-on-droid, so start ssh-agent from the shell.
   programs.zsh.initExtra = ''
     # ssh-agent on nix-on-droid (no systemd).
-    # Android aggressively kills background processes, so the agent often dies
-    # between commands.  Verify agent health in preexec (via add-zsh-hook so
-    # we don't clobber Atuin's hook) so git/ssh always find a live agent.
+    # Android kills background processes, so the agent may die between
+    # commands.  Check and restart at shell startup, and wrap git/ssh so
+    # they verify the agent before each invocation without touching zsh
+    # hooks (which would break starship/atuin).
     _ssh_agent_env="$HOME/.ssh/agent.env"
 
     _ensure_ssh_agent() {
@@ -67,8 +68,11 @@
     fi
     _ensure_ssh_agent
 
-    autoload -Uz add-zsh-hook
-    add-zsh-hook preexec _ensure_ssh_agent
+    # Re-invoke the real binary after ensuring agent health
+    git() { _ensure_ssh_agent; command git "$@"; }
+    ssh() { _ensure_ssh_agent; command ssh "$@"; }
+    scp() { _ensure_ssh_agent; command scp "$@"; }
+    sftp() { _ensure_ssh_agent; command sftp "$@"; }
 
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   '';
