@@ -9,7 +9,7 @@
     ai.enable = false;
     theme.catppuccin.enable = true;
     cli = {
-      neovim.enable = false; # nvf presets need pkgs missing in 24.05; guards in stash@{0}
+      neovim.enable = true; # unstable build, see home/android/default.nix
       git.enable = true;
       git.signing.enable = false;
       mitmproxy.enable = false;
