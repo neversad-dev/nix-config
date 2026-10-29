@@ -9,3 +9,4 @@ x 2026-09-30 Expand nix-on-droid config with shared home-manager imports (now vi
 x 2026-10-29 Consider moving nvf-config and nix-lib into this repository +deps @consider
 (B) 2026-10-26 Fix mkEditableConfig/mkEditableConfigDir dry-run bug (lib/editable-config.nix) — overwrites config files during home-manager dry activation +lib @bug
 x 2026-10-28 Reorganize home/ into base/core (always-on essentials), base/tui + base/gui (togglable) and per-platform stacks. Core: shell, basic git, ssh, direnv; starship+nvim opt-in. +home @refactor
+(B) 2026-10-29 Enable secrets and AI on the android host (features.secrets + features.ai) +nix-on-droid @security @ai
