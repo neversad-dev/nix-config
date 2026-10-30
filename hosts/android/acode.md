@@ -10,7 +10,9 @@ is `home/base/core/git/` and `home/base/core/ssh.nix`.
 - Install the **F-Droid build** of Acode. The normal build can't request
   "All files access", so its terminal sees shared storage as empty.
 - Settings → Apps → Acode:
-  - **All files access**: allow (or a Storage Scope covering `code/projects`).
+  - **All files access**: allow, with Storage Scopes off. A scope doesn't
+    cover folders nix-on-droid's git creates later (`.git/objects/xx`), so
+    pulls in Acode fail with "unable to write file ... No such file".
   - **Exploit protection → Native code debugging**: allow (proot needs `ptrace`).
 - Open Acode's terminal once so it installs its sandbox.
 
