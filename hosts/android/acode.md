@@ -63,34 +63,15 @@ Host github.com
   User git
   IdentityFile ~/.ssh/id_ed25519
   IdentitiesOnly yes
-  AddKeysToAgent yes
-  # The plugin runs git without a shell env, so point ssh at the agent here.
-  IdentityAgent ~/.ssh/agent.sock
 EOF
 chmod 600 ~/.ssh/config ~/.ssh/known_hosts
 ```
 
-Start an agent on that socket in every Acode terminal:
+## 5. Check
 
 ```sh
-cat >> ~/.bashrc << 'EOF'
-export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
-ssh-add -l > /dev/null 2>&1
-if [ $? -eq 2 ]; then
-  rm -f "$SSH_AUTH_SOCK"
-  ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
-fi
-EOF
-```
-
-## 5. Every Acode session
-
-Open a terminal, unlock the key, then use the plugin:
-
-```sh
-ssh-add
 ssh -T git@github.com   # "Hi neversad-dev! ..."
 ```
 
-Then open `/sdcard/code/projects/nix-config` as a folder; Git SCM should detect
-the repo.
+Then open `/sdcard/code/projects/nix-config` as a folder in Acode; Git SCM
+should detect the repo and ask for the key's passphrase when it needs it.
