@@ -35,6 +35,18 @@ Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font fr
 
 There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (`~/.ssh/agent.sock`) when none is reachable. The key is added on first use via `AddKeysToAgent`: the passphrase is asked once and cached until Android kills the agent (e.g. when the app is fully closed).
 
+### Acode (Git SCM plugin)
+
+[Acode](https://acode.app)'s Git SCM plugin runs git in Acode's own Alpine sandbox, which can't see nix-on-droid's home. On every switch, `home/android/acode.nix` exports the generated git/ssh config (store paths replaced by copies) to `/storage/emulated/0/nix-on-droid/acode/`. [`scripts/acode-setup.sh`](../../scripts/acode-setup.sh) installs git/ssh in Acode and wires them to that bundle:
+
+```sh
+sh /sdcard/code/projects/nix-config/scripts/acode-setup.sh   # in Acode's terminal
+```
+
+git settings are included live, so `just droid` is enough to update them. Rerun the script after changing ssh settings or when Acode resets its sandbox. It generates a separate key for Acode (one key per machine); add it to GitHub, and run `ssh-add` once per Acode session so the plugin can push.
+
+Requirements (GrapheneOS): the **F-Droid build** of Acode (the normal build can't request "All files access"), **All files access** (or a Storage Scope covering the repo), and **Native code debugging** allowed (proot needs `ptrace`).
+
 ### Known issues
 
 - No system monitor: Android blocks `/proc/stat` for apps (since Android 8),

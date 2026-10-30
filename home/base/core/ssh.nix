@@ -10,6 +10,7 @@
   config,
   lib,
   pkgs,
+  myvars,
   ...
 }: {
   home.packages = [pkgs.openssh]; # ssh-keygen, ssh-add (not installed by programs.ssh)
@@ -71,7 +72,7 @@
       echo "[dry-run] would seed GitHub host key in $HOME/.ssh/known_hosts" >&2
     else
       mkdir -p "$HOME/.ssh"
-      GH_KEY="github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+      GH_KEY="${myvars.githubHostKey}"
       if [ -f "$HOME/.ssh/known_hosts" ]; then
         if ! ${pkgs.gnugrep}/bin/grep -qF "$GH_KEY" "$HOME/.ssh/known_hosts" 2>/dev/null; then
           ${pkgs.coreutils}/bin/printf '%s\n' "$GH_KEY" >> "$HOME/.ssh/known_hosts"
