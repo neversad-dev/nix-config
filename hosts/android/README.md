@@ -35,6 +35,10 @@ Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font fr
 
 There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (`~/.ssh/agent.sock`) when none is reachable. The key is added on first use via `AddKeysToAgent`: the passphrase is asked once and cached until Android kills the agent (e.g. when the app is fully closed).
 
+### Acode
+
+To use Acode's Git SCM plugin on the same repos, see [acode.md](acode.md).
+
 ### Known issues
 
 - No system monitor: Android blocks `/proc/stat` for apps (since Android 8),
