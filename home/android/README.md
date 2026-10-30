@@ -14,9 +14,6 @@ Phone-specific settings live in `default.nix`:
 - zsh: ssh-agent startup and syntax highlighting
 - Termux font activation
 
-`acode.nix` exports git/ssh settings for Acode's Alpine terminal (see
-[hosts/android](../../hosts/android/README.md#acode-git-scm-plugin)).
-
 ## compat.nix
 
 Translates newer shared HM options for HM 24.05: shell init (`initContent`),

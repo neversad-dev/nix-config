@@ -6,7 +6,6 @@
 }: {
   imports = [
     ./compat.nix
-    ./acode.nix
     ../base/home.nix
     ../base/core
     ../base/tui
