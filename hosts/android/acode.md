@@ -37,6 +37,9 @@ git config --global init.defaultBranch main
 git config --global pull.rebase true
 git config --global push.autoSetupRemote true
 git config --global core.pager delta
+# Acode runs proot with --link2symlink, which breaks hard links on shared
+# storage ("unable to write file .git/objects/..."): rename objects instead.
+git config --global core.createObject rename
 
 # Conventional-commit check and commit template, from this repo:
 R=/sdcard/code/projects/nix-config
