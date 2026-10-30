@@ -38,6 +38,12 @@
   # (hosts/android/pixel6): many packages depend on these, and overriding
   # them in the package set forces hundreds of uncached rebuilds.
   programs.git.package = pkgs.nixos2511.git;
+
+  # Shared storage (/storage/emulated/0) is owned by another Android user, so
+  # git refuses repos there ("dubious ownership"). Declared here because
+  # `git config --global` writes ~/.gitconfig, which core.nix removes on
+  # every switch. Trailing /* matches everything below (git >= 2.46).
+  programs.git.settings.safe.directory = "/storage/emulated/0/*";
   programs.fzf.package = pkgs.nixos2511.fzf;
 
   # HM-24.05's highlighting can conflict with Atuin's zle bindings.
