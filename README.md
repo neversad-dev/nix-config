@@ -13,22 +13,24 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 - **Declarative macOS** via [nix-darwin](https://github.com/nix-darwin/nix-darwin) + Home Manager.
 - **Declarative Linux desktops** via Home Manager (no NixOS servers yet).
 - **Declarative Android** via nix-on-droid.
-- **Cross-platform bundles** under `home/features/` toggled with shared `features.*` flags.
+- **Layered home modules** under `home/` (`base/core` → `base/tui` → `base/gui`); optional pieces toggled with `features.*` flags.
 - **Encrypted secrets** via agenix/ragenix in a private `nix-secrets` repo.
 - **Catppuccin** everywhere.
 
 ## Quick start
 
 ```bash
-just darwin  # macOS system switch only (nix-darwin)
-just home    # Home Manager switch (SSH config, git, shell, etc.)
+just darwin  # macOS switch: nix-darwin system + embedded Home Manager
+just home    # Home Manager only (fast iteration on HM changes)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
+nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 ```
 
-> On macOS you usually need **both** `just darwin` and `just home` — they are separate.
-> `just darwin` applies system-level changes (dock, defaults, packages); `just home`
-> applies user-level config (dotfiles, SSH, git signing, shell setup).
+> On macOS, Home Manager is embedded in nix-darwin: `just darwin` applies both the
+> system (dock, defaults, packages) and user config (dotfiles, SSH, git, shell).
+> The standalone `neversad@mbair` output stays for HM-only iteration via `just home`.
+> On Linux (enduro), `just home` is the only switch.
 >
 > Full command list: `just --list`
 
@@ -36,11 +38,11 @@ just up      # update flake inputs
 
 ## Hosts
 
-| Host       | Platform               | Entrypoint                           |
-| ---------- | ---------------------- | ------------------------------------ |
-| **mbair**  | macOS / aarch64        | `hosts/mbair/` + HM `neversad@mbair` |
-| **enduro** | Linux / x86_64         | HM only: `neversad@enduro`           |
-| **pixel6** | Android (nix-on-droid) | `hosts/nix-on-droid.nix`             |
+| Host       | Platform               | Entrypoint                   |
+| ---------- | ---------------------- | ---------------------------- |
+| **mbair**  | macOS / aarch64        | `hosts/mbair/` (HM embedded) |
+| **enduro** | Linux / x86_64         | HM only: `neversad@enduro`   |
+| **pixel6** | Android (nix-on-droid) | `hosts/android/pixel6/`      |
 
 Adding a new machine? See [hosts/README.md](hosts/README.md).
 
@@ -54,6 +56,8 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 | Home Manager structure                     | [`home/README.md`](home/README.md)                                                   |
 | CI & automated checks                      | [`.github/workflows/README.md`](.github/workflows/README.md)                         |
 | Nixpkgs channels (`pkgs` vs `pkgs.stable`) | `flake.nix` inputs + overlay docs inline                                             |
+| Editing the Neovim config                  | [`home/base/tui/neovim/README.md`](home/base/tui/neovim/README.md)                   |
+| Local helper functions (`scanPaths`, etc.) | [`lib/README.md`](lib/README.md)                                                     |
 | Project tasks                              | [`todo.txt`](todo.txt) (managed with [tuxedo](https://github.com/webstonehq/tuxedo)) |
 
 ## Repo layout
@@ -63,15 +67,17 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── flake.nix                    # darwin + HM + nix-on-droid outputs
 ├── hosts/                       # per-host system configs + bootstrap docs
 │   ├── mbair/
-│   └── nix-on-droid.nix
+│   └── android/pixel6/
 ├── modules/darwin/              # nix-darwin system modules
 ├── home/                        # home-manager configs
-│   ├── common/                  # shared baseline
-│   ├── features/                # togglable bundles (cli, desktop, dev, ...)
-│   └── neversad/                # per-user entrypoints
+│   ├── base/                    # cross-platform core/tui/gui modules
+│   │   └── tui/neovim/          # vendored nvf modules (Neovim package)
+│   ├── linux|darwin|android/    # per-platform stacks
+│   └── hosts/                   # per-host home entrypoints
+├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to
 ├── vars/                        # myvars + features option schema
-├── overlays/                    # stable-packages + custom patches
+├── overlays/                    # pkgs.stable / unstable / nixos2511
 └── pkgs/                        # custom packages
 ```
 

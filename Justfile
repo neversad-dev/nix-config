@@ -1,6 +1,6 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
 
-hostname := `hostname`
+hostname := if env_var_or_default("HOSTNAME", "") != "" { env_var_or_default("HOSTNAME", "") } else { `sh -c 'hostname 2>/dev/null || cat /proc/sys/kernel/hostname 2>/dev/null || echo unknown'` }
 user := env_var_or_default("USER", `whoami`)
 
 # List all the just commands
@@ -99,12 +99,22 @@ home-legacy:
 ############################################################################
 
 [group('nix-on-droid')]
-droid host="default":
-  nix-on-droid switch --flake .#{{ host }}
+droid host="":
+  nix-on-droid switch --flake .#{{ if host != "" { host } else { hostname } }}
 
 [group('nix-on-droid')]
-droid-build host="default":
-  nix-on-droid build --flake .#{{ host }}
+droid-build host="":
+  nix-on-droid build --flake .#{{ if host != "" { host } else { hostname } }}
+
+# Clean up garbage on nix-on-droid:
+# - delete old generations of the system + HM (and the current one if -d twice)
+# - wipe old nix profile generations
+# - collect garbage from the store
+[group('nix-on-droid')]
+droid-clean:
+  nix-collect-garbage -d
+  nix profile wipe-history --profile ~/.nix-profile 2>/dev/null || true
+  nix-collect-garbage -d
 
 ############################################################################
 #
@@ -180,9 +190,11 @@ fmt-check:
   # Check TOML files with taplo
   git ls-files "*.toml" | xargs -r taplo fmt --check
 
+# Run the configured Neovim directly; extra args are forwarded
+# Usage: just nvim -- --version
 [group('tools')]
-nvim:
-  # run neovim
+nvim *args:
   nix run .#nvim \
     --extra-experimental-features 'nix-command flakes' \
-    --accept-flake-config
+    --accept-flake-config \
+    -- {{ args }}

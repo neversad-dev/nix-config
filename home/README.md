@@ -1,100 +1,68 @@
 # Home Manager
 
-This directory contains all Home Manager configurations organized by platform and functionality.
-
-## Structure
+Three layers separate reusable configuration, platform stacks, and host choices.
 
 ```
 home/
-├── common/              # Shared baseline for all HM outputs
-│   ├── default.nix      # Imports secrets + features options
-│   └── secrets.nix      # User-level agenix identity path
-├── core/                # Always-on essentials (future: no feature flags)
-│   ├── shell.nix        # zsh/bash, PATH, aliases
-│   ├── git.nix          # git config (basic, not full git/ stack)
-│   ├── ssh.nix          # ~/.ssh/config
-│   └── ...
-├── features/            # Togglable extras (opt-in per host)
-│   ├── ai/              # Pi coding agent, atuin, etc.
-│   ├── cli/             # Neovim, starship, btop, fzf, ...
-│   ├── darwin/          # macOS-specific apps (aerospace, sketchybar)
-│   ├── desktop/         # Ghostty, Kitty, VS Code/Cursor, Zed
-│   ├── development/     # Android SDK, language toolchains
-│   └── linux/           # Linux-specific apps
-├── neversad/            # Per-user entrypoints
-│   ├── home.nix         # Shared user settings (stateVersion, etc.)
-│   ├── fonts.nix        # Font packages
-│   ├── mbair.nix        # macOS host entrypoint
-│   └── enduro.nix       # Linux host entrypoint
-└── README.md            # This file
+├── base/                 # Cross-platform modules
+│   ├── home.nix          # User identity, stateVersion, Nix settings
+│   ├── core/             # Shell, basic Git, SSH, direnv, small CLI tools
+│   ├── tui/              # Workstation tools, Git extras, AI, secrets, theme
+│   └── gui/              # Editors, terminals, wallpapers, fonts
+├── linux/                # core.nix → tui.nix → gui.nix
+├── darwin/               # Full workstation stack + AeroSpace/SketchyBar
+├── android/              # Core + HM 24.05 compatibility
+└── hosts/                # One entry point per host, grouped by platform
 ```
 
-## How features work
+## Composition
 
-Options are declared **decentrally** — each leaf module under `home/features/` (or `vars/features.nix` for cross-cutting ones) exposes its own toggle. Parent `default.nix` files import the whole directory via `mylib.scanPaths` but do not gate anything themselves.
+Outputs reference one file under `home/hosts/`. Each host imports a platform
+stack and supplies overrides. Reusable modules do not import host files.
 
-### Two kinds of toggles
+| Host entry point           | Stack           | Integration                             |
+| -------------------------- | --------------- | --------------------------------------- |
+| `hosts/darwin/mbair.nix`   | `darwin`        | nix-darwin module (+ standalone output) |
+| `hosts/linux/enduro.nix`   | `linux/gui.nix` | Standalone HM, generic Linux            |
+| `hosts/android/pixel6.nix` | `android`       | nix-on-droid's built-in HM              |
 
-| Kind              | Where declared                                                  | What it controls                                                                                 |
-| ----------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Cross-cutting** | `vars/features.nix`                                             | Both darwin and HM (e.g. `features.gaming`, `features.stayAwake`, `features.development.vscode`) |
-| **HM-only**       | In the leaf module itself (e.g. `home/features/cli/neovim.nix`) | Only Home Manager (e.g. `features.cli.neovim`, `features.desktop.zed`)                           |
+A future Linux server can import `linux/core.nix`; HM is optional for servers,
+not automatically installed by a system module. `linux/tui.nix` adds terminal
+workstation tools, and `linux/gui.nix` adds desktop applications. Android uses
+its own stack rather than assuming all Linux integrations work in proot.
 
-Leaf modules gate themselves with `lib.mkIf config.features.<path>.enable`:
+## Defaults and feature flags
+
+Core imports enable shell, basic Git (identity, aliases, commit template) and
+SSH. The following are part of core/tui but are **opt-in and disabled by
+default**: `atuin`, `direnv`, `eza`, `fastfetch`, `zoxide`, `starship`,
+`neovim`, `pay-respects`, `herdr`, `btop`, `superfile`, `tuxedo` (all under
+`features.cli.*`). Each host enables what it needs in its entry point, e.g.:
 
 ```nix
-# home/features/cli/neovim.nix
-{ config, lib, ... }:
-{
-  options.features.cli.neovim.enable = lib.mkEnableOption "Neovim";
-  config = lib.mkIf config.features.cli.neovim.enable {
-    programs.neovim.enable = true;
-  };
-}
+features.cli.starship.enable = true;
+features.cli.neovim.enable = true;
 ```
 
-### Always-on vs. opt-in
+Neovim is a Home Manager module in [`base/tui/neovim/`](base/tui/neovim/README.md)
+that enables nvf with the in-repo nvf modules (no separate flake input).
+It can also be run directly with `nix run github:neversad-dev/nix-config`.
 
-Not everything has a toggle. Small utilities that are harmless when idle (`eza`, `zoxide`, `bat`, `fzf`, ...) are imported unconditionally by their parent `default.nix` and are always present. This is fine — they only activate when you invoke them.
+`features.cli.git.enable` controls the optional Git extras (Delta, lazygit,
+worktrunk); basic Git does not depend on it. Signing retains its separate flag.
+Other optional features retain their existing `features.*` names. Shared
+system/HM options live in `vars/features.nix`; HM-only options live in their
+leaf modules. Directory `default.nix` files use `mylib.scanPaths`.
 
-Toggles are reserved for:
+Core avoids unconditional flake-input dependencies. TUI adds Catppuccin,
+agenix and AI integration; GUI adds fonts and desktop applications.
 
-- Heavy or opinionated tools (neovim, desktop editors, window managers)
-- Things that change system behavior (SSH commit signing, mitmproxy)
-- Platform-specific apps (aerospace, sketchybar)
-- Anything you might want to disable on a headless server or VPS
+## Adding a host
 
-### Future: `home/core/`
+1. Create `home/hosts/<platform>/<hostname>.nix` and import a platform stack.
+2. Set host-specific flags and overrides there.
+3. Point the standalone HM output or system HM integration at that one file.
+4. Update [hosts/README.md](../hosts/README.md).
 
-The current `home/common/` is light (just agenix wiring). A future `home/core/` directory is planned for true essentials you want on _every_ machine — even a fresh VPS — without thinking about feature flags: shell baseline, git auth config, SSH client settings, direnv, coreutils. See `todo.txt` for the tracking task.
-
-### Setting toggles per host
-
-```nix
-# home/neversad/mbair.nix
-{
-  features = {
-    ai.enable = true;
-    cli = {
-      neovim.enable = true;
-      git.enable = true;
-      git.signing.enable = true;
-      starship.enable = true;
-    };
-    desktop = {
-      ghostty.enable = true;
-      zed.enable = true;
-    };
-  };
-}
-```
-
-Enable a feature for one host, disable for another, without forking the module code.
-
-## Adding a new Home Manager host
-
-1. Add `home/<user>/<hostname>.nix` importing the right `../features/*` stacks
-2. Add `homeConfigurations."<user>@<hostname>"` in `flake.nix`
-3. Wire `hosts/<hostname>/features.nix` if you need host-specific feature flags shared with darwin
-
-See [`vars/README.md`](../vars/README.md) for cross-cutting options.
+See [base/README.md](base/README.md), [android/README.md](android/README.md),
+and [vars/README.md](../vars/README.md).
