@@ -11,3 +11,5 @@ x 2026-10-29 Consider moving nvf-config and nix-lib into this repository +deps @
 x 2026-10-28 Reorganize home/ into base/core (always-on essentials), base/tui + base/gui (togglable) and per-platform stacks. Core: shell, basic git, ssh, direnv; starship+nvim opt-in. +home @refactor
 (B) 2026-10-29 Enable secrets and AI on the android host (features.secrets + features.ai) +nix-on-droid @security @ai
     Context: pi.nix and the catppuccin-pi module skip themselves on HM 24.05 via isHm24, and features.ai asserts features.secrets; agenix's HM module may need a compat backport like herdr/worktrunk. Prior discussion: pi session 01a18914-d227-7612-90be-013b602e6822 (branch feature/nix-on-droid, 2026-10-29).
+(B) 2026-10-31 Investigate and set up AI integration for Neovim (nvf: copilot/codecompanion/avante or minuet) +nvf @ai @neovim
+(B) 2026-10-31 Go through the nix-on-droid options list and decide which to enable +nix-on-droid @config https://nix-community.github.io/nix-on-droid/nix-on-droid-options.html#sec-usage
