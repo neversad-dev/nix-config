@@ -7,7 +7,7 @@
 with lib; let
   cfg = config.features.cli;
 in {
-  config = mkIf (cfg.herdr.enable && cfg.git.enable) {
+  config = mkIf (cfg.herdr.enable && cfg.git.extended.enable) {
     programs.herdr.settings.keys.command = [
       {
         key = "prefix+shift+g";
