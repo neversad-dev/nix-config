@@ -32,7 +32,9 @@
 
   # Atuin daemon relies on systemd user services (not available on
   # nix-on-droid) — run without it; sqlite direct access is fine.
-  programs.atuin.daemon.enable = false;
+  # mkForce: the shared atuin module sets daemon.enable = true at ordinary
+  # priority; a plain false here would be a conflicting definition.
+  programs.atuin.daemon.enable = lib.mkForce false;
 
   # From nixos-25.11 via the package option rather than the HM pkgs overlay
   # (hosts/android/pixel6): many packages depend on these, and overriding
