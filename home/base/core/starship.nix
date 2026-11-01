@@ -26,20 +26,21 @@ in
         # the whole block on the catppuccin flag. With the theme off,
         # starship uses its default prompt and colors.
         (mkIf config.features.theme.catppuccin.enable {
-          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$custom.nix$line_break$character";
+          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$custom.nix$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
           os = {
             disabled = false;
             style = "bg:surface0 fg:text";
           };
 
-          # Nix project indicator: starship has no built-in flake.nix
-          # detection, so use a custom module triggered on nix project files.
+          # Nix project indicator: starship has no built-in flake.nix detection,
+          # so use a custom module triggered on nix project files. Styled like
+          # the language segments so it sits in the same prompt chain.
           custom.nix = {
             command = "true"; # cheap no-op; when= drives the trigger
             when = "test -f flake.nix || test -f shell.nix || test -f default.nix";
-            symbol = "❄ "; # snowflake
-            style = "fg:sapphire";
-            format = "[$symbol]($style)";
+            symbol = " "; # nf-linux-nixos (NixOS logo)
+            style = "bg:teal";
+            format = "[[ $symbol ](fg:base bg:teal)]($style)";
           };
 
           # Define OS symbols
