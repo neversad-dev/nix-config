@@ -14,9 +14,9 @@ Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)
 **In this tree:**
 
 - `secrets/darwin.nix` — imports the agenix Darwin module and sets the **system-level** identity path. No `age.secrets` declarations here anymore.
-- `home/common/secrets.nix` — imports the agenix home-manager module and sets the **user-level** identity path.
+- `home/base/tui/secrets.nix` — imports the agenix home-manager module and sets the **user-level** identity path.
 - `hosts/<host>/secrets.nix` — host-specific system secrets.
-- `home/features/<feature>/` — feature-specific user secrets (e.g. `home/features/ai/pi.nix` for OpenRouter API key).
+- `home/base/tui/` feature modules — feature-specific user secrets (e.g. `home/base/tui/ai/pi.nix` for the OpenRouter API key).
 
 ## Adding or changing a secret
 
@@ -62,7 +62,7 @@ agenix -e shared/openrouter-pi.age -i ~/.ssh/id_ed25519
 **User-level** (home-manager):
 
 ```nix
-# home/features/some-feature/default.nix
+# home/base/tui/some-feature/default.nix
 age.secrets."my-secret" = {
   file = "${nix-secrets}/shared/my-secret.age";
   path = "${config.xdg.dataHome}/secrets/my-secret";  # optional explicit path

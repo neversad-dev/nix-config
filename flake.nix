@@ -27,6 +27,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-24-05.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # Last release on glibc < 2.42 (no TCGETS2, which Android SELinux blocks
+    # on ttys). Source of newer TUI packages for nix-on-droid.
+    nixpkgs-25-11.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
@@ -52,6 +55,12 @@
     # agenix.url = "github:ryantm/agenix";
     agenix.url = "github:yaxitech/ragenix"; # a rust implementation of agenix
 
+    # Neovim framework; config lives in home/base/tui/neovim
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # theme
     catppuccin.url = "github:catppuccin/nix";
     catppuccin-vsc = {
@@ -65,23 +74,11 @@
 
     ########################  My own repositories  #########################################
 
-    # Shared library functions
-    nix-lib = {
-      url = "github:neversad-dev/nix-lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # my private secrets, it's a private repository.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     nix-secrets = {
       url = "git+ssh://git@github.com/neversad-dev/nix-secrets.git?shallow=1";
       flake = false;
-    };
-
-    # Custom nvf configuration
-    nvf-config = {
-      url = "github:neversad-dev/nvf-config";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # my wallpapers
@@ -99,14 +96,14 @@
     nixpkgs-24-05,
     home-manager,
     wallpapers,
-    nvf-config,
-    nix-lib,
+    nvf,
     ...
   } @ inputs: let
     inherit (self) outputs;
     inherit (inputs.nixpkgs) lib;
+    # Library functions, vendored locally from github:neversad-dev/nix-lib
     mylib =
-      nix-lib.lib
+      import ./lib {inherit lib;}
       // {
         relativeToRoot = lib.path.append ./.;
       };
@@ -115,7 +112,8 @@
     specialArgs =
       inputs
       // {
-        inherit outputs mylib myvars;
+        inherit inputs outputs mylib myvars;
+        isHm24 = false; # HM 24.05 hosts (nix-on-droid) override this
       };
 
     darwinSystems = {
@@ -144,6 +142,15 @@
           fetcherVersion = 7;
         };
       };
+
+    # Neovim built from the in-repo nvf modules (home/base/tui/neovim).
+    # scanPaths picks up the nvf modules and skips default.nix (the HM module).
+    neovimFor = system:
+      (nvf.lib.neovimConfiguration {
+        pkgs = pkgsFor system;
+        modules = mylib.scanPaths ./home/base/tui/neovim;
+        extraSpecialArgs = {inherit mylib;};
+      }).neovim;
   in {
     # Example configurations (can be used directly or as templates)
     darwinConfigurations = {
@@ -159,6 +166,50 @@
         };
     };
 
+    # nix-on-droid (release-24.05) and its HM run fully on nixpkgs-24.05.
+    # Unstable binaries break on Android: glibc >= 2.42 uses the TCGETS2
+    # ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, stty
+    # "Permission denied"). Opt in per package via pkgs.unstable.<name>,
+    # only for non-interactive CLI tools.
+    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
+      pkgs = import nixpkgs-24-05 {
+        system = "aarch64-linux";
+        overlays = [
+          overlays.additions
+          overlays.unstable-packages
+          overlays.nixos-25-11-packages
+          # nvf's language presets reference these; missing in 24.05.
+          # Leaf packages, so aliasing them doesn't force rebuilds.
+          (final: prev: {
+            inherit
+              (prev.nixos2511)
+              bash-language-server
+              prettier
+              superhtml
+              tombi
+              basedpyright
+              just-lsp
+              typescript-language-server
+              # superfile from 25.11: newer than 24.05's 1.1.2, still glibc 2.40
+              superfile
+              # not in 24.05 at all; leaf packages, so no rebuild cascade
+              pay-respects
+              # 24.05's tealdeer 1.6.1 can't unpack the tldr pages zip
+              # (fixed upstream in later releases).
+              tealdeer
+              ;
+            # Unstable TUIs that work on-device despite glibc >= 2.42.
+            # Same derivations as the desktops/devShell: fetched from cache.
+            inherit (prev.unstable) tuxedo herdr worktrunk;
+          })
+        ];
+      };
+      extraSpecialArgs = specialArgs;
+      modules = [
+        ./hosts/android/pixel6
+      ];
+    };
+
     homeConfigurations = {
       "${myvars.primaryUser}@mbair" = let
         system = darwinSystems.aarch64;
@@ -171,7 +222,7 @@
               inherit outputs wallpapers inputs;
             };
           modules = [
-            ./home/${myvars.primaryUser}/mbair.nix
+            ./home/hosts/darwin/mbair.nix
           ];
         };
 
@@ -186,17 +237,17 @@
               inherit outputs wallpapers inputs;
             };
           modules = [
-            ./home/${myvars.primaryUser}/enduro.nix
+            ./home/hosts/linux/enduro.nix
           ];
         };
     };
 
-    nixOnDroidConfigurations.pixel6 = inputs.nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs = import nixpkgs-24-05 {system = "aarch64-linux";};
-      modules = [
-        ./hosts/nix-on-droid.nix
-      ];
-    };
+    # Standalone Neovim package: `nix run github:neversad-dev/nix-config`
+    # (or `.#nvim` / `.#default` explicitly)
+    packages = forAllSystems (system: {
+      default = neovimFor system;
+      nvim = neovimFor system;
+    });
 
     # Format the nix code in this flake
     formatter = forAllSystems (
@@ -220,7 +271,7 @@
           nix-melt # TUI flake.lock viewer
           nix-tree # TUI dependency graph for a derivation
           just # command runner (repo Justfile)
-          tuxedo # project TODO manager (todo.txt)
+          tuxedo # project TODO manager (todo.txt, see Justfile)
         ];
         shellHook = ''
           export NH_FLAKE="."       # used by nh as the default flake path
