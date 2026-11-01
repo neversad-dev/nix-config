@@ -18,9 +18,15 @@ in
       settings = mkMerge [
         {
           "$schema" = "https://starship.rs/config-schema.json";
-
-          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
           add_newline = true;
+        }
+
+        # The custom format and module styles use palette-only color
+        # names, so they only make sense together with a palette: gate
+        # the whole block on the catppuccin flag. With the theme off,
+        # starship uses its default prompt and colors.
+        (mkIf config.features.theme.catppuccin.enable {
+          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
           os = {
             disabled = false;
             style = "bg:surface0 fg:text";
@@ -185,9 +191,7 @@ in
             vimcmd_replace_symbol = "[](bold fg:purple)";
             vimcmd_visual_symbol = "[](bold fg:lavender)";
           };
-        }
 
-        (mkIf config.features.theme.catppuccin.enable {
           palette = lib.mkDefault "catppuccin";
           palettes.catppuccin = {
             rosewater = "#f5e0dc";
