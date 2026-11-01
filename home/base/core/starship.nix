@@ -34,13 +34,13 @@ in
 
           # Nix project indicator: starship has no built-in flake.nix detection,
           # so use a custom module triggered on nix project files. Styled like
-          # the language segments so it sits in the same prompt chain.
+          # the language segments. NB: embed the glyph directly in the format —
+          # $symbol gets restyled outside the inline bg (loses the pill).
           custom.nix = {
             command = "true"; # cheap no-op; when= drives the trigger
             when = "test -f flake.nix || test -f shell.nix || test -f default.nix";
-            symbol = " "; # nf-linux-nixos (NixOS logo)
-            style = "bg:teal";
-            format = "[[ $symbol ](fg:base bg:teal)]($style)";
+            style = "bg:teal fg:base";
+            format = "[ ](fg:base bg:teal)";
           };
 
           # Define OS symbols
