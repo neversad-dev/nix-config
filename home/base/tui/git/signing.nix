@@ -7,7 +7,7 @@
 with lib; let
   cfg = config.features.cli.git.extended;
 in {
-  config = mkIf (cfg.enable && cfg.signing.enable) {
+  config = mkIf (cfg.enable && config.features.cli.git.signing.enable) {
     home.activation.sshAllowedSigners = lib.hm.dag.entryAfter ["linkGeneration"] ''
       PUBKEY="$HOME/.ssh/id_ed25519.pub"
       if [ -f "$PUBKEY" ]; then
