@@ -26,7 +26,7 @@ in
         # the whole block on the catppuccin flag. With the theme off,
         # starship uses its default prompt and colors.
         (mkIf config.features.theme.catppuccin.enable {
-          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$custom.nix$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
+          format = "[](fg:surface0)$os$username$hostname[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$custom$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character";
           os = {
             disabled = false;
             style = "bg:surface0 fg:text";
