@@ -61,7 +61,7 @@ in
         force = true;
       };
 
-      home.activation.worktrunkPiIntegration = mkIf config.features.cli.git.enable (
+      home.activation.worktrunkPiIntegration = mkIf config.features.cli.git.extended.enable (
         lib.hm.dag.entryAfter ["linkGeneration"] ''
           export PATH="${lib.makeBinPath [pkgs.git]}:$PATH"
           run sh -c 'cd "$HOME" && echo "y" | ${lib.getExe config.programs.worktrunk.package} config plugins pi install'

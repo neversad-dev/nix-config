@@ -64,13 +64,17 @@
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
   '';
 
-  # Termux needs a real file, not a symlink into the Nix store.
+  # Termux needs a real file, not a symlink into the Nix store: nix-on-droid's
+  # own terminal.font option only symlinks ~/.termux/font.ttf into the
+  # nix-on-droid app's private storage, which the Termux app cannot read
+  # (different UID). Copy the same Maple Mono NF used on other hosts instead.
   home.activation.copyTermuxFont = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    fontStorePath="${pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];}}/share/fonts/truetype/NerdFonts/JetBrainsMonoNerdFont-Regular.ttf"
+    fontStorePath="${pkgs.nixos2511.maple-mono.NF-unhinted}/share/fonts/truetype/MapleMono-NF-Regular.ttf"
     targetDir="${config.home.homeDirectory}/.termux"
-    mkdir -p "$targetDir"
+    # Respect dry-run: don't mutate ~/.termux during a dry-activate preview.
+    $DRY_RUN_CMD mkdir $VERBOSE_ARG -p "$targetDir"
     if [ -e "$fontStorePath" ]; then
-      cp -f "$fontStorePath" "$targetDir/font.ttf"
+      $DRY_RUN_CMD cp $VERBOSE_ARG -f "$fontStorePath" "$targetDir/font.ttf"
     fi
   '';
 }

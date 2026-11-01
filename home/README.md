@@ -48,8 +48,10 @@ Neovim is a Home Manager module in [`base/tui/neovim/`](base/tui/neovim/README.m
 that enables nvf with the in-repo nvf modules (no separate flake input).
 It can also be run directly with `nix run github:neversad-dev/nix-config`.
 
-`features.cli.git.enable` controls the optional Git extras (Delta, lazygit,
-worktrunk); basic Git does not depend on it. Signing retains its separate flag.
+`features.cli.git.extended.enable` controls the optional Git extras (Delta, lazygit,
+worktrunk); the git binary does not depend on it, and core Git configuration
+(identity, ignores, aliases) is gated separately by `features.cli.git.core.enable`.
+Signing retains its separate flag.
 Other optional features retain their existing `features.*` names. Shared
 system/HM options live in `vars/features.nix`; HM-only options live in their
 leaf modules. Directory `default.nix` files use `mylib.scanPaths`.

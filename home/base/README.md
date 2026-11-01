@@ -10,8 +10,10 @@
   Not required for minimal servers.
 - `gui/`: cross-platform desktop editors, terminal emulators, wallpapers and fonts.
 
-Basic Git is always available from core. `features.cli.git.enable` gates the
-TUI Git extras; `features.cli.git.signing.enable` additionally enables signing.
+The git binary is always available from core (unconditional `programs.git`).
+`features.cli.git.core.enable` gates core Git configuration (identity, ignores,
+aliases, commit template); `features.cli.git.extended.enable` gates the TUI Git extras;
+`features.cli.git.signing.enable` additionally enables signing.
 Modules that need a newer HM than 24.05 (Catppuccin, pi) skip themselves when
 `isHm24` is set (nix-on-droid).
 

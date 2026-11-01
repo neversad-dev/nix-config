@@ -5,7 +5,7 @@
   ...
 }:
 with lib; let
-  cfg = config.features.cli.git;
+  cfg = config.features.cli.git.extended;
   # Inline catppuccin references follow the global theme flag.
   theme = config.features.theme.catppuccin.enable;
   mochaDelta = lib.optionalString theme " catppuccin-mocha";

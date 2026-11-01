@@ -13,7 +13,8 @@
     theme.catppuccin.enable = true;
     cli = {
       neovim.enable = true;
-      git.enable = true;
+      git.core.enable = true;
+      git.extended.enable = true;
       git.signing.enable = true;
       mitmproxy.enable = false;
       starship.enable = true;

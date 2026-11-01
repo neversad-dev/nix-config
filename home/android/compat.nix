@@ -73,6 +73,10 @@
             type = lib.types.bool;
             default = false;
           };
+          enableBashIntegration = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+          };
           settings = lib.mkOption {
             type = (pkgs.formats.toml {}).type;
             default = {};
@@ -192,12 +196,15 @@
       lib.optional config.programs.herdr.enable config.programs.herdr.package
       ++ lib.optional config.programs.worktrunk.enable config.programs.worktrunk.package;
 
-    # worktrunk: package, config.toml and zsh integration, as upstream.
+    # worktrunk: package, config.toml and shell integrations, as upstream.
     xdg.configFile."worktrunk/config.toml" = lib.mkIf (config.programs.worktrunk.enable && config.programs.worktrunk.settings != {}) {
       source = (pkgs.formats.toml {}).generate "config.toml" config.programs.worktrunk.settings;
     };
     programs.zsh.initContent = lib.mkIf (config.programs.worktrunk.enable && config.programs.worktrunk.enableZshIntegration) ''
       eval "$(${lib.getExe config.programs.worktrunk.package} config shell init zsh)"
+    '';
+    programs.bash.initContent = lib.mkIf (config.programs.worktrunk.enable && config.programs.worktrunk.enableBashIntegration) ''
+      eval "$(${lib.getExe config.programs.worktrunk.package} config shell init bash)"
     '';
 
     # herdr: package + immutable config.toml, as upstream with the default

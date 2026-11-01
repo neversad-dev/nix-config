@@ -1,6 +1,11 @@
-{lib, ...}:
-with lib; {
-  config = {
+{
+  lib,
+  config,
+  ...
+}:
+with lib;
+{
+  config = mkIf config.features.cli.git.core.enable {
     programs.git = {
       settings = {
         commit = {

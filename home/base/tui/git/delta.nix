@@ -6,7 +6,7 @@
   ...
 }:
 with lib; let
-  cfg = config.features.cli.git;
+  cfg = config.features.cli.git.extended;
   # Follow the global theme flag (vars/features.nix).
   theme = config.features.theme.catppuccin.enable;
 in {

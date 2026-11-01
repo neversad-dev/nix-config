@@ -29,7 +29,7 @@ Flake `inputs` are passed to Home Manager via `home-manager.extraSpecialArgs`, l
 
 Termux reads a **real file** (not a symlink) from `~/.termux/font.ttf`. The store path is not resolvable from Android's native font layer, so home-manager's `home.file` with `.source` doesn't work.
 
-Solution: `home.activation.copyTermuxFont` copies the JetBrainsMono Nerd Font from `/nix/store` into `~/.termux/font.ttf` on every switch.
+Solution: `home.activation.copyTermuxFont` copies the Maple Mono NF font from `/nix/store` into `~/.termux/font.ttf` on every switch. (nix-on-droid's `terminal.font` option doesn't help: it only symlinks into the nix-on-droid app's private storage, unreadable by the Termux app.)
 
 ### SSH agent
 
@@ -44,7 +44,6 @@ To use Acode's Git SCM plugin on the same repos, see [acode.md](acode.md).
 - No system monitor: Android blocks `/proc/stat` for apps (since Android 8),
   so btop can't read CPU stats in any version. `htop` and `procs` are
   installed but show no/partial CPU data.
-- `tmux` was removed entirely from the repo (not just skipped).
 
 ## Usage
 

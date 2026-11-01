@@ -5,7 +5,7 @@
   ...
 }:
 with lib; let
-  cfg = config.features.cli.git;
+  cfg = config.features.cli.git.extended;
 in {
   config = mkIf (cfg.enable && cfg.signing.enable) {
     home.activation.sshAllowedSigners = lib.hm.dag.entryAfter ["linkGeneration"] ''

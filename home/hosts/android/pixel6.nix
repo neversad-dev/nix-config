@@ -13,7 +13,8 @@
     theme.catppuccin.enable = true;
     cli = {
       neovim.enable = true; # language packages aliased in flake.nix
-      git.enable = true;
+      git.core.enable = true;
+      git.extended.enable = true;
       git.signing.enable = false;
       mitmproxy.enable = false;
       starship.enable = true;

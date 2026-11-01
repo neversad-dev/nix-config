@@ -1,6 +1,8 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   vim = {
     theme = {
+      # Gated by the outer catppuccin flag in default.nix (HM scope); inert
+      # (nvf default = false) when the theme feature is disabled.
       enable = true;
       name = "catppuccin";
       style = "mocha";
@@ -10,11 +12,19 @@
     # Keep the smart cursorline (only shows in the active split)
     autocmds = [
       {
-        event = ["WinEnter" "BufEnter" "FocusGained"];
+        event = [
+          "WinEnter"
+          "BufEnter"
+          "FocusGained"
+        ];
         command = "setlocal cursorline";
       }
       {
-        event = ["WinLeave" "BufLeave" "FocusLost"];
+        event = [
+          "WinLeave"
+          "BufLeave"
+          "FocusLost"
+        ];
         command = "setlocal nocursorline";
       }
     ];
