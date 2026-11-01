@@ -31,7 +31,7 @@
         BACKUP_FILE="${backupFile}"
 
         # Create directory if it doesn't exist
-        mkdir -p "$CONFIG_DIR"
+        $DRY_RUN_CMD mkdir $VERBOSE_ARG -p "$CONFIG_DIR"
 
     # Create new config content in a temp file (safely, without shell interpretation)
     TEMP_FILE=$(mktemp)
@@ -54,7 +54,7 @@
         # If config exists and is different from new content, create backup and show diff
         if [ -f "$CONFIG_FILE" ]; then
           if ! cmp -s "$CONFIG_FILE" "$TEMP_FILE"; then
-            cp "$CONFIG_FILE" "$BACKUP_FILE"
+            $DRY_RUN_CMD cp $VERBOSE_ARG "$CONFIG_FILE" "$BACKUP_FILE"
             echo "" >&2
             printf "📁 \033[1;36m%s\033[0m config backed up to %s\n" "${name}" "$BACKUP_FILE" >&2
             printf "🔄 Overwriting manual changes in \033[1;33m%s\033[0m config (%s):\n" "${name}" "$CONFIG_FILE" >&2
@@ -63,12 +63,14 @@
           fi
         fi
 
-        # Always overwrite with new config
-        cp "$TEMP_FILE" "$CONFIG_FILE"
+        # Always overwrite with new config ($DRY_RUN_CMD is empty on real
+        # activation and `echo` during `--dry-run`, so a preview shows the
+        # intended copy instead of mutating the live config)
+        $DRY_RUN_CMD cp $VERBOSE_ARG "$TEMP_FILE" "$CONFIG_FILE"
         rm "$TEMP_FILE"
 
         # Make sure it's writable and set executable permission if needed
-        chmod ${
+        $DRY_RUN_CMD chmod ${
       if executable
       then "755"
       else "644"
