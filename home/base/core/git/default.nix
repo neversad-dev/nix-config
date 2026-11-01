@@ -2,8 +2,7 @@
   lib,
   mylib,
   ...
-}:
-{
+}: {
   imports = mylib.scanPaths ./.;
   # Two independent flags:
   # - core.enable: core Git configuration (identity, ignores, aliases, commit

@@ -4,11 +4,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.features.cli.starship;
-in
-{
+in {
   options.features.cli.starship.enable = mkEnableOption "Starship cross-shell prompt";
 
   config = mkIf cfg.enable {

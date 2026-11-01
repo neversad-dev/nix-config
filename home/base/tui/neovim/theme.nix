@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   vim = {
     theme = {
       # Gated by the outer catppuccin flag in default.nix (HM scope); inert

@@ -3,8 +3,7 @@
   config,
   ...
 }:
-with lib;
-{
+with lib; {
   config = mkIf config.features.cli.git.core.enable {
     programs.git = {
       settings = {

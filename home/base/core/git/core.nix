@@ -4,12 +4,11 @@
   pkgs,
   ...
 }:
-with lib;
-{
+with lib; {
   config = mkMerge [
     # The git package is unconditional: a bare git binary is always available,
     # independent of any feature flags.
-    { programs.git.enable = true; }
+    {programs.git.enable = true;}
 
     (mkIf config.features.cli.git.core.enable {
       home = {
@@ -17,7 +16,7 @@ with lib;
         # so a stale ~/.gitconfig would shadow our HM-managed settings. Migrate
         # it to a one-time backup instead of deleting (preserves user config),
         # after writeBoundary and dry-run-aware so a preview never touches it.
-        activation.migrateGitconfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        activation.migrateGitconfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
           gitconfig="$HOME/.gitconfig"
           if [ -f "$gitconfig" ] && [ ! -L "$gitconfig" ]; then
             $DRY_RUN_CMD mv $VERBOSE_ARG "$gitconfig" "$gitconfig.pre-hm.bak"
@@ -25,7 +24,7 @@ with lib;
         '';
 
         # git itself is installed by programs.git (respects programs.git.package).
-        packages = [ pkgs.git-lfs ];
+        packages = [pkgs.git-lfs];
 
         sessionPath = [
           "${config.programs.git.package}/bin"
@@ -45,10 +44,9 @@ with lib;
           ".direnv"
         ];
 
-        settings =
-          let
-            isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
-          in
+        settings = let
+          isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+        in
           {
             user = {
               name = "neversad-dev";

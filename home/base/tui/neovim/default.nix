@@ -5,9 +5,8 @@
   mylib,
   nvf,
   ...
-}:
-{
-  imports = [ nvf.homeManagerModules.default ];
+}: {
+  imports = [nvf.homeManagerModules.default];
 
   options.features.cli.neovim.enable =
     lib.mkEnableOption "Neovim (nvf, configured in home/base/tui/neovim)";
