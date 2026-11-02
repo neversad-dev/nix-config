@@ -13,17 +13,6 @@ with lib; let
   # `lib.modules ? importApply` became true on HM 24.05 once pkgs.lib
   # comes from unstable, so hosts flag HM 24.05 explicitly.
   hasModule = !isHm24 && lib.modules ? importApply;
-
-  piKeyPath = "${config.xdg.dataHome}/secrets/openrouter-pi";
-
-  piOpenrouterKey = pkgs.writeShellScript "pi-openrouter-key" ''
-    f=${escapeShellArg piKeyPath}
-    if [ ! -s "$f" ]; then
-      printf '%s\n' "pi: OpenRouter key missing or empty at $f -- is agenix activated?" >&2
-      exit 1
-    fi
-    exec ${pkgs.coreutils}/bin/cat "$f"
-  '';
 in
   if hasModule
   then {
@@ -41,23 +30,14 @@ in
 
       programs.pi.catppuccin.enable = config.features.theme.catppuccin.enable;
 
-      # catppuccin-pi patches settings.json from an activation hook; since
-      # settings.json is store-managed here, blank that hook and set the theme
-      # through `settings` below instead.
       home.activation.setPiTheme = lib.mkForce (lib.hm.dag.entryAfter [] "");
 
       age.secrets."openrouter-pi" = {
         file = "${nix-secrets}/shared/openrouter-pi.age";
-        path = piKeyPath;
-        symlink = false;
-        mode = "0400";
+        path = "${config.xdg.dataHome}/secrets/openrouter-pi";
       };
 
-      home.activation.agenixReapply = mkIf config.features.secrets.enable (
-        lib.hm.dag.entryAfter ["linkGeneration"] ''
-          run /bin/launchctl kickstart -k gui/$(id -u)/org.nix-community.home.activate-agenix || true
-        ''
-      );
+      home.file."${config.programs.pi-coding-agent.configDir}/settings.json".force = true;
 
       programs.pi-coding-agent = {
         enable = true;
@@ -75,7 +55,7 @@ in
         source = jsonFormat.generate "pi-auth.json" {
           openrouter = {
             type = "api_key";
-            key = "!cat ${piOpenrouterKey}";
+            key = "!cat ${escapeShellArg config.age.secrets."openrouter-pi".path}";
           };
         };
         force = true;
