@@ -55,7 +55,7 @@ in
         source = jsonFormat.generate "pi-auth.json" {
           openrouter = {
             type = "api_key";
-            key = "!cat ${config.age.secrets."openrouter-pi".path}";
+            key = "!cat ${escapeShellArg config.age.secrets."openrouter-pi".path}";
           };
         };
         force = true;
