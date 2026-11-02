@@ -10,6 +10,7 @@ home/
 │   ├── tui/              # Workstation tools, Git extras, AI, theme
 │   └── gui/              # Editors, terminals, wallpapers, fonts
 ├── darwin/               # Full workstation stack + AeroSpace/SketchyBar
+├── linux/                # Reserved for future NixOS hosts
 ├── android/              # Core + HM 24.05 compatibility
 └── hosts/                # One entry point per host, grouped by platform
 ```
@@ -25,7 +26,8 @@ stack and supplies overrides. Reusable modules do not import host files.
 | `hosts/android/pixel6.nix` | `android` | nix-on-droid's built-in HM |
 
 Android uses its own stack rather than assuming all desktop integrations work
-in proot.
+in proot. The `linux/` stack is kept for future NixOS hosts; it is not wired to
+any current output.
 
 ## Defaults and feature flags
 

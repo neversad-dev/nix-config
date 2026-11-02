@@ -11,6 +11,7 @@ nix-darwin + Home Manager flake for macOS, plus [nix-on-droid](https://github.co
 
 - **Declarative macOS** via [nix-darwin](https://github.com/nix-darwin/nix-darwin) + Home Manager.
 - **Declarative Android** via nix-on-droid.
+- **Future NixOS hosts**: a reusable Linux home stack is kept under `home/linux/`.
 - **Layered home modules** under `home/` (`base/core` → `base/tui` → `base/gui`); optional pieces toggled with `features.*` flags.
 - **Encrypted secrets** via agenix/ragenix in a private `nix-secrets` repo.
 - **Catppuccin** everywhere.
@@ -67,7 +68,7 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── home/                        # home-manager configs
 │   ├── base/                    # cross-platform core/tui/gui modules
 │   │   └── tui/neovim/          # vendored nvf modules (Neovim package)
-│   ├── darwin|android/          # per-platform stacks
+│   ├── darwin|linux|android/    # per-platform stacks
 │   └── hosts/                   # per-host home entrypoints
 ├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to

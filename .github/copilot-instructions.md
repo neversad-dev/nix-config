@@ -70,6 +70,7 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 │   │   ├── tui/                 # Git extras, neovim (nvf), AI, catppuccin, TUIs
 │   │   └── gui/                 # Editors, terminals, wallpapers, fonts
 │   ├── darwin/                  # macOS stack (aerospace, sketchybar)
+│   ├── linux/                   # Reserved for future NixOS hosts
 │   ├── android/                 # nix-on-droid stack + HM 24.05 compat.nix
 │   └── hosts/<platform>/        # One HM entry point per host
 ├── hosts/
@@ -131,7 +132,7 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 - **Nix files**: Always use 2-space indentation, format with alejandra (format all code via `just fmt`)
 - **Host configs**: system under `hosts/<hostname>/`; HM entry modules under `home/hosts/<platform>/<hostname>.nix`
 - **System modules**: `modules/darwin/` for macOS
-- **User modules**: `home/base/{core,tui,gui}/`; platform-only bits in `home/{darwin,android}/`
+- **User modules**: `home/base/{core,tui,gui}/`; platform-only bits in `home/{darwin,linux,android}/` (`home/linux` is reserved for future NixOS hosts)
 
 ### Adding New Features
 
