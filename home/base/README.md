@@ -4,10 +4,10 @@
   fallback Vim editor and Nix settings. Platform stacks import it explicitly.
 - `core/`: shared shell, Git, SSH, direnv and lightweight CLI baseline. Starship
   and Neovim are opt-in (`features.cli.{starship,neovim}.enable`, default false).
-- `tui/`: workstation tools, Git extras, AI agent, Catppuccin and user-level
-  agenix. Includes [`tui/neovim/`](tui/neovim/README.md), a Home Manager module
-  that enables nvf and feeds the sibling nvf modules into `programs.nvf`.
-  Not required for minimal servers.
+- `tui/`: workstation tools, Git extras, AI agent and Catppuccin. Includes
+  [`tui/neovim/`](tui/neovim/README.md), a Home Manager module that enables nvf
+  and feeds the sibling nvf modules into `programs.nvf`. Not required for
+  minimal servers.
 - `gui/`: cross-platform desktop editors, terminal emulators, wallpapers and fonts.
 
 The git binary is always available from core (unconditional `programs.git`).

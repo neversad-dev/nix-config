@@ -3,7 +3,6 @@
   osConfig,
   lib,
   pkgs,
-  nix-secrets,
   catppuccin-pi,
   isHm24 ? false, # set by hosts using HM 24.05 (nix-on-droid)
   ...
@@ -22,13 +21,6 @@ in
     ];
 
     config = mkIf cfg.enable {
-      assertions = [
-        {
-          assertion = config.features.secrets.enable;
-          message = "features.ai requires features.secrets to be enabled (OpenRouter API key needs decryption)";
-        }
-      ];
-
       programs.pi.catppuccin.enable = config.features.theme.catppuccin.enable;
 
       home.activation.setPiTheme = lib.mkForce (lib.hm.dag.entryAfter [] "");

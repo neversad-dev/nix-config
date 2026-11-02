@@ -2,23 +2,25 @@
 
 App/site passwords stay in a password manager. Here I only care about **machine secrets** Nix should materialize (tokens, deploy keys, etc.).
 
-Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)** (private). This flake pulls it as **`nix-secrets`** and decrypts via the agenix-compatible module (`inputs.agenix` → `agenix.darwinModules.default` / `agenix.homeManagerModules.default`).
+Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)** (private). This flake pulls it as **`nix-secrets`** and decrypts via the agenix-compatible module (`inputs.agenix` → `agenix.darwinModules.default`).
 
-## Two levels of decryption
+## How secrets are decrypted
 
-| Level                        | Identity key                    | Where declared                                  | Use for                                       |
-| ---------------------------- | ------------------------------- | ----------------------------------------------- | --------------------------------------------- |
-| **System (Darwin, shared)**  | `/etc/ssh/ssh_host_ed25519_key` | `secrets/darwin.nix`                            | Secrets intended for all Darwin hosts         |
-| **System (Darwin, per-host)**| `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix`                      | Host-specific system secrets                  |
-| **User**                     | `~/.ssh/id_ed25519`             | Any home-manager module via `age.secrets`       | API keys, app configs, user tokens            |
+All secrets are **system-level** and use each Darwin host's SSH host key as the
+identity. There is no Home Manager agenix module; HM modules read the decrypted
+system secret via `osConfig.age.secrets`.
+
+| Level                         | Identity key                    | Where declared             | Use for                               |
+| ----------------------------- | ------------------------------- | -------------------------- | ------------------------------------- |
+| **System (Darwin, shared)**   | `/etc/ssh/ssh_host_ed25519_key` | `secrets/darwin.nix`       | Secrets intended for all Darwin hosts |
+| **System (Darwin, per-host)** | `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix` | Host-specific system secrets          |
 
 **In this tree:**
 
-- `secrets/darwin.nix` — imports the agenix Darwin module, sets the **system-level** identity path, and declares system secrets shared across Darwin hosts.
+- `secrets/darwin.nix` — imports the agenix Darwin module, sets the **system-level** identity path, and declares secrets shared across Darwin hosts.
 - `hosts/<host>/secrets.nix` — placeholder for secrets specific to that host; each is decrypted with that host's system key.
-- `home/base/tui/secrets.nix` — imports the agenix Home Manager module and sets the **user-level** identity path.
-- `home/base/tui/` feature modules — feature-specific user secrets (e.g. `home/base/tui/ai/pi.nix` for the OpenRouter API key).
-- nix-on-droid does not support system-level agenix secrets; its `hosts/android/<host>/secrets.nix` is only a documented placeholder.
+- `home/base/tui/` feature modules — read system secrets (e.g. `home/base/tui/ai/pi.nix` uses the OpenRouter API key).
+- nix-on-droid does not support system-level agenix secrets; its `hosts/android/<host>/secrets.nix` is only a documented placeholder. No secrets are currently used on Android.
 
 ## Adding or changing a secret
 
@@ -37,47 +39,32 @@ Edit `secrets.nix` in the private repo. Declare which keys can decrypt it:
 
 ```nix
 let
-  mbair_host = "ssh-ed25519 AAAA... root@mbair";
   neversad_user = "ssh-ed25519 AAAA... neversad@mbair";
   recovery_key = "ssh-ed25519 AAAA... neversad@agenix-recovery";
+  mbair_host = "ssh-ed25519 AAAA... root@mbair";
+  admins = [ neversad_user recovery_key ];
+  workstations = [ mbair_host ];
 in {
-  "./shared/openrouter-pi.age".publicKeys = [ neversad_user recovery_key ];
-  "./hosts/mbair/work-vpn.age".publicKeys = [ mbair_host recovery_key ];
+  # Shared: every Darwin host must be listed here
+  "./shared/openrouter-pi.age".publicKeys = admins ++ workstations;
+  # Per-host: only this host (plus admins/recovery) can decrypt
+  "./hosts/mbair/work-vpn.age".publicKeys = admins ++ [ mbair_host ];
 }
 ```
 
 ### 2. Create/edit the ciphertext
 
-```bash
-# For a user-level secret (encrypt for your user key)
-age -r <your-user-pubkey> -o shared/openrouter-pi.age plaintext.txt
+Encrypt for the intended host key(s), plus any recovery key:
 
-# For a host-level secret (encrypt for host key)
-sudo age -r <host-pubkey> -o hosts/mbair/work-vpn.age plaintext.txt
+```bash
+sudo age -r <host-pubkey> -r <recovery-pubkey> \
+  -o hosts/mbair/work-vpn.age plaintext.txt
 
 # Or via agenix REPL
-agenix -e shared/openrouter-pi.age -i ~/.ssh/id_ed25519
+agenix -e shared/openrouter-pi.age -i /etc/ssh/ssh_host_ed25519_key
 ```
 
 ### 3. Wire it in this repo
-
-**User-level** (home-manager):
-
-```nix
-# home/base/tui/some-feature/default.nix
-age.secrets."my-secret" = {
-  file = "${nix-secrets}/shared/my-secret.age";
-  path = "${config.xdg.dataHome}/secrets/my-secret";  # optional explicit path
-};
-
-# Pi supports command-backed credential values; other applications need their own runtime loading mechanism.
-home.file.".pi/agent/auth.json".text = builtins.toJSON {
-  openrouter = {
-    type = "api_key";
-    key = "!cat ${config.age.secrets."my-secret".path}";
-  };
-};
-```
 
 **System-level** (darwin/nixos):
 
@@ -95,10 +82,16 @@ A ciphertext declared there must be decryptable by every Darwin host. Put
 host-specific declarations in that host's `hosts/<host>/secrets.nix` instead,
 and encrypt the ciphertext for that host's system key (plus any recovery key).
 
+Home Manager modules read a declared secret through `osConfig`, for example:
+
+```nix
+key = "!cat ${osConfig.age.secrets."my-secret".path}";
+```
+
 ### 4. Rebuild
 
 ```bash
-just darwin   # macOS; just home for standalone Linux Home Manager
+just darwin
 ```
 
 ## Adding a new host or machine
@@ -185,4 +178,4 @@ home-manager switch --flake . --verbose
 
 ## Why ragenix/agenix
 
-Same module surface as agenix; Rust CLI errors are usually easier to parse when I typo `secrets.nix`. The flake input is `agenix.url = "github:yaxitech/ragenix"` but exposes both `agenix.darwinModules.default` and `agenix.homeManagerModules.default`.
+Same module surface as agenix; Rust CLI errors are usually easier to parse when I typo `secrets.nix`. The flake input is `agenix.url = "github:yaxitech/ragenix"`; this repo uses `agenix.darwinModules.default`.

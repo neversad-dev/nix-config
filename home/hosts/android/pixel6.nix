@@ -31,6 +31,5 @@
       superfile.enable = true;
       tuxedo.enable = true;
     };
-    secrets.enable = false;
   };
 }

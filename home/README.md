@@ -56,8 +56,10 @@ Other optional features retain their existing `features.*` names. Shared
 system/HM options live in `vars/features.nix`; HM-only options live in their
 leaf modules. Directory `default.nix` files use `mylib.scanPaths`.
 
-Core avoids unconditional flake-input dependencies. TUI adds Catppuccin,
-agenix and AI integration; GUI adds fonts and desktop applications.
+Core avoids unconditional flake-input dependencies. TUI adds Catppuccin and AI
+integration; GUI adds fonts and desktop applications. Secret decryption is
+system-level (agenix via nix-darwin); Home Manager reads secrets through
+`osConfig`.
 
 ## Adding a host
 

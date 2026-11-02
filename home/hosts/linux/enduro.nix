@@ -31,6 +31,5 @@
       ghostty.enable = false;
       kitty.enable = true;
     };
-    secrets.enable = true;
   };
 }
