@@ -29,21 +29,21 @@ in
 
       programs.pi-coding-agent = {
         enable = true;
-        settings = {
-          defaultProvider = "openrouter";
-          defaultModel = "openrouter/auto";
-          theme =
-            if config.features.theme.catppuccin.enable
-            then "catppuccin-mocha"
-            else null;
-        };
+        settings =
+          {
+            defaultProvider = "openrouter";
+            defaultModel = "openrouter/auto";
+          }
+          // optionalAttrs config.features.theme.catppuccin.enable {
+            theme = "catppuccin-mocha";
+          };
       };
 
       home.file."${config.programs.pi-coding-agent.configDir}/auth.json" = {
         source = jsonFormat.generate "pi-auth.json" {
           openrouter = {
             type = "api_key";
-            key = "!cat ${osConfig.age.secrets."openrouter-pi".path}";
+            key = "!cat ${escapeShellArg osConfig.age.secrets."openrouter-pi".path}";
           };
         };
         force = true;
