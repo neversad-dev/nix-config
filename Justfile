@@ -1,7 +1,6 @@
 # just is a command runner, Justfile is very similar to Makefile, but simpler.
 
 hostname := if env_var_or_default("HOSTNAME", "") != "" { env_var_or_default("HOSTNAME", "") } else { `sh -c 'hostname 2>/dev/null || cat /proc/sys/kernel/hostname 2>/dev/null || echo unknown'` }
-user := env_var_or_default("USER", `whoami`)
 
 # List all the just commands
 default:
@@ -69,28 +68,6 @@ darwin-legacy:
     --accept-flake-config
 
   ./result/sw/bin/darwin-rebuild switch --flake .#{{ hostname }}
-
-############################################################################
-#
-#  Home-manager related commands
-#
-############################################################################
-
-[group('home-manager')]
-home host="":
-  nh home switch .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}
-
-[group('home-manager')]
-home-build host="":
-  nh home build .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}
-
-# Legacy home-manager command (kept for compatibility)
-[group('home-manager')]
-home-legacy:
-  home-manager switch --flake . \
-    -b home-manager.backup \
-    --extra-experimental-features 'nix-command flakes' \
-    --accept-flake-config
 
 ############################################################################
 #

@@ -24,7 +24,7 @@ in {
   # Host-specific settings can go here
   imports = [
     ./features.nix # Shared configuration
-    ./secrets.nix
+    ./secrets.nix # Host-specific system secrets
     (mylib.relativeToRoot "modules/darwin")
     (mylib.relativeToRoot "secrets/darwin.nix")
     inputs.home-manager.darwinModules.home-manager

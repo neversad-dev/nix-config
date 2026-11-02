@@ -2,8 +2,8 @@
 #   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 # This stores the passphrase in macOS Keychain. After the first unlock,
 # AddKeysToAgent + UseKeychain in the config below handle everything automatically.
-# On Linux (enduro), run `ssh-add ~/.ssh/id_ed25519` once per session or use a
-# desktop keyring integration (e.g. GNOME Keyring / KDE Wallet) if available.
+# On Linux, run `ssh-add ~/.ssh/id_ed25519` once per session or use a desktop
+# keyring integration (e.g. GNOME Keyring / KDE Wallet) if available.
 # On Android, zsh starts the agent (home/android/default.nix); the key is
 # added on first use and cached until Android kills the agent.
 {

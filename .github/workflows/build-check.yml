@@ -205,7 +205,7 @@ jobs:
           echo "Configurations to build: $configs"
 
           # Local part of user@host keys (same for all configs in this flake)
-          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE" | jq -r 'sort | .[0] | split("@")[0]')
+          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE" | jq -r 'sort | .[0] // "" | split("@")[0]')
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one
@@ -267,7 +267,7 @@ jobs:
           configs='${{ needs.discover-configurations.outputs.linux-configs }}'
           echo "Configurations to build: $configs"
 
-          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE" | jq -r 'sort | .[0] | split("@")[0]')
+          USERNAME=$(nix eval --json .#homeConfigurations --apply 'builtins.attrNames' --accept-flake-config --override-input nix-secrets "$NIX_SECRETS_OVERRIDE" --override-input wallpapers "$NIX_WALLPAPERS_OVERRIDE" | jq -r 'sort | .[0] // "" | split("@")[0]')
           echo "Username: $USERNAME"
 
           # Parse configurations and build each one

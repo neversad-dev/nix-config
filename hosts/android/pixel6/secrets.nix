@@ -1,8 +1,4 @@
-{
-  config,
-  nix-secrets,
-  ...
-}: {
-  # Android system-level secrets are not supported by nix-on-droid.
-  # Use home-manager level secrets (home/base/tui/secrets.nix) instead.
+{...}: {
+  # nix-on-droid does not support system-level agenix secrets. User-level
+  # secrets, if needed, should be managed by Home Manager modules instead.
 }

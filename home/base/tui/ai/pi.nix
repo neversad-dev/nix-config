@@ -1,8 +1,8 @@
 {
   config,
+  osConfig,
   lib,
   pkgs,
-  nix-secrets,
   catppuccin-pi,
   isHm24 ? false, # set by hosts using HM 24.05 (nix-on-droid)
   ...
@@ -21,21 +21,9 @@ in
     ];
 
     config = mkIf cfg.enable {
-      assertions = [
-        {
-          assertion = config.features.secrets.enable;
-          message = "features.ai requires features.secrets to be enabled (OpenRouter API key needs decryption)";
-        }
-      ];
-
       programs.pi.catppuccin.enable = config.features.theme.catppuccin.enable;
 
       home.activation.setPiTheme = lib.mkForce (lib.hm.dag.entryAfter [] "");
-
-      age.secrets."openrouter-pi" = {
-        file = "${nix-secrets}/shared/openrouter-pi.age";
-        path = "${config.xdg.dataHome}/secrets/openrouter-pi";
-      };
 
       home.file."${config.programs.pi-coding-agent.configDir}/settings.json".force = true;
 
@@ -55,7 +43,7 @@ in
         source = jsonFormat.generate "pi-auth.json" {
           openrouter = {
             type = "api_key";
-            key = "!cat ${escapeShellArg config.age.secrets."openrouter-pi".path}";
+            key = "!cat ${escapeShellArg osConfig.age.secrets."openrouter-pi".path}";
           };
         };
         force = true;

@@ -4,6 +4,6 @@
 (AeroSpace and SketchyBar). Host choices live in `home/hosts/darwin/`.
 
 System settings and native/Homebrew applications remain in `modules/darwin`.
-Home Manager runs as a nix-darwin module (`hosts/mbair/default.nix`), so
-`just darwin` applies both. The standalone `neversad@mbair` output points at the
-same entry point for HM-only iteration (`just home`).
+Home Manager runs only as a nix-darwin module (`hosts/mbair/default.nix`), so
+`just darwin` applies both system and user configuration. Use `just darwin-build`
+to build the configuration without switching.

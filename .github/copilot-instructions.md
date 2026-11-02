@@ -2,14 +2,14 @@
 
 ## Repository Overview
 
-This is a **public Nix configuration repository** that provides cross-platform (macOS, Linux and Android) configurations using nix-darwin, Home Manager and nix-on-droid. The repository is designed as a modular flake that can be used standalone or imported into other Nix flakes.
+This is a **public Nix configuration repository** that provides macOS and Android configurations using nix-darwin, Home Manager and nix-on-droid. The repository is designed as a modular flake that can be used standalone or imported into other Nix flakes.
 
 ### Key Facts
 
 - **Type**: Nix flake configuration repository
 - **Size**: on the order of 60+ `.nix` files in a modular layout
 - **Languages**: Nix (primary), Shell scripts, TOML configs
-- **Platforms**: macOS (nix-darwin + embedded Home Manager), Linux (standalone Home Manager), Android (nix-on-droid, pinned to 24.05)
+- **Platforms**: macOS (nix-darwin + embedded Home Manager), Android (nix-on-droid, pinned to 24.05)
 - **Theme**: Catppuccin Mocha throughout all applications
 - **License**: MIT
 
@@ -20,7 +20,6 @@ This is a **public Nix configuration repository** that provides cross-platform (
 - **Nix version**: 2.28.3+ with experimental features (`nix-command flakes`)
 - **Required tools**: `just` (command runner), `nh` (nix helper)
 - **macOS**: nix-darwin for system-level changes and Home Manager for user-level configurations
-- **Linux**: Home Manager for user-level configurations
 
 ### Essential Commands (via just)
 
@@ -30,8 +29,6 @@ This is a **public Nix configuration repository** that provides cross-platform (
 just                 # List all available commands
 just darwin-build    # Build macOS system (safe, no activation)
 just darwin          # Build and activate macOS system
-just home-build      # Build Home Manager config (safe, no activation)
-just home            # Build and activate Home Manager config
 just droid           # nix-on-droid switch (on-device only)
 just up              # Update all flake inputs
 just fmt             # Format code (Nix, Markdown/YAML, Shell, TOML)
@@ -47,7 +44,6 @@ just fmt-check
 
 # Manual builds (if just fails)
 nix build .#darwinConfigurations.mbair.system
-nix build .#homeConfigurations."neversad@mbair"
 nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home.activationPackage.drvPath
 ```
 
@@ -55,15 +51,14 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 
 1. **ALWAYS** run `just fmt` before committing changes
 2. **ALWAYS** run `nix flake check` to validate configuration
-3. For system changes: `just darwin-build` → test → `just darwin`
-4. For user changes: `just home-build` → test → `just home`
+3. Build with `just darwin-build`, test, then apply with `just darwin`
 
 ## Project Architecture
 
 ### Directory structure
 
 ```
-├── flake.nix                    # Outputs: darwin/home/nix-on-droid configs, nvim package
+├── flake.nix                    # Outputs: darwin/nix-on-droid configs, nvim package
 ├── Justfile
 ├── modules/
 │   ├── darwin/                  # nix-darwin system modules
@@ -72,10 +67,10 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 │   ├── base/
 │   │   ├── home.nix             # User identity, stateVersion, Nix settings (imports vars/features.nix)
 │   │   ├── core/                # Shell, basic git, SSH, direnv, small CLI tools
-│   │   ├── tui/                 # Git extras, neovim (nvf), AI, secrets, catppuccin, TUIs
+│   │   ├── tui/                 # Git extras, neovim (nvf), AI, catppuccin, TUIs
 │   │   └── gui/                 # Editors, terminals, wallpapers, fonts
 │   ├── darwin/                  # macOS stack (aerospace, sketchybar)
-│   ├── linux/                   # core.nix → tui.nix → gui.nix
+│   ├── linux/                   # Reserved for future NixOS hosts
 │   ├── android/                 # nix-on-droid stack + HM 24.05 compat.nix
 │   └── hosts/<platform>/        # One HM entry point per host
 ├── hosts/
@@ -100,7 +95,8 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 
 ### Outputs
 
-- **Configs**: `darwinConfigurations.mbair`, `homeConfigurations."neversad@mbair"` (HM-only iteration), `homeConfigurations."neversad@enduro"`, `nixOnDroidConfigurations.pixel6`
+- **Configs**: `darwinConfigurations.mbair`, `nixOnDroidConfigurations.pixel6`
+- **Home Manager**: embedded in nix-darwin on macOS and provided by nix-on-droid on Android; there are no standalone `homeConfigurations` hosts
 - **Packages**: `packages.<system>.nvim` (also `default`): the configured Neovim
 - **Utilities**: `mylib` from `./lib` + `relativeToRoot` (internal, passed as a module arg)
 
@@ -136,13 +132,13 @@ nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home
 - **Nix files**: Always use 2-space indentation, format with alejandra (format all code via `just fmt`)
 - **Host configs**: system under `hosts/<hostname>/`; HM entry modules under `home/hosts/<platform>/<hostname>.nix`
 - **System modules**: `modules/darwin/` for macOS
-- **User modules**: `home/base/{core,tui,gui}/`; platform-only bits in `home/{darwin,linux,android}/`
+- **User modules**: `home/base/{core,tui,gui}/`; platform-only bits in `home/{darwin,linux,android}/` (`home/linux` is reserved for future NixOS hosts)
 
 ### Adding New Features
 
 1. **Check existing modules**: Put new programs in `home/base/{core,tui,gui}/` behind a `features.*` flag; options newer than HM 24.05 need a polyfill in `home/android/compat.nix`
 2. **Use catppuccin theme**: Consistent theming across all applications
-3. **Test on all platforms**: macOS, Linux and Android where applicable (Android: no unstable TUI binaries, glibc >= 2.42 breaks ttys; use `pkgs.nixos2511`)
+3. **Test on all platforms**: macOS and Android where applicable (Android: no unstable TUI binaries, glibc >= 2.42 breaks ttys; use `pkgs.nixos2511`)
 4. **Update example hosts**: Add to appropriate host configs
 
 ### Package Installation Guidelines (macOS)

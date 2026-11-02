@@ -1,4 +1,9 @@
-{agenix, ...}: {
+{
+  agenix,
+  nix-secrets,
+  myvars,
+  ...
+}: {
   imports = [
     agenix.darwinModules.default
   ];
@@ -12,7 +17,17 @@
   # Default identity path for all Darwin machines.
   # Generate this key manually if missing:
   #   sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
-  age.identityPaths = [
-    "/etc/ssh/ssh_host_ed25519_key"
-  ];
+  age = {
+    identityPaths = [
+      "/etc/ssh/ssh_host_ed25519_key"
+    ];
+
+    secrets = {
+      "openrouter-pi" = {
+        file = "${nix-secrets}/shared/openrouter-pi.age";
+        mode = "0500";
+        owner = myvars.primaryUser;
+      };
+    };
+  };
 }
