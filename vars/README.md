@@ -58,13 +58,13 @@ I define flags once, import the same file from darwin + HM.
 { mylib, ... }: {
   imports = [
     (mylib.relativeToRoot "hosts/myhost/features.nix") # shared flags, optional
-    ../../darwin # or ../../linux/gui.nix
+    ../../darwin # or ../../android
   ];
 }
 ```
 
-Then point `homeConfigurations."<user>@myhost"` in `flake.nix` at that one file
-(or wire it into a system module's HM integration).
+Then wire that one file into the host's Home Manager integration in `flake.nix`
+(the embedded nix-darwin module or nix-on-droid's built-in HM).
 
 ## Adding a new `features` flag
 

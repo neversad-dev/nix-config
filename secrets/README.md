@@ -54,26 +54,45 @@ in {
 
 ### 2. Create/edit the ciphertext
 
-Encrypt for the intended host key(s), plus any recovery key:
+Encrypt a new host-specific secret for every key listed in its `publicKeys`
+entry — the host key, the user key, and the recovery key here (no private key is
+needed to encrypt):
 
 ```bash
-sudo age -r <host-pubkey> -r <recovery-pubkey> \
+age -r <user-pubkey> -r <recovery-pubkey> -r <host-pubkey> \
   -o hosts/mbair/work-vpn.age plaintext.txt
+```
 
-# Or via agenix REPL
-agenix -e shared/openrouter-pi.age -i /etc/ssh/ssh_host_ed25519_key
+Edit an existing ciphertext with your **user** key. Host keys decrypt at
+runtime, but they are root-owned and should not be used for editing. The user
+key is already in `admins`, so it can decrypt every ciphertext it is listed on:
+
+```bash
+agenix -e hosts/mbair/work-vpn.age -i ~/.ssh/id_ed25519
+agenix -e shared/openrouter-pi.age -i ~/.ssh/id_ed25519
 ```
 
 ### 3. Wire it in this repo
 
-**System-level** (darwin/nixos):
+**Host-specific** (declared in that host's module):
+
+```nix
+# hosts/mbair/secrets.nix
+age.secrets."work-vpn" = {
+  file = "${nix-secrets}/hosts/mbair/work-vpn.age";
+  owner = myvars.primaryUser;
+  mode = "0400";
+};
+```
+
+**Shared across Darwin hosts** (declared centrally):
 
 ```nix
 # secrets/darwin.nix
-age.secrets."work-vpn" = {
-  file = "${nix-secrets}/shared/work-vpn.age";
-  owner = "neversad";
-  mode = "0400";
+age.secrets."openrouter-pi" = {
+  file = "${nix-secrets}/shared/openrouter-pi.age";
+  owner = myvars.primaryUser;
+  mode = "0500";
 };
 ```
 

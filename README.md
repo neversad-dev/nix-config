@@ -2,16 +2,14 @@
 
 [![Built with Nix](https://img.shields.io/badge/Built_With-Nix-5277C3.svg?logo=nixos&labelColor=73C3D5)](https://nixos.org)
 [![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=F0F0F0)](https://www.apple.com/macos)
-[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](https://www.linux.org/)
 [![Build Check](https://img.shields.io/github/actions/workflow/status/neversad-dev/nix-config/build-check.yml?branch=main&logo=github-actions&logoColor=white&label=build%20check)](https://github.com/neversad-dev/nix-config/actions/workflows/build-check.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://github.com/nix-community/nix-on-droid) for Android.
+nix-darwin + Home Manager flake for macOS, plus [nix-on-droid](https://github.com/nix-community/nix-on-droid) for Android.
 
 ## What lives here
 
 - **Declarative macOS** via [nix-darwin](https://github.com/nix-darwin/nix-darwin) + Home Manager.
-- **Declarative Linux desktops** via Home Manager (no NixOS servers yet).
 - **Declarative Android** via nix-on-droid.
 - **Layered home modules** under `home/` (`base/core` → `base/tui` → `base/gui`); optional pieces toggled with `features.*` flags.
 - **Encrypted secrets** via agenix/ragenix in a private `nix-secrets` repo.
@@ -21,7 +19,6 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 
 ```bash
 just darwin  # macOS switch: nix-darwin system + embedded Home Manager
-just home    # Linux Home Manager only (enduro)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
 nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
@@ -29,8 +26,7 @@ nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 
 > On macOS, Home Manager is embedded in nix-darwin: `just darwin` applies both the
 > system (dock, defaults, packages) and user config (dotfiles, SSH, git, shell).
-> Use `just darwin-build` to build without switching. On Linux (enduro), `just home`
-> is the Home Manager switch.
+> Use `just darwin-build` to build without switching.
 >
 > Full command list: `just --list`
 
@@ -41,7 +37,6 @@ nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 | Host       | Platform               | Entrypoint                   |
 | ---------- | ---------------------- | ---------------------------- |
 | **mbair**  | macOS / aarch64        | `hosts/mbair/` (HM embedded) |
-| **enduro** | Linux / x86_64         | HM only: `neversad@enduro`   |
 | **pixel6** | Android (nix-on-droid) | `hosts/android/pixel6/`      |
 
 Adding a new machine? See [hosts/README.md](hosts/README.md).
@@ -50,7 +45,7 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 
 | Topic                                      | Location                                                                             |
 | ------------------------------------------ | ------------------------------------------------------------------------------------ |
-| Bootstrap a new Mac / Linux machine        | [`hosts/README.md`](hosts/README.md)                                                 |
+| Bootstrap a new Mac                        | [`hosts/README.md`](hosts/README.md)                                                 |
 | How secrets work (agenix)                  | [`secrets/README.md`](secrets/README.md)                                             |
 | Editing `features.*` flags                 | [`vars/README.md`](vars/README.md)                                                   |
 | Home Manager structure                     | [`home/README.md`](home/README.md)                                                   |
@@ -72,7 +67,7 @@ Adding a new machine? See [hosts/README.md](hosts/README.md).
 ├── home/                        # home-manager configs
 │   ├── base/                    # cross-platform core/tui/gui modules
 │   │   └── tui/neovim/          # vendored nvf modules (Neovim package)
-│   ├── linux|darwin|android/    # per-platform stacks
+│   ├── darwin|android/          # per-platform stacks
 │   └── hosts/                   # per-host home entrypoints
 ├── lib/                         # local helper functions (vendored nix-lib)
 ├── secrets/                     # agenix wiring + how-to

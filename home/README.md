@@ -7,9 +7,8 @@ home/
 ├── base/                 # Cross-platform modules
 │   ├── home.nix          # User identity, stateVersion, Nix settings
 │   ├── core/             # Shell, basic Git, SSH, direnv, small CLI tools
-│   ├── tui/              # Workstation tools, Git extras, AI, secrets, theme
+│   ├── tui/              # Workstation tools, Git extras, AI, theme
 │   └── gui/              # Editors, terminals, wallpapers, fonts
-├── linux/                # core.nix → tui.nix → gui.nix
 ├── darwin/               # Full workstation stack + AeroSpace/SketchyBar
 ├── android/              # Core + HM 24.05 compatibility
 └── hosts/                # One entry point per host, grouped by platform
@@ -20,16 +19,13 @@ home/
 Outputs reference one file under `home/hosts/`. Each host imports a platform
 stack and supplies overrides. Reusable modules do not import host files.
 
-| Host entry point           | Stack           | Integration                             |
-| -------------------------- | --------------- | --------------------------------------- |
-| `hosts/darwin/mbair.nix`   | `darwin`        | nix-darwin module                      |
-| `hosts/linux/enduro.nix`   | `linux/gui.nix` | Standalone HM, generic Linux            |
-| `hosts/android/pixel6.nix` | `android`       | nix-on-droid's built-in HM              |
+| Host entry point           | Stack     | Integration                |
+| -------------------------- | --------- | -------------------------- |
+| `hosts/darwin/mbair.nix`   | `darwin`  | nix-darwin module          |
+| `hosts/android/pixel6.nix` | `android` | nix-on-droid's built-in HM |
 
-A future Linux server can import `linux/core.nix`; HM is optional for servers,
-not automatically installed by a system module. `linux/tui.nix` adds terminal
-workstation tools, and `linux/gui.nix` adds desktop applications. Android uses
-its own stack rather than assuming all Linux integrations work in proot.
+Android uses its own stack rather than assuming all desktop integrations work
+in proot.
 
 ## Defaults and feature flags
 
@@ -66,7 +62,7 @@ system-level (agenix via nix-darwin); Home Manager reads secrets through
 1. Create `home/hosts/<platform>/<hostname>.nix` and import a platform stack.
 2. Set host-specific flags and overrides there.
 3. Point the host's Home Manager integration at that one file (nix-darwin on
-   macOS, standalone HM on Linux).
+   macOS, nix-on-droid on Android).
 4. Update [hosts/README.md](../hosts/README.md).
 
 See [base/README.md](base/README.md), [android/README.md](android/README.md),

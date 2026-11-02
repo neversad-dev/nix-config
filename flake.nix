@@ -210,22 +210,9 @@
       ];
     };
 
-    homeConfigurations = {
-      "${myvars.primaryUser}@enduro" = let
-        system = linuxSystems.x86_64;
-      in
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsFor system;
-          extraSpecialArgs =
-            specialArgs
-            // {
-              inherit outputs wallpapers inputs;
-            };
-          modules = [
-            ./home/hosts/linux/enduro.nix
-          ];
-        };
-    };
+    # No standalone Home Manager hosts currently: macOS uses the embedded
+    # nix-darwin module and nix-on-droid has its own integration.
+    homeConfigurations = {};
 
     # Standalone Neovim package: `nix run github:neversad-dev/nix-config`
     # (or `.#nvim` / `.#default` explicitly)

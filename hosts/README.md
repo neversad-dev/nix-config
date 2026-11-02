@@ -4,11 +4,10 @@ This directory contains per-host configurations and the bootstrap guide.
 
 ## Current hosts
 
-| Host       | Platform               |      System       |    Home Manager     | Purpose           |
-| ---------- | ---------------------- | :---------------: | :-----------------: | ----------------- |
-| **mbair**  | macOS / aarch64        |        ✅         | embedded in darwin  | Daily driver      |
-| **enduro** | Linux / x86_64         |         —         |  `neversad@enduro`  | Secondary desktop |
-| **pixel6** | Android (nix-on-droid) | ✅ (nix-on-droid) | via built-in module | Phone             |
+| Host       | Platform               |      System       |    Home Manager     | Purpose      |
+| ---------- | ---------------------- | :---------------: | :-----------------: | ------------ |
+| **mbair**  | macOS / aarch64        |        ✅         | embedded in darwin  | Daily driver |
+| **pixel6** | Android (nix-on-droid) | ✅ (nix-on-droid) | via built-in module | Phone        |
 
 ## Bootstrap a new machine
 
@@ -54,14 +53,6 @@ This directory contains per-host configurations and the bootstrap guide.
    ```bash
    just darwin
    ```
-
-### Linux (Home Manager only)
-
-Same as macOS for steps 1–5. Skip step 6 (no system-level agenix on HM-only Linux). Run:
-
-```bash
-just home
-```
 
 ### NixOS server (future)
 
