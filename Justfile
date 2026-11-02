@@ -76,10 +76,12 @@ darwin-legacy:
 #
 ############################################################################
 
+# Standalone Home Manager is for Linux hosts (enduro); macOS uses `just darwin`.
 [group('home-manager')]
 home host="":
   nh home switch .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}
 
+# Build the standalone Linux Home Manager configuration without switching.
 [group('home-manager')]
 home-build host="":
   nh home build .{{ if host != "" { " -c " + user + "@" + host } else { "" } }}

@@ -211,21 +211,6 @@
     };
 
     homeConfigurations = {
-      "${myvars.primaryUser}@mbair" = let
-        system = darwinSystems.aarch64;
-      in
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsFor system;
-          extraSpecialArgs =
-            specialArgs
-            // {
-              inherit outputs wallpapers inputs;
-            };
-          modules = [
-            ./home/hosts/darwin/mbair.nix
-          ];
-        };
-
       "${myvars.primaryUser}@enduro" = let
         system = linuxSystems.x86_64;
       in

@@ -6,17 +6,19 @@ Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)
 
 ## Two levels of decryption
 
-| Level               | Identity key                    | Where declared                            | Use for                                       |
-| ------------------- | ------------------------------- | ----------------------------------------- | --------------------------------------------- |
-| **System (Darwin)** | `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix`                | Root-level secrets (VPNs, system certs, etc.) |
-| **User**            | `~/.ssh/id_ed25519`             | Any home-manager module via `age.secrets` | API keys, app configs, user tokens            |
+| Level                        | Identity key                    | Where declared                                  | Use for                                       |
+| ---------------------------- | ------------------------------- | ----------------------------------------------- | --------------------------------------------- |
+| **System (Darwin, shared)**  | `/etc/ssh/ssh_host_ed25519_key` | `secrets/darwin.nix`                            | Secrets intended for all Darwin hosts         |
+| **System (Darwin, per-host)**| `/etc/ssh/ssh_host_ed25519_key` | `hosts/<host>/secrets.nix`                      | Host-specific system secrets                  |
+| **User**                     | `~/.ssh/id_ed25519`             | Any home-manager module via `age.secrets`       | API keys, app configs, user tokens            |
 
 **In this tree:**
 
-- `secrets/darwin.nix` — imports the agenix Darwin module and sets the **system-level** identity path. No `age.secrets` declarations here anymore.
-- `home/base/tui/secrets.nix` — imports the agenix home-manager module and sets the **user-level** identity path.
-- `hosts/<host>/secrets.nix` — host-specific system secrets.
+- `secrets/darwin.nix` — imports the agenix Darwin module, sets the **system-level** identity path, and declares system secrets shared across Darwin hosts.
+- `hosts/<host>/secrets.nix` — placeholder for secrets specific to that host; each is decrypted with that host's system key.
+- `home/base/tui/secrets.nix` — imports the agenix Home Manager module and sets the **user-level** identity path.
 - `home/base/tui/` feature modules — feature-specific user secrets (e.g. `home/base/tui/ai/pi.nix` for the OpenRouter API key).
+- nix-on-droid does not support system-level agenix secrets; its `hosts/android/<host>/secrets.nix` is only a documented placeholder.
 
 ## Adding or changing a secret
 
@@ -80,18 +82,23 @@ home.file.".pi/agent/auth.json".text = builtins.toJSON {
 **System-level** (darwin/nixos):
 
 ```nix
-# hosts/mbair/secrets.nix
+# secrets/darwin.nix
 age.secrets."work-vpn" = {
-  file = "${nix-secrets}/hosts/mbair/work-vpn.age";
+  file = "${nix-secrets}/shared/work-vpn.age";
   owner = "neversad";
   mode = "0400";
 };
 ```
 
+All Darwin hosts import `secrets/darwin.nix` for shared system-level secrets.
+A ciphertext declared there must be decryptable by every Darwin host. Put
+host-specific declarations in that host's `hosts/<host>/secrets.nix` instead,
+and encrypt the ciphertext for that host's system key (plus any recovery key).
+
 ### 4. Rebuild
 
 ```bash
-just darwin   # or just home, depending on where the secret is declared
+just darwin   # macOS; just home for standalone Linux Home Manager
 ```
 
 ## Adding a new host or machine

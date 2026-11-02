@@ -13,7 +13,7 @@ Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based*
 | File                                                                   | Purpose                                                                                                                                   |
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `pixel6/default.nix`                                                   | System layer: login shell, timezone, Nix settings, and the `home-manager` block (HM-scoped 25.11 package overrides, `isHm24 = true`).     |
-| `pixel6/secrets.nix`                                                   | Placeholder: nix-on-droid has no system-level secrets; user secrets would go through `home/base/tui/secrets.nix` (disabled on the phone). |
+| `pixel6/secrets.nix`                                                   | Placeholder: nix-on-droid has no system-level agenix secrets; user secrets belong in Home Manager modules.                               |
 | [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix) | Home entry point: `features.*` flags for the phone.                                                                                       |
 | [`home/android/`](../../home/android/README.md)                        | Android home stack: `compat.nix` polyfills, ssh-agent, Termux font, 25.11 package choices.                                                |
 

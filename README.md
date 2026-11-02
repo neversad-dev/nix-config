@@ -21,7 +21,7 @@ nix-darwin + Home Manager flake (macOS + Linux), plus [nix-on-droid](https://git
 
 ```bash
 just darwin  # macOS switch: nix-darwin system + embedded Home Manager
-just home    # Home Manager only (fast iteration on HM changes)
+just home    # Linux Home Manager only (enduro)
 just droid   # nix-on-droid switch on-device
 just up      # update flake inputs
 nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
@@ -29,8 +29,8 @@ nix run github:neversad-dev/nix-config  # run the configured Neovim standalone
 
 > On macOS, Home Manager is embedded in nix-darwin: `just darwin` applies both the
 > system (dock, defaults, packages) and user config (dotfiles, SSH, git, shell).
-> The standalone `neversad@mbair` output stays for HM-only iteration via `just home`.
-> On Linux (enduro), `just home` is the only switch.
+> Use `just darwin-build` to build without switching. On Linux (enduro), `just home`
+> is the Home Manager switch.
 >
 > Full command list: `just --list`
 

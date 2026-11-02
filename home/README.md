@@ -22,7 +22,7 @@ stack and supplies overrides. Reusable modules do not import host files.
 
 | Host entry point           | Stack           | Integration                             |
 | -------------------------- | --------------- | --------------------------------------- |
-| `hosts/darwin/mbair.nix`   | `darwin`        | nix-darwin module (+ standalone output) |
+| `hosts/darwin/mbair.nix`   | `darwin`        | nix-darwin module                      |
 | `hosts/linux/enduro.nix`   | `linux/gui.nix` | Standalone HM, generic Linux            |
 | `hosts/android/pixel6.nix` | `android`       | nix-on-droid's built-in HM              |
 
@@ -63,7 +63,8 @@ agenix and AI integration; GUI adds fonts and desktop applications.
 
 1. Create `home/hosts/<platform>/<hostname>.nix` and import a platform stack.
 2. Set host-specific flags and overrides there.
-3. Point the standalone HM output or system HM integration at that one file.
+3. Point the host's Home Manager integration at that one file (nix-darwin on
+   macOS, standalone HM on Linux).
 4. Update [hosts/README.md](../hosts/README.md).
 
 See [base/README.md](base/README.md), [android/README.md](android/README.md),
