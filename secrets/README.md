@@ -113,6 +113,78 @@ key = "!cat ${osConfig.age.secrets."my-secret".path}";
 just darwin
 ```
 
+## GitHub CLI token
+
+`home/base/core/git/gh.nix` enables `gh` with SSH for Git operations, preserving
+existing SSH authentication. On Darwin, a wrapper reads the `github-cli` secret
+at invocation time and exports `GH_TOKEN` only to `gh` and its child processes
+(including extensions). It works in scripts as well as interactive shells.
+The token is not embedded in the Nix store or written to gh's credential storage;
+agenix does materialize a decrypted, owner-readable file at runtime. Explicit
+`GH_TOKEN` or `GITHUB_TOKEN` environment variables override the managed token.
+Android gets plain `gh` without a managed token.
+
+### Create a personal access token
+
+Tokens belong to your **account**, not necessarily one repository. Create one at
+[GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/personal-access-tokens).
+
+- **Fine-grained (recommended):** choose your account as resource owner and select
+  multiple repositories, or **All repositories** for current and future repos
+  owned by that account. Grant only the permissions you need: for example,
+  Contents (read for browsing, write for pushing), Pull requests and Issues
+  (read/write if you want to manage them), and Actions (read for viewing runs,
+  write for triggering/cancelling them). Metadata read access is automatic.
+  One fine-grained token is limited to **one resource owner** (your account or
+  one organization); it does not cover unrelated owners. Some `gh` operations
+  require additional permissions or do not support fine-grained tokens.
+- **Classic:** useful when you need broader coverage across your own repos and
+  organizations/collaborator repos that allow classic tokens. GitHub CLI's
+  documented baseline scopes are `repo`, `read:org`, and `gist`; add `workflow`
+  only if needed to modify workflow files. `repo` grants broad private-repository
+  access, so prefer fine-grained tokens when they cover your use case.
+
+A token cannot grant permissions your account does not have. Organizations may
+require approval, SSO authorization, or disallow a token type. Set an expiration
+and rotate the encrypted secret when renewing it. `GH_HOST` is unnecessary for
+normal github.com usage.
+
+### Encrypt and deploy
+
+In your private **nix-secrets** checkout:
+
+1. Add `"./shared/github-cli.age".publicKeys = admins ++ workstations;` to
+   `secrets.nix`, using the same recipients as `shared/openrouter-pi.age`.
+2. Run the following and put **only the token** in the editor (no `GH_TOKEN=`):
+
+   ```bash
+   nix shell github:yaxitech/ragenix#ragenix
+   agenix -e shared/github-cli.age -i ~/.ssh/id_ed25519
+   ```
+
+   Use an editor without persistent backups/undo for secrets. Do not paste the
+   token into shell commands, this repo, or chat.
+
+3. Commit and push the ciphertext and recipient declaration.
+
+Back in **nix-config**:
+
+```bash
+# New modules must be Git-tracked for the local flake to include them:
+git add home/base/core/git/gh.nix
+nix flake update nix-secrets
+just darwin
+# Open a new shell so gh is on PATH, then:
+gh auth status
+gh api user --jq .login
+gh repo list
+```
+
+No `gh auth login` is needed. Do not run `gh auth token` or
+`gh auth status --show-token` in logs: they can print the secret. Until the real
+ciphertext is present in the pinned `nix-secrets` input, deployment will fail;
+CI stubs are for evaluation only.
+
 ## Adding a new host or machine
 
 ### Darwin (new Mac)

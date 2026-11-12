@@ -23,6 +23,11 @@
     ];
 
     secrets = {
+      "github-cli" = {
+        file = "${nix-secrets}/shared/github-cli.age";
+        mode = "0400";
+        owner = myvars.primaryUser;
+      };
       "openrouter-pi" = {
         file = "${nix-secrets}/shared/openrouter-pi.age";
         mode = "0500";
