@@ -64,7 +64,6 @@
         # "zoom"
 
         # media & files
-        "iina"
         "localsend"
         "the-unarchiver"
         "transnomino" # A batch rename utility for the Mac
