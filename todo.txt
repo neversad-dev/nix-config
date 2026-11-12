@@ -4,7 +4,7 @@
 (A) 2026-09-30 Set up YubiKey integration for secure authentication +yubikey @security
 x 2026-09-30 Switch to pkgs-unstable as default and use overlay-based stable overrides for specific packages +nixpkgs @refactor
 (A) 2026-09-30 Unify hotkeys across apps and levels and document the philosophy in a dedicated .md file +hotkeys @docs
-(B) 2026-09-30 Add GitHub CLI (gh) and configure its authentication (token via secrets/agenix, not plaintext) +gh @dev @security
+x 2026-11-12 2026-09-30 Add GitHub CLI (gh) and configure its authentication (token via secrets/agenix, not plaintext) +gh @dev @security
 x 2026-09-30 Expand nix-on-droid config with shared home-manager imports (now via home/base/core through home/android/) +nix-on-droid @refactor
 x 2026-10-29 Consider moving nvf-config and nix-lib into this repository +deps @consider
 x 2026-11-01 2026-10-26 Fix mkEditableConfig/mkEditableConfigDir dry-run bug (lib/editable-config.nix) — overwrites config files during home-manager dry activation +lib @bug
