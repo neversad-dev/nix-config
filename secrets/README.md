@@ -113,6 +113,35 @@ key = "!cat ${osConfig.age.secrets."my-secret".path}";
 just darwin
 ```
 
+## CodeCompanion OpenRouter key
+
+Create a separate key from pi in [OpenRouter settings](https://openrouter.ai/settings/keys),
+preferably with a small credit limit. In **nix-secrets**, register it with the
+same recipients as pi (including every Darwin host):
+
+```nix
+"./shared/openrouter-codecompanion.age".publicKeys = admins ++ workstations;
+```
+
+Encrypt **only the API key**, using an editor without persistent backups/undo:
+
+```bash
+agenix -e shared/openrouter-codecompanion.age -i ~/.ssh/id_ed25519
+```
+
+Commit/push the ciphertext and recipient declaration, then in **nix-config**:
+
+```bash
+nix flake update nix-secrets
+just darwin
+```
+
+On Darwin, agenix decrypts `openrouter-codecompanion` with mode `0400`, owned by
+the primary user. CodeCompanion reads it at runtime via `cmd:`; the key stays
+out of the Nix store and separate from pi. The ciphertext must exist in the
+pinned input before deployment; CI stubs are evaluation-only.
+See [Neovim usage](../home/base/tui/neovim/README.md#codecompanion--pi).
+
 ## GitHub CLI token
 
 `home/base/core/git/gh.nix` enables `gh` with SSH for Git operations, preserving

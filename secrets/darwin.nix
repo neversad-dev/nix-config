@@ -28,6 +28,11 @@
         mode = "0400";
         owner = myvars.primaryUser;
       };
+      "openrouter-codecompanion" = {
+        file = "${nix-secrets}/shared/openrouter-codecompanion.age";
+        mode = "0400";
+        owner = myvars.primaryUser;
+      };
       "openrouter-pi" = {
         file = "${nix-secrets}/shared/openrouter-pi.age";
         mode = "0500";
