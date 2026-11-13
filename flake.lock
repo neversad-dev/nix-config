@@ -328,10 +328,10 @@
     "nix-secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1794477836,
-        "narHash": "sha256-UdqxsHPuijj8DNhgmtY9+leIWIthawYC9S4ZEnTfj30=",
+        "lastModified": 1794601390,
+        "narHash": "sha256-jDsU+KfslgydhsKDir3tu2W0qfS9PBrnGXthre8LJE0=",
         "ref": "refs/heads/main",
-        "rev": "17b5447ac6a0416fd04a05332aa9e22970ca066a",
+        "rev": "03e99a8e5ed218f4df6c75e0ad5b88ae307f939c",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/neversad-dev/nix-secrets.git"
