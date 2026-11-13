@@ -21,6 +21,7 @@
       };
     };
 
+    # Ctrl+h/j/k/l are installed by the plugin's setup above.
     keymaps = [
       {
         key = "<C-w>h";
@@ -41,46 +42,6 @@
         key = "<C-w>l";
         mode = "n";
         action = "<Nop>";
-      }
-      {
-        key = "<C-h>";
-        mode = "n";
-        lua = true; # interpret the action as Lua code
-        action = ''
-          function()
-            require('herdr-nvim-nav').left()
-          end
-        '';
-      }
-      {
-        key = "<C-j>";
-        mode = "n";
-        lua = true; # interpret the action as Lua code
-        action = ''
-          function()
-            require('herdr-nvim-nav').down()
-          end
-        '';
-      }
-      {
-        key = "<C-k>";
-        mode = "n";
-        lua = true; # interpret the action as Lua code
-        action = ''
-          function()
-            require('herdr-nvim-nav').up()
-          end
-        '';
-      }
-      {
-        key = "<C-l>";
-        mode = "n";
-        lua = true; # interpret the action as Lua code
-        action = ''
-          function()
-            require('herdr-nvim-nav').right()
-          end
-        '';
       }
     ];
   };
