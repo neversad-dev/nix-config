@@ -25,7 +25,7 @@ The default model is `openrouter/auto` (set in `default.nix`).
 | `<leader>ac` | Toggle chat                 |
 | `<leader>ai` | Inline prompt/edit          |
 
-Accept/reject inline edits with `ga`/`gr`; press `?` in chat for help.
+Accept/reject all suggested changes with `g2`/`g3`; press `?` in chat for help.
 Use CodeCompanion for small editor tasks and pi for larger work; avoid concurrent
 edits to the same file. Attached code is sent to OpenRouter and its model provider.
 Troubleshoot with `:checkhealth codecompanion`.
