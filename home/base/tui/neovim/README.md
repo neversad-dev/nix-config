@@ -19,11 +19,11 @@ on Android or in the standalone package. It uses a
 read through agenix at runtime; pi keeps its own credentials and conversation.
 The default model is `openrouter/auto` (set in `default.nix`).
 
-| Shortcut | Action (normal/visual mode) |
-| --- | --- |
-| `<leader>aa` | Action palette |
-| `<leader>ac` | Toggle chat |
-| `<leader>ai` | Inline prompt/edit |
+| Shortcut     | Action (normal/visual mode) |
+| ------------ | --------------------------- |
+| `<leader>aa` | Action palette              |
+| `<leader>ac` | Toggle chat                 |
+| `<leader>ai` | Inline prompt/edit          |
 
 Accept/reject inline edits with `ga`/`gr`; press `?` in chat for help.
 Use CodeCompanion for small editor tasks and pi for larger work; avoid concurrent
