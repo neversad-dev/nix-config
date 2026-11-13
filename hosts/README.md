@@ -77,8 +77,8 @@ Replace `mbair` with your configured flake host name. The build does not activat
 Use the **nix-on-droid environment**, not a plain Termux shell. Install the app and initialize it before using this flake.
 
 1. Set up a per-device user SSH key and GitHub access as above. macOS Keychain settings do not apply.
-2. Clone the repository, review the phone's flags, and enter the development shell with `nix develop` if `just` is not already available.
-3. Run `just droid pixel6` on-device. After the first switch, a new shell receives `HOSTNAME=pixel6`, so plain `just droid` works.
+2. Clone the repository and review the phone's flags. Avoid the default `nix develop` shell on Android: it uses unstable packages, not the phone's compatible package set, and can trigger the terminal issues described in the [Android guide](android/README.md#compatibility-constraints).
+3. Run `just droid pixel6` on-device, or `nix-on-droid switch --flake .#pixel6` if `just` is unavailable. After the first switch, a new shell receives `HOSTNAME=pixel6`, so plain `just droid` works.
 
 Do not follow the Darwin host-key or agenix enrollment steps: Android currently has no managed secrets in this repository. Access to the private flake input may still be required during evaluation.
 

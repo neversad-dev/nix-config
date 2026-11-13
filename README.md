@@ -23,7 +23,7 @@ The Linux home stacks are reserved for future NixOS hosts; no Linux system or st
 These are personal host configurations, not generic installation profiles. Review the username, SSH keys, feature flags, and secrets before applying them to another machine.
 
 - Use a recent Nix release with `nix-command` and `flakes` enabled.
-- The development shell provides `just`, `nh`, and the formatters. Enter it with `nix develop`, or use `direnv` after allowing the repository's environment.
+- The development shell provides `just`, `nh`, and the formatters. On macOS or conventional Linux, enter it with `nix develop`, or use `direnv` after allowing the repository's environment. On Android, avoid this unstable-based shell and automatic direnv activation; use the [on-device bootstrap commands](hosts/README.md#bootstrap-android) instead.
 - The flake references a **private `nix-secrets` repository**. Normal evaluation may require SSH access to it, even when selecting only a package. To reuse the configuration, replace that input and its secret declarations. CI uses evaluation-only stubs, not deployable secrets.
 
 For machine setup and SSH key enrollment, start with the [host bootstrap guide](hosts/README.md).
