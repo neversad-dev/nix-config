@@ -1,6 +1,8 @@
-# Secrets — reminder
+# Machine secrets
 
-App/site passwords stay in a password manager. Here I only care about **machine secrets** Nix should materialize (tokens, deploy keys, etc.).
+Application and website passwords belong in a password manager. This directory configures **machine secrets** that Nix needs to materialize at runtime, such as API tokens and deploy keys.
+
+Never put plaintext secrets in this repository, Nix expressions, shell history, or chat. Nix-store files are not a secure place for credentials.
 
 Ciphertext lives in **[nix-secrets](https://github.com/neversad-dev/nix-secrets)** (private). This flake pulls it as **`nix-secrets`** and decrypts via the agenix-compatible module (`inputs.agenix` → `agenix.darwinModules.default`).
 
@@ -54,18 +56,9 @@ in {
 
 ### 2. Create/edit the ciphertext
 
-Encrypt a new host-specific secret for every key listed in its `publicKeys`
-entry — the host key, the user key, and the recovery key here (no private key is
-needed to encrypt):
+Use `agenix -e` to create or edit ciphertext using the recipients declared in `secrets.nix`. Use an editor without persistent backups, swap, or undo files, and enter only the secret value. Avoid creating a plaintext file in either checkout.
 
-```bash
-age -r <user-pubkey> -r <recovery-pubkey> -r <host-pubkey> \
-  -o hosts/mbair/work-vpn.age plaintext.txt
-```
-
-Edit an existing ciphertext with your **user** key. Host keys decrypt at
-runtime, but they are root-owned and should not be used for editing. The user
-key is already in `admins`, so it can decrypt every ciphertext it is listed on:
+Use your **user** key for editing. Host keys decrypt at runtime, but they are root-owned and should not be used for editing. The user key must already be a recipient to decrypt an existing ciphertext:
 
 ```bash
 agenix -e hosts/mbair/work-vpn.age -i ~/.ssh/id_ed25519
@@ -107,11 +100,17 @@ Home Manager modules read a declared secret through `osConfig`, for example:
 key = "!cat ${osConfig.age.secrets."my-secret".path}";
 ```
 
-### 4. Rebuild
+### 4. Pin, build, and apply
+
+Commit and push the ciphertext and recipient changes in `nix-secrets` first. Then, from the `nix-config` repository root:
 
 ```bash
-just darwin
+just upp nix-secrets
+just darwin-build mbair
+just darwin mbair
 ```
+
+`just upp` updates the selected input and commits `flake.lock`. Replace `mbair` with the configured host name when targeting another Mac. An unpinned ciphertext will not be available during deployment.
 
 ## CodeCompanion OpenRouter key
 
@@ -132,15 +131,16 @@ agenix -e shared/openrouter-codecompanion.age -i ~/.ssh/id_ed25519
 Commit/push the ciphertext and recipient declaration, then in **nix-config**:
 
 ```bash
-nix flake update nix-secrets
-just darwin
+just upp nix-secrets
+just darwin-build mbair
+just darwin mbair
 ```
 
 On Darwin, agenix decrypts `openrouter-codecompanion` with mode `0400`, owned by
 the primary user. CodeCompanion reads it at runtime via `cmd:`; the key stays
 out of the Nix store and separate from pi. The ciphertext must exist in the
 pinned input before deployment; CI stubs are evaluation-only.
-See [Neovim usage](../home/base/tui/neovim/README.md#codecompanion--pi).
+See [Neovim usage](../home/base/tui/neovim/README.md#codecompanion-and-pi).
 
 ## GitHub CLI token
 
@@ -199,10 +199,9 @@ In your private **nix-secrets** checkout:
 Back in **nix-config**:
 
 ```bash
-# New modules must be Git-tracked for the local flake to include them:
-git add home/base/core/git/gh.nix
-nix flake update nix-secrets
-just darwin
+just upp nix-secrets
+just darwin-build mbair
+just darwin mbair
 # Open a new shell so gh is on PATH, then:
 gh auth status
 gh api user --jq .login
@@ -218,8 +217,8 @@ CI stubs are for evaluation only.
 
 ### Darwin (new Mac)
 
-1. Finish the [bootstrap steps in hosts/README.md](../hosts/README.md#bootstrap-a-new-machine) (generate user key, add to GitHub, clone repo, verify SSH).
-2. Generate the host key:
+1. Complete [GitHub SSH setup](../hosts/README.md#1-set-up-github-ssh-access) from the host guide. The user key provides repository access; it is distinct from the system key that decrypts secrets.
+2. Generate the host key **only if it does not already exist**. Never overwrite an enrolled host key:
    ```bash
    sudo ssh-keygen -t ed25519 -N "" -f /etc/ssh/ssh_host_ed25519_key -C "root@$(hostname)"
    ```
@@ -228,10 +227,12 @@ CI stubs are for evaluation only.
    cat /etc/ssh/ssh_host_ed25519_key.pub
    ```
 4. On a machine that can already decrypt `nix-secrets`: add the new host pubkey and user pubkey as recipients in `nix-secrets/secrets.nix`, rekey (`agenix -r -i <key>`), commit/push.
-5. Update this flake's `nix-secrets` input to the new revision.
-6. On the new Mac: `just darwin` to rebuild with working secrets.
+5. Update this flake's input with `just upp nix-secrets` from an authorized checkout, then transfer or pull the updated lock file on the new Mac.
+6. On the new Mac, build with `just darwin-build <host>` before applying with `just darwin <host>`, using the host name defined in `flake.nix`.
 
 ### NixOS (new server)
+
+This is a future-host reference, not a supported output today: the flake has no `nixosConfigurations`. Add a system configuration and agenix integration before using these installation patterns.
 
 NixOS generates host keys when OpenSSH starts, but **agenix needs the key before it can decrypt secrets**. You have two options:
 
@@ -267,19 +268,22 @@ nix shell github:yaxitech/ragenix#ragenix
 agenix -r -i ~/.ssh/id_ed25519   # re-encrypts all files with updated recipients
 ```
 
-## CI / stub handling
+## CI and stub handling
 
-CI runners have no SSH access to `nix-secrets`. The workflow auto-generates empty `.age` stub files from all `${nix-secrets}` references so evaluation succeeds:
+CI runners have no SSH access to `nix-secrets`. The generator scans source directories for literal paths into the `nix-secrets` input and creates matching empty `.age` files so evaluation can proceed. If a new reference format is not recognized, update `scripts/gen-stubs.sh`.
 
 ```bash
 just gen-stubs   # local equivalent (also generates wallpapers stub)
 ```
 
-Stubs are created in `stub-flake-for-ci/nix-secrets/` (gitignored) and overridden via:
+The generated directories are gitignored. CI passes both input overrides to its validation commands:
 
-```
+```text
 --override-input nix-secrets path:./stub-flake-for-ci/nix-secrets
+--override-input wallpapers path:./stub-flake-for-ci/wallpapers
 ```
+
+Generating stubs does not select them automatically. **Never activate a host with stub inputs:** the empty files are not valid ciphertext and cannot decrypt. See the [workflow guide](../.github/workflows/README.md#input-stubs) for coverage and limitations.
 
 ## Troubleshooting activation
 
@@ -290,12 +294,10 @@ tail -n 100 /Library/Logs/org.nixos.activate-agenix.stderr.log
 tail -n 100 /Library/Logs/org.nixos.activate-agenix.stdout.log
 ```
 
-**Home-manager** — check the activation script output or run:
+**Home Manager** — inspect the output of the embedded nix-darwin activation. For verbose rebuild output, use `just darwin-debug mbair` (this **switches** the configuration; it is not a read-only diagnostic). There is no standalone Home Manager output, so `home-manager switch --flake .` does not apply to this repository.
 
-```bash
-home-manager switch --flake . --verbose
-```
+Check that the required `.age` file exists in the **pinned** `nix-secrets` revision, the system key is a recipient, and the decrypted file is owned by the intended user. Do not print secret contents while debugging.
 
 ## Why ragenix/agenix
 
-Same module surface as agenix; Rust CLI errors are usually easier to parse when I typo `secrets.nix`. The flake input is `agenix.url = "github:yaxitech/ragenix"`; this repo uses `agenix.darwinModules.default`.
+The flake uses `agenix.url = "github:yaxitech/ragenix"` and imports `agenix.darwinModules.default`. ragenix provides an agenix-compatible module interface and Rust CLI; the recipient and ciphertext workflow remains the same.

@@ -1,69 +1,75 @@
-# nix-on-droid (Pixel 6)
+# Android host: Pixel 6
 
-Nix-on-Droid configuration for Pixel 6 (aarch64-linux). This is a **proot-based** Android Nix environment using the `nix-on-droid` flake from `nix-community/nix-on-droid/release-24.05`.
+An `aarch64-linux`, proot-based Nix environment using [nix-on-droid release 24.05](https://github.com/nix-community/nix-on-droid/tree/release-24.05). This configures the terminal environment, not Android's operating system.
 
-## Key constraints
+## Compatibility constraints
 
-- **Pinned to 24.05**: nix-on-droid, its pkgs (`nixpkgs-24-05`) and its bundled Home Manager (`home-manager-24-05`) are on release-24.05, so `system.stateVersion` and `home.stateVersion` are `24.05`.
-- **No unstable binaries for interactive tools**: unstable's glibc (>= 2.42) uses the `TCGETS2` ioctl, which Android's SELinux blocks on ttys (no prompt/TUI, `stty: Permission denied`). Newer packages come from **nixos-25.11** (`pkgs.nixos2511`, still glibc 2.40). `pkgs.unstable` is only for non-interactive CLI tools, plus TUIs verified to work on-device (tuxedo, herdr, worktrunk).
-- **Shared modules, HM 24.05 shims**: the phone uses the same `home/base` modules as the desktops. Options introduced after HM 24.05 are polyfilled in [`home/android/compat.nix`](../../home/android/compat.nix).
+- **Base releases stay on 24.05.** nix-on-droid, its base nixpkgs, and its Home Manager input are pinned together. Both system and home compatibility state versions are `24.05`.
+- **Interactive unstable binaries are unsafe by default.** glibc 2.42 and newer use the `TCGETS2` ioctl, which Android's SELinux blocks on ttys. Symptoms include a missing prompt, broken TUIs, and `stty: Permission denied`.
+- **Use `pkgs.nixos2511` for newer interactive tools.** This package set stays below that glibc boundary. Unstable packages require on-device verification; tuxedo, herdr, and worktrunk are explicit exceptions already used here, not evidence that every unstable TUI works.
+- **Shared modules need HM 24.05 compatibility.** Newer option names are translated or declared in [`home/android/compat.nix`](../../home/android/compat.nix); integrations such as the upstream Catppuccin and pi HM modules skip themselves via `isHm24`.
+- **No managed secrets.** The Android secrets module is a placeholder. Evaluation may still need access to the private `nix-secrets` flake input; see the [root prerequisites](../../README.md#before-you-start).
 
-## File layout
+## Configuration map
 
-| File                                                                   | Purpose                                                                                                                               |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `pixel6/default.nix`                                                   | System layer: login shell, timezone, Nix settings, and the `home-manager` block (HM-scoped 25.11 package overrides, `isHm24 = true`). |
-| `pixel6/secrets.nix`                                                   | Placeholder: nix-on-droid has no system-level agenix secrets; user secrets belong in Home Manager modules.                            |
-| [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix) | Home entry point: `features.*` flags for the phone.                                                                                   |
-| [`home/android/`](../../home/android/README.md)                        | Android home stack: `compat.nix` polyfills, ssh-agent, Termux font, 25.11 package choices.                                            |
+| Location                                                               | Responsibility                                             |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `pixel6/default.nix`                                                   | Shell, timezone, Nix settings, embedded HM, leaf overrides |
+| `pixel6/secrets.nix`                                                   | Placeholder; no agenix integration                         |
+| [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix) | Phone feature flags and `HOSTNAME`                         |
+| [`home/android/default.nix`](../../home/android/default.nix)           | Android user behavior and program package selections       |
+| [`home/android/compat.nix`](../../home/android/compat.nix)             | HM 24.05 compatibility shims                               |
+| [`flake.nix`](../../flake.nix)                                         | Base package set, overlays, nvf language-package aliases   |
 
-The pkgs set itself (24.05 + overlays, plus 25.11 aliases for packages nvf's language presets need) is built in `flake.nix` under `nixOnDroidConfigurations.pixel6`.
+Widely used packages such as Git and fzf are selected through `programs.<name>.package`; replacing them throughout the package set would rebuild their dependents. Leaf TUI overrides are scoped to Home Manager in the system host module.
 
-## Architecture notes
+## Build and switch
 
-### Flake inputs and HM-version-dependent modules
-
-Flake `inputs` are passed to Home Manager via `home-manager.extraSpecialArgs`, like on the desktops. Modules whose upstream HM module needs a newer HM (Catppuccin, pi) check `isHm24` and skip themselves on the phone.
-
-### Font setup
-
-Termux reads a **real file** (not a symlink) from `~/.termux/font.ttf`. The store path is not resolvable from Android's native font layer, so home-manager's `home.file` with `.source` doesn't work.
-
-Solution: `home.activation.copyTermuxFont` copies the Maple Mono NF font from `/nix/store` into `~/.termux/font.ttf` on every switch. (nix-on-droid's `terminal.font` option doesn't help: it only symlinks into the nix-on-droid app's private storage, unreadable by the Termux app.)
-
-### SSH agent
-
-There is no systemd (or keychain), so zsh starts `ssh-agent` on a fixed socket (`~/.ssh/agent.sock`) when none is reachable. The key is added on first use via `AddKeysToAgent`: the passphrase is asked once and cached until Android kills the agent (e.g. when the app is fully closed).
-
-### Acode
-
-To use Acode's Git SCM plugin on the same repos, see [acode.md](acode.md).
-
-### Known issues
-
-- No system monitor: Android blocks `/proc/stat` for apps (since Android 8),
-  so btop can't read CPU stats in any version. `htop` and `procs` are
-  installed but show no/partial CPU data.
-
-## Usage
+Run inside **nix-on-droid on the device**, from the repository root:
 
 ```bash
-# Switch from local checkout (useful while iterating)
-cd /storage/emulated/0/code/projects/nix-config && git pull
-just droid          # uses $HOSTNAME, set by HM once the first switch is done
-just droid pixel6   # first switch (HOSTNAME not set yet)
+just droid-build pixel6  # build without switching
+just droid pixel6        # apply system and Home Manager configuration
+```
 
-# Or without just
-nix-on-droid switch --flake "path:/storage/emulated/0/code/projects/nix-config#pixel6"
+After the first switch, open a new shell to receive `HOSTNAME=pixel6`; plain `just droid` then selects the host. A checkout on Android shared storage can be used, provided the app has the required storage permissions.
 
-# Switch from GitHub (useful once everything is stable)
+Without a local checkout, the direct remote switch is:
+
+```bash
 nix-on-droid switch --flake github:neversad-dev/nix-config#pixel6
 ```
 
-After switching, **force-stop and reopen** the nix-on-droid app so Termux picks up the copied font and login-shell changes.
+The same private-input access requirements apply. Do not use CI stub inputs for activation.
 
-`just droid-clean` deletes old generations and garbage-collects the store.
+Force-stop and reopen the app after changing the login shell or font. `just droid-clean` deletes old generations and garbage-collects the store; it removes rollback history, so use it only after verifying the new configuration.
 
-## What's enabled
+## Validation
 
-See the `features` flags in [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix).
+On-device builds and interactive testing are authoritative. For evaluation on another platform, CI checks only the Home Manager derivation path:
+
+```bash
+nix eval --raw .#nixOnDroidConfigurations.pixel6.config.home-manager.config.home.activationPackage.drvPath
+```
+
+`nix flake check` alone does not validate `nixOnDroidConfigurations`, and CI does not build or activate the Android environment. See the [workflow guide](../../.github/workflows/README.md).
+
+## Runtime notes
+
+### Fonts
+
+The native Termux font reader needs a real file at `~/.termux/font.ttf`; a symlink into the Nix store is insufficient. Home activation copies Maple Mono NF there on each switch. See the [Android home stack](../../home/android/README.md#font-activation).
+
+### SSH agent
+
+zsh shares one `ssh-agent` on `~/.ssh/agent.sock`. Keys are added on first use through `AddKeysToAgent`; the passphrase remains cached until the agent exits or Android kills it. There is no systemd user service or macOS Keychain integration.
+
+### Process monitors
+
+Android restricts access to `/proc/stat`, so btop is disabled. The available `htop` and `procs` tools may show incomplete or no CPU data; changing package versions does not remove the platform restriction.
+
+### Acode
+
+For Acode's Git SCM plugin on the same repositories, see [acode.md](acode.md).
+
+Enabled programs are listed in [`home/hosts/android/pixel6.nix`](../../home/hosts/android/pixel6.nix). General enrollment and setup are covered by the [host bootstrap guide](../README.md#bootstrap-android).

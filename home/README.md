@@ -1,71 +1,78 @@
 # Home Manager
 
-Three layers separate reusable configuration, platform stacks, and host choices.
+Home configuration has three layers: reusable modules, platform stacks, and per-host choices. Home Manager is integrated into nix-darwin on macOS and nix-on-droid on Android; there are no standalone Home Manager hosts.
 
-```
+```text
 home/
-├── base/                 # Cross-platform modules
-│   ├── home.nix          # User identity, stateVersion, Nix settings
-│   ├── core/             # Shell, basic Git, SSH, direnv, small CLI tools
-│   ├── tui/              # Workstation tools, Git extras, AI, theme
-│   └── gui/              # Editors, terminals, wallpapers, fonts
-├── darwin/               # Full workstation stack + AeroSpace/SketchyBar
-├── linux/                # Reserved for future NixOS hosts
-├── android/              # Core + HM 24.05 compatibility
-└── hosts/                # One entry point per host, grouped by platform
+├── base/
+│   ├── home.nix          # Identity, stateVersion, editor fallback, Nix settings
+│   ├── core/             # Shell, Git, SSH, and lightweight CLI integrations
+│   ├── tui/              # Terminal tools, Neovim, AI, and theming
+│   └── gui/              # Editors, terminals, wallpapers, and fonts
+├── darwin/               # Full workstation stack and macOS integrations
+├── linux/                # Core/TUI/GUI stacks for future NixOS hosts
+├── android/              # Core + TUI with HM 24.05 compatibility
+└── hosts/                # One home entry point per host, grouped by platform
 ```
 
 ## Composition
 
-Outputs reference one file under `home/hosts/`. Each host imports a platform
-stack and supplies overrides. Reusable modules do not import host files.
+Each system's Home Manager integration points to one file under `home/hosts/`. That file imports a platform stack and sets host-specific flags and overrides. Reusable modules never import host files.
 
-| Host entry point           | Stack     | Integration                |
-| -------------------------- | --------- | -------------------------- |
-| `hosts/darwin/mbair.nix`   | `darwin`  | nix-darwin module          |
-| `hosts/android/pixel6.nix` | `android` | nix-on-droid's built-in HM |
+| Home entry point           | Platform stack | Integration                |
+| -------------------------- | -------------- | -------------------------- |
+| `hosts/darwin/mbair.nix`   | `darwin/`      | nix-darwin module          |
+| `hosts/android/pixel6.nix` | `android/`     | nix-on-droid's built-in HM |
 
-Android uses its own stack rather than assuming all desktop integrations work
-in proot. The `linux/` stack is kept for future NixOS hosts; it is not wired to
-any current output.
+Paths in this table are relative to `home/`.
+
+- **Darwin** imports shared identity, core, TUI, GUI, and macOS-only modules.
+- **Android** imports shared identity, core, and TUI with compatibility shims; GUI modules are excluded.
+- **Linux** offers layered core/TUI/GUI stacks, but no current flake host uses them.
+
+Directory `default.nix` modules commonly use `mylib.scanPaths` to discover child modules. Importing a module makes its options available; it does not necessarily enable the program.
 
 ## Defaults and feature flags
 
-Core imports enable shell, basic Git (identity, aliases, commit template) and
-SSH. The following are part of core/tui but are **opt-in and disabled by
-default**: `atuin`, `direnv`, `eza`, `fastfetch`, `zoxide`, `starship`,
-`neovim`, `pay-respects`, `herdr`, `btop`, `superfile`, `tuxedo` (all under
-`features.cli.*`). Each host enables what it needs in its entry point, e.g.:
+`base/home.nix` supplies default identity and home-directory values, a fallback Vim editor, Nix settings, and a compatibility `home.stateVersion`. The state version is not the installed Home Manager release; Android explicitly uses `24.05`.
+
+The core stack provides shell, SSH, Git, and GitHub CLI integration. Optional programs such as Atuin, direnv, Starship, Neovim, and the TUI tools are gated by disabled-by-default `features.cli.*` flags. Enable only what the host needs:
 
 ```nix
 features.cli.starship.enable = true;
 features.cli.neovim.enable = true;
 ```
 
-Neovim is a Home Manager module in [`base/tui/neovim/`](base/tui/neovim/README.md)
-that enables nvf with the in-repo nvf modules (no separate flake input).
-It can also be run directly with `nix run github:neversad-dev/nix-config`.
+Git has separate controls:
 
-`features.cli.git.extended.enable` controls the optional Git extras (Delta, lazygit,
-worktrunk); the git binary does not depend on it, and core Git configuration
-(identity, ignores, aliases) is gated separately by `features.cli.git.core.enable`.
-Signing retains its separate flag.
-Other optional features retain their existing `features.*` names. Shared
-system/HM options live in `vars/features.nix`; HM-only options live in their
-leaf modules. Directory `default.nix` files use `mylib.scanPaths`.
+- The Git binary is available regardless of the feature flags.
+- `features.cli.git.core.enable` enables identity, ignores, aliases, and the commit template.
+- `features.cli.git.extended.enable` enables Delta, lazygit, and worktrunk.
+- `features.cli.git.signing.enable` enables SSH commit signing only when `features.cli.git.extended.enable` is also enabled.
 
-Core avoids unconditional flake-input dependencies. TUI adds Catppuccin and AI
-integration; GUI adds fonts and desktop applications. Secret decryption is
-system-level (agenix via nix-darwin); Home Manager reads secrets through
-`osConfig`.
+Shared system/HM options are declared in [`vars/features.nix`](../vars/features.nix). Home Manager-only options are declared in their owning modules. On Darwin, shared flags can be imported from `hosts/<host>/features.nix` by both module trees; HM-only flags belong in the home entry point. See the [feature guide](../vars/README.md).
 
-## Adding a host
+## Compatibility and secrets
+
+Android runs HM 24.05. Newer shared options need a shim in [`android/compat.nix`](android/compat.nix), or a guard when the integration cannot be supported. Modules such as Catppuccin's HM integration and pi skip their newer upstream modules when `isHm24` is set. Shared styling and program configuration may still apply.
+
+On Darwin, agenix decrypts secrets at the **system** level. Home Manager consumers use `osConfig.age.secrets` to reference runtime paths, never plaintext values in Nix expressions. Android currently has no managed secrets. See [secrets](../secrets/README.md).
+
+## Adding a module or host
+
+To add a program, place it in the appropriate `base/core`, `base/tui`, or `base/gui` layer; use a platform directory for platform-only integrations. Prefer an existing Home Manager program module and opt-in flags over unconditional packages.
+
+To add a host:
 
 1. Create `home/hosts/<platform>/<hostname>.nix` and import a platform stack.
 2. Set host-specific flags and overrides there.
-3. Point the host's Home Manager integration at that one file (nix-darwin on
-   macOS, nix-on-droid on Android).
-4. Update [hosts/README.md](../hosts/README.md).
+3. Point the system's Home Manager integration at that file.
+4. Update the [host documentation](../hosts/README.md) and root host table.
 
-See [base/README.md](base/README.md), [android/README.md](android/README.md),
-and [vars/README.md](../vars/README.md).
+## Further reading
+
+- [Shared layers](base/README.md)
+- [Darwin stack](darwin/README.md)
+- [Android stack](android/README.md)
+- [Future Linux stacks](linux/README.md)
+- [Neovim and CodeCompanion](base/tui/neovim/README.md)
